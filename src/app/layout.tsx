@@ -31,7 +31,8 @@ export default function RootLayout ({
   return (
     <html lang="en">
       <PrimeReactProvider>
-        <body className={`${geistSans.variable} ${geistMono.variable} pt-3`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} pt-3 text-center`}>
+          <h1>Taller de autos</h1>
           {children}
         </body>
       </PrimeReactProvider>
