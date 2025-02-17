@@ -1,31 +1,34 @@
-'use client';
+'use client'
 
-import { Calendar } from 'primereact/calendar';
-import { useState } from 'react';
-import { Nullable } from 'primereact/ts-helpers';
-import styles from './page.module.css';
-import Table from '@/components/table';
-import { Button } from 'primereact/button';
 
-export default function Home() {
-  const [date, setDate] = useState<Nullable<Date>>(null);
+import { useOrders } from '@/hooks/useOrders'
+import { DataView } from 'primereact/dataview'
+import { OrdenTrabajo } from './types'
+import { ListOrders } from '@/components/listOrders'
 
-  return (
-    <main className={styles.container}>
-      <section className={styles.section}>
-        <h2>Lista de Órdenes</h2>
-        <Table />
-        <Button label="Nueva orden de trabajo" icon="pi pi-plus" className='mt-2' />
-      </section>
-      <aside className={styles.aside}>
-        <h2>Calendario de entregas</h2>
-        <Calendar
-          value={date}
-          onChange={(e) => setDate(e.value)}
-          inline
-          className={styles.calendar}
-        />
-      </aside>
-    </main>
-  );
+export default function Home () {
+
+  const { orders }: {orders: OrdenTrabajo[]}  = useOrders()
+  console.log(orders)
+
+
+  // const itemTemplate = (product, index) => {
+  //   return (
+
+  //   )
+  // }
+
+  // const listTemplate = (items) => {
+  //   if (!items || items.length === 0) return null
+
+  //   const list = items.map((product, index) => {
+  //     return itemTemplate(product, index)
+  //   })
+
+  //   return <>{list}</>
+  // }
+
+  return ( orders &&
+    <DataView value={orders} listTemplate={(items: OrdenTrabajo[]) => <ListOrders items={items} />}/>
+  )
 }
