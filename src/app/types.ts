@@ -60,6 +60,6 @@ export interface OrdenTrabajo {
   total?: number
   comentarios?: string
   vehiculo: Vehiculo // Relación: cada orden se asocia a un vehículo
-  elementos_revisados: ElementosIngreso // Relación: la orden contiene los elementos revisados
+  elementos_ingreso: ElementosIngreso // Relación: la orden contiene los elementos revisados
   forma_pago: MetodoPago // Relación: la orden define un método de pago
 }
