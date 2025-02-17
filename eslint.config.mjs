@@ -19,7 +19,8 @@ const eslintConfig = [
       'space-before-function-paren': ['error', 'always'], // Espacio antes de paréntesis en funciones
       'indent': ['error', 2],                    // Indentación de 2 espacios
       'no-trailing-spaces': 'error',             // Sin espacios al final de líneas
-      'eol-last': ['error', 'always']            // Línea en blanco al final
+      'eol-last': ['error', 'always'],            // Línea en blanco al final,
+      '@next/next/no-img-element': 'off'        // Desactivar regla de next para img
     }
   }
 ]
