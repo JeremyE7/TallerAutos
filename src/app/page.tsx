@@ -1,7 +1,7 @@
 'use client';
 
 import { Calendar } from 'primereact/calendar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Nullable } from 'primereact/ts-helpers';
 import styles from './page.module.css';
 import Table from '@/components/table';
@@ -9,7 +9,13 @@ import { Button } from 'primereact/button';
 
 export default function Home() {
   const [date, setDate] = useState<Nullable<Date>>(null);
-
+  /*// Crear las tablas
+  useEffect(() => {
+    fetch('/api/initDB')
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error('Error:', error));
+  }, []);*/
   return (
     <main className={styles.container}>
       <section className={styles.section}>
