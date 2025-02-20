@@ -1,3 +1,9 @@
+export interface Response<T>{
+  message: string
+  code: number
+  data?: T
+}
+
 // Enumerado para los métodos de pago
 export enum MetodoPago {
   EFECTIVO = 'Efectivo',
@@ -63,3 +69,4 @@ export interface OrdenTrabajo {
   elementos_ingreso: ElementosIngreso // Relación: la orden contiene los elementos revisados
   forma_pago: MetodoPago // Relación: la orden define un método de pago
 }
+
