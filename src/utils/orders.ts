@@ -1,8 +1,18 @@
-import { OrdenTrabajo } from '@/app/types'
+import { OrdenTrabajo, Response } from '@/app/types'
 
 export const getOrders = async () => {
-  //Hacer fetch al mockdata
-  const response = await fetch('mocks/mockOrders.json')
-  const data: OrdenTrabajo[] = await response.json()
-  return data
+  try{
+    const response = await fetch('api/orden')
+    const data: Response<OrdenTrabajo[]> = await response.json()
+    if(data.code !== 200){
+      console.error('Error fetching orders:', data.message)
+      return []
+    }
+
+    console.info(data.message)
+    return data.data
+
+  }catch(error){
+    console.error('Error fetching orders:', error)
+  }
 }
