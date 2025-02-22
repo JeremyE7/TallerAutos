@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Galleria } from 'primereact/galleria'
-import { PhotoService } from './service/PhotoService'
 
-export default function ItemWithoutThumbnailsDemo () {
+export default function GalleryyOrder () {
   const [images, setImages] = useState(null)
-
-  useEffect(() => {
-    PhotoService.getImages().then(data => setImages(data))
-  }, [])
 
   const itemTemplate = (item) => {
     return <img src={item.itemImageSrc} alt={item.alt} style={{ width: '100%', display: 'block' }} />
