@@ -12,6 +12,7 @@ export enum MetodoPago {
 
 // Tipo para Cliente
 export interface Cliente {
+  id: number,
   nombre: string
   cedula: string
   direccion?: string
@@ -21,6 +22,7 @@ export interface Cliente {
 
 // Tipo para Vehículo (relacionado a Cliente)
 export interface Vehiculo {
+  id: number,
   marca: string
   modelo?: string
   anio?: number
@@ -35,6 +37,7 @@ export interface Vehiculo {
 
 // Tipo para Elementos Revisados (relacionado con OrdenTrabajo)
 export interface ElementosIngreso {
+  id: number,
   limpiaparabrisas?: boolean
   espejos?: boolean
   luces?: boolean
@@ -57,6 +60,7 @@ export interface ElementosIngreso {
 
 // Tipo para Orden de Trabajo (relacionado a Vehículo, que a su vez está vinculado a Cliente)
 export interface OrdenTrabajo {
+  id: number,
   fechaIngreso: Date
   fechaSalida: Date
   operaciones_solicitadas?: string
@@ -68,5 +72,16 @@ export interface OrdenTrabajo {
   vehiculo: Vehiculo // Relación: cada orden se asocia a un vehículo
   elementos_ingreso: ElementosIngreso // Relación: la orden contiene los elementos revisados
   forma_pago: MetodoPago // Relación: la orden define un método de pago
+  foto?: Foto
 }
+
+export interface Foto {
+  id: number;
+  frontal?: string;
+  trasera?: string;
+  derecha?: string;
+  izquierda?: string;
+  superior?: string;
+  interior?: string;
+};
 

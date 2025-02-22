@@ -8,7 +8,6 @@ import { SpeedDial } from 'primereact/speeddial'
 import 'primeflex/primeflex.css'
 import 'primereact/resources/primereact.css'
 import 'primereact/resources/themes/arya-orange/theme.css'
-// import 'primereact/resources/themes/lara-light-teal/theme.css'
 import 'primeicons/primeicons.css'
 import { Tooltip } from 'primereact/tooltip'
 
@@ -55,15 +54,21 @@ export default function RootLayout ({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const value = {
+    ripple: true
+  }
+
+
   return (
     <html lang="es">
-      <PrimeReactProvider>
+      <PrimeReactProvider value={value}>
         <body className={`${geistSans.variable} ${geistMono.variable} text-center z-1 relative`}>
           <header className=' p-4 flex align-items-center text-white h-8rem gap-5'>
             <img src="logo.png" alt="" className='ml-1 w-11rem overflow-hidden ml-8 z-1'  />
-            <h1 className='z-1 text-6xl sm: text-2xl' >Taller de autos</h1>
+            <h1 className='z-1 text-6xl sm: text-2xl hidden md:block' >Taller de autos</h1>
           </header>
-          <main>
+          <main className='align-items-center flex flex-column'>
             {children}
           </main>
           <Tooltip target=".speeddial-bottom-left .p-speeddial-action" />
