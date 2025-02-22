@@ -7,7 +7,7 @@ import { Divider } from 'primereact/divider'
 interface ListItemOrderProps {
   order: OrdenTrabajo
   confirmDelete: () => void,
-  showModal: () => void,
+  showModal: (order: OrdenTrabajo) => void,
 }
 
 export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrderProps) => {
@@ -17,7 +17,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
   const header =  (
     <div className='buttons mr-1 mt-2 md:mt-6 md:mr-3' style={{float: 'right'}}>
       <div className='flex gap-2 flex-col flex-row'>
-        <Button icon="pi pi-eye" onClick={showModal}/>
+        <Button icon="pi pi-eye" onClick={() => showModal(order)}/>
         <Button icon="pi pi-print" severity='help'/>
         <Button severity="danger" icon="pi pi-trash" onClick={confirmDelete}/>
       </div>
