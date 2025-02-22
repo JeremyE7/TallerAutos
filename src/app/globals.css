@@ -1,29 +1,54 @@
-body{
+@import "tailwindcss";
+
+body {
   height: 100vh;
   padding-top: 20px;
+  padding-bottom: 20px;
 }
 
-main{
-  height: 90%;
+main {
+  height: 80%;
 }
 
-body, main {
+body,
+main {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
 }
 
-h1{
+h1 {
   margin: 0;
-  
+
 }
 
-section{
+section {
   overflow-x: hidden;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
+img {
+  object-fit: contain;
+}
 
+.p-dataview-content {
+  background-color: transparent;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+h5{
+  margin: 0;
+  padding: 0;
+}
+
+.label-show{
+  display: flex;
+  flex-direction: column;
+}
