@@ -120,3 +120,29 @@ legend{
     margin-top: 30px;
   }
 }
+
+.p-chip {
+  color: black;
+}
+
+/* .p-dropdown .p-dropdown-trigger{
+  width: 0;
+  border: none !important;
+}
+
+.p-dropdown{
+  border: none !important;
+} */
+
+.p-dropdown {
+  background: transparent;
+  border: none;
+}
+
+.p-dropdown-label{
+  display: none;
+}
+
+.p-hidden-accessible input{
+  display: none;
+}
