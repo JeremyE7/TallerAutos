@@ -1,4 +1,4 @@
-import { OrdenTrabajo } from '@/app/types'
+import { EstadosOrden, OrdenTrabajo } from '@/app/types'
 import { ListItemOrder } from './lisItemOrder'
 
 import { ConfirmDialog } from 'primereact/confirmdialog' // For <ConfirmDialog /> component
@@ -7,6 +7,7 @@ import { useRef, useState } from 'react'
 import { Toast } from 'primereact/toast'
 import { Dialog } from 'primereact/dialog'
 import { OrderView } from './OrderView'
+import { Button } from 'primereact/button'
 
 interface ListOrdersProps {
     items: OrdenTrabajo[]
@@ -52,7 +53,11 @@ export const ListOrders = ({items} : ListOrdersProps) => {
     <Toast ref={toast} position='bottom-right'/>
     <ConfirmDialog />
     {list}
-    <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={<h1 className='text-4xl text-primary font-bold'>Orden de trabajo N°{orderToShowInModal?.id}</h1>} contentClassName='px-0'>
+    <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={<h1 className='text-4xl text-primary font-bold'>Orden de trabajo N°{orderToShowInModal?.id}</h1>} contentClassName='px-0' footer={<section className='flex gap-1.5 drop-shadow-lg pt-3'>
+      <Button  icon='pi pi-pencil' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')}/>
+      <Button icon='pi pi-print' severity='help' className='w-2 md:w-1'/>
+      <Button icon='pi pi-trash' severity='danger' className='w-2 ml-auto md:w-1'/>
+    </section>} >
       <OrderView order={orderToShowInModal}/>
     </Dialog>
   </>

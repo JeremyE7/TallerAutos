@@ -1,8 +1,11 @@
 'use client'
-import { OrdenTrabajo } from '@/app/types'
+import { EstadosOrden, OrdenTrabajo } from '@/app/types'
 import { Button } from 'primereact/button'
 import { Card } from 'primereact/card'
+import { Chip } from 'primereact/chip'
 import { Divider } from 'primereact/divider'
+import { Dropdown } from 'primereact/dropdown'
+import { useEffect, useState } from 'react'
 
 interface ListItemOrderProps {
   order: OrdenTrabajo
@@ -12,22 +15,52 @@ interface ListItemOrderProps {
 
 export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrderProps) => {
 
+  const [selectedOption, setSelectedOption] = useState(null)
+  const options = [
+    { name: 'Ver', code: 'view' },
+    { name: 'Imprimir', code: 'print' },
+    { name: 'Eliminar', code: 'delete' }
+  ]
 
+  useEffect(() => {
+    if(selectedOption === 'view') showModal(order)
+    if(selectedOption === 'delete') confirmDelete()
+
+  }, [selectedOption])
+
+  const getColorState = (state: string) => {
+    switch (state) {
+    case EstadosOrden.CANCELADA:
+      return 'bg-red-500 text-black'
+    case EstadosOrden.EN_PROCESO:
+      return 'bg-yellow-500 text-black'
+    case EstadosOrden.FINALIZADA:
+      return 'bg-green-500 text-black'
+    case EstadosOrden.PENDIENTE:
+      return 'bg-blue-500'
+    default:
+      return ''
+    }
+  }
 
   const header =  (
-    <div className='buttons mr-1 mt-2 md:mt-6 md:mr-3' style={{float: 'right'}}>
-      <div className='flex gap-2 flex-row'>
+    <div className='buttons mr-1 mt-2 md:mt-6 md:mr-3 ' style={{float: 'right'}}>
+      <div className='gap-2 flex-row hidden md:flex'>
         <Button icon="pi pi-eye" onClick={() => showModal(order)}/>
         <Button icon="pi pi-print" severity='help'/>
         <Button severity="danger" icon="pi pi-trash" onClick={confirmDelete}/>
       </div>
+      <Dropdown value={selectedOption} onChange={(e) =>{
+        setSelectedOption(e.value.code)
+      }} options={options} optionLabel="name"
+      placeholder="" className="w-1 block md:hidden mt-3.5" dropdownIcon='pi pi-ellipsis-v' onShow={() => setSelectedOption(null)} onHide={() => setSelectedOption(null)}/>
     </div>
   )
 
   return (
     <>
       {order.vehiculo && (
-        <Card title={order.vehiculo.marca}  subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl' key={order.vehiculo.id} header={header}>
+        <Card title={<>{order.vehiculo.marca} <Chip label={order.estado} className={getColorState(order.estado) + ' ml-1'}/></>}  subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl' key={order.vehiculo.id} header={header}>
           <div className='grid w-full'>
             <div className='flex flex-column md:col-5 md:text-right sm:text-left sm:col-12'>
               <h5 className='text-primary'>

@@ -68,5 +68,6 @@ export const OrdenTrabajo = sqliteTable('OrdenTrabajo', {
   vehiculo_id: integer('vehiculo_id').notNull().references(() => Vehiculo.id),
   elementos_ingreso_id: integer('elementos_ingreso_id').notNull().references(() => ElementosIngreso.id),
   fotos_id: integer('fotos_id').notNull().references(() => Fotos.id),
-  forma_pago: text('forma_pago').notNull()
+  forma_pago: text('forma_pago').notNull(),
+  estado: text('estado').notNull().default('Pendiente')
 })
