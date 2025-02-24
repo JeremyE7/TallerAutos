@@ -45,14 +45,14 @@ export const ListOrders = ({items} : ListOrdersProps) => {
   if (!items || items.length === 0) return null
 
   const list = items.map((order) => {
-    return ListItemOrder({order: order, confirmDelete, showModal})
+    return <ListItemOrder key={order.id} order={order} confirmDelete={confirmDelete} showModal={showModal} />
   })
 
   return <>
     <Toast ref={toast} position='bottom-right'/>
     <ConfirmDialog />
     {list}
-    <Dialog visible={visible} maximizable style={{ width: '50vw' }} onHide={hideModal}>
+    <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={<h1 className='text-4xl text-primary font-bold'>Orden de trabajo N°{orderToShowInModal?.id}</h1>} contentClassName='px-0'>
       <OrderView order={orderToShowInModal}/>
     </Dialog>
   </>
