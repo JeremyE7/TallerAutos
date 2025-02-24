@@ -65,8 +65,8 @@ export default function RootLayout ({
       <PrimeReactProvider value={value}>
         <body className={`${geistSans.variable} ${geistMono.variable} text-center z-1 relative`}>
           <header className=' p-4 flex align-items-center text-white h-8rem gap-5'>
-            <img src="logo.png" alt="" className='ml-1 w-11rem overflow-hidden ml-8 z-1'  />
-            <h1 className='z-1 text-6xl sm: text-2xl hidden md:block' >Taller de autos</h1>
+            <img src="logo.png" alt="" className='w-11rem overflow-hidden ml-8 z-1'  />
+            <h1 className='z-1 text-6xl hidden md:block' >Taller de autos</h1>
           </header>
           <main className='align-items-center flex flex-column'>
             {children}
