@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1740378303440,
+      "tag": "0000_dizzy_jetstream",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1740378418163,
+      "tag": "0001_large_black_widow",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1740378466139,
+      "tag": "0002_military_blacklash",
+      "breakpoints": true
+    }
+  ]
+}
