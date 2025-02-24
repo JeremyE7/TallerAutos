@@ -51,4 +51,72 @@ h5{
 .label-show{
   display: flex;
   flex-direction: column;
+  
+}
+
+.label-show .label{
+  width: 30%;
+  text-align: left;
+}
+
+legend{
+  margin-left: 20px;
+}
+
+.label-show-container{
+  display: grid;
+  gap: 30px 5px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 40%));
+  justify-content: center;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.value{
+  font-size: 11pt;
+  width: 70%;
+  text-align: left;
+}
+
+.p-galleria-item img{
+  width: 50% !important;
+  object-fit: contain;
+  aspect-ratio: 2/1;
+}
+
+.view-elementos-ingreso-container{
+  display: grid;
+  grid-template-columns: 70% 20%;
+  justify-content: center;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.elementos-ingreso-container{
+  display: grid;
+  gap: 15px 5px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.nob-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .view-elementos-ingreso-container{
+    grid-template-columns: 345px;
+  }
+
+  .elementos-ingreso-container{
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .nob-container{
+    margin-top: 30px;
+  }
 }
