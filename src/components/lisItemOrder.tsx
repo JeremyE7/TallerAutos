@@ -16,7 +16,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
 
   const header =  (
     <div className='buttons mr-1 mt-2 md:mt-6 md:mr-3' style={{float: 'right'}}>
-      <div className='flex gap-2 flex-col flex-row'>
+      <div className='flex gap-2 flex-row'>
         <Button icon="pi pi-eye" onClick={() => showModal(order)}/>
         <Button icon="pi pi-print" severity='help'/>
         <Button severity="danger" icon="pi pi-trash" onClick={confirmDelete}/>
@@ -27,7 +27,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
   return (
     <>
       {order.vehiculo && (
-        <Card title={order.vehiculo.marca}  subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl' key={order.vehiculo.placa} header={header}>
+        <Card title={order.vehiculo.marca}  subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl' key={order.vehiculo.id} header={header}>
           <div className='grid w-full'>
             <div className='flex flex-column md:col-5 md:text-right sm:text-left sm:col-12'>
               <h5 className='text-primary'>
