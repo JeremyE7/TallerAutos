@@ -1,11 +1,11 @@
 'use client'
-import { EstadosOrden, OrdenTrabajo } from '@/app/types'
+import { OrdenTrabajo } from '@/app/types'
 import { Button } from 'primereact/button'
 import { Card } from 'primereact/card'
-import { Chip } from 'primereact/chip'
 import { Divider } from 'primereact/divider'
 import { Dropdown } from 'primereact/dropdown'
 import { useEffect, useState } from 'react'
+import { ChipOrderState } from './ChipOrderState'
 
 interface ListItemOrderProps {
   order: OrdenTrabajo
@@ -28,21 +28,6 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
 
   }, [selectedOption])
 
-  const getColorState = (state: string) => {
-    switch (state) {
-    case EstadosOrden.CANCELADA:
-      return 'bg-red-500 text-black'
-    case EstadosOrden.EN_PROCESO:
-      return 'bg-yellow-500 text-black'
-    case EstadosOrden.FINALIZADA:
-      return 'bg-green-500 text-black'
-    case EstadosOrden.PENDIENTE:
-      return 'bg-blue-500'
-    default:
-      return ''
-    }
-  }
-
   const header =  (
     <div className='buttons mr-1 mt-2 md:mt-6 md:mr-3 ' style={{float: 'right'}}>
       <div className='gap-2 flex-row hidden md:flex'>
@@ -60,7 +45,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
   return (
     <>
       {order.vehiculo && (
-        <Card title={<>{order.vehiculo.marca} <Chip label={order.estado} className={getColorState(order.estado) + ' ml-1'}/></>}  subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl' key={order.vehiculo.id} header={header}>
+        <Card title={<div className='flex gap-3'>{order.vehiculo.marca} <ChipOrderState state={order.estado}/></div>}  subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl' key={order.vehiculo.id} header={header}>
           <div className='grid w-full'>
             <div className='flex flex-column md:col-5 md:text-right sm:text-left sm:col-12'>
               <h5 className='text-primary'>
