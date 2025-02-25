@@ -148,3 +148,19 @@ legend{
 .p-hidden-accessible input{
   display: none;
 }
+
+.text-area-show{
+  display: flex;
+  flex-direction: column;
+}
+
+.text-area-show .value{
+  width: 130%;
+}
+
+.text-area-show-container{
+  display: grid;
+  gap: 30px 5px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 40%));
+  justify-content: center;
+}
