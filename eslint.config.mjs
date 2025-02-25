@@ -20,7 +20,8 @@ const eslintConfig = [
       'indent': ['error', 2],                    // Indentación de 2 espacios
       'no-trailing-spaces': 'error',             // Sin espacios al final de líneas
       'eol-last': ['error', 'always'],            // Línea en blanco al final,
-      '@next/next/no-img-element': 'off'        // Desactivar regla de next para img
+      '@next/next/no-img-element': 'off',        // Desactivar regla de next para img
+      'react-hooks/exhaustive-deps': 'off'      // Desactivar regla de react-hooks
     }
   }
 ]
