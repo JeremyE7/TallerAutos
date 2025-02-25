@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+:root {
+  --font-geist-sans: 'Geist', sans-serif;
+  --font-geist-mono: 'Geist Mono', monospace;
+  --font-lato: 'Lato', sans-serif;
+  --font-roboto: 'Roboto', sans-serif;
+}
+
+* {
+  font-family: var(--font-geist-sans);
+}
+
 body {
   height: 100vh;
   padding-top: 20px;
@@ -55,7 +66,7 @@ h5{
 }
 
 .label-show .label{
-  width: 30%;
+  width: 40%;
   text-align: left;
 }
 
@@ -74,7 +85,7 @@ legend{
 
 .value{
   font-size: 11pt;
-  width: 70%;
+  width: 60%;
   text-align: left;
 }
 
@@ -124,15 +135,6 @@ legend{
 .p-chip {
   color: black;
 }
-
-/* .p-dropdown .p-dropdown-trigger{
-  width: 0;
-  border: none !important;
-}
-
-.p-dropdown{
-  border: none !important;
-} */
 
 .p-dropdown {
   background: transparent;
