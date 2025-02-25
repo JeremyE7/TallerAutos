@@ -52,11 +52,11 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   })
 
   const FooterModal = () => {
-    return(
+    return (
       <section className='flex gap-1.5 drop-shadow-lg pt-3'>
         <Button icon='pi pi-pencil' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} />
         <Button icon='pi pi-print' severity='help' className='w-2 md:w-1' />
-        <Button icon='pi pi-trash' severity='danger' className='w-2 ml-auto md:w-1' onClick={confirmDelete}/>
+        <Button icon='pi pi-trash' severity='danger' className='w-2 ml-auto md:w-1' onClick={confirmDelete} />
       </section>
     )
   }
@@ -64,17 +64,17 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const HeaderModal = () => {
     return <div className='flex justify-center items-center flex-col md:flex-row gap-3'>
       <h1 className='text-4xl text-primary font-bold'>
-      Orden de trabajo N°{orderToShowInModal?.id}
+        Orden de trabajo N°{orderToShowInModal?.id}
       </h1>
       <ChipOrderState state={orderToShowInModal?.estado ?? ''} />
     </div>
   }
 
   return <>
-    <Toast ref={toast} position='bottom-right' className='w-10 md:w-auto'/>
+    <Toast ref={toast} position='bottom-right' className='w-10 md:w-auto' />
     <ConfirmDialog />
     {list}
-    <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={HeaderModal} contentClassName='px-0' footer={<FooterModal/> } >
+    <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={HeaderModal} contentClassName='px-0' footer={<FooterModal />} >
       <OrderView order={orderToShowInModal} />
     </Dialog>
   </>

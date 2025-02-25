@@ -23,29 +23,29 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
   ]
 
   useEffect(() => {
-    if(selectedOption === 'view') showModal(order)
-    if(selectedOption === 'delete') confirmDelete()
+    if (selectedOption === 'view') showModal(order)
+    if (selectedOption === 'delete') confirmDelete()
 
   }, [selectedOption])
 
-  const header =  (
-    <div className='buttons mr-1 mt-2 md:mt-6 md:mr-3 ' style={{float: 'right'}}>
+  const header = (
+    <div className='buttons mr-1 mt-2 md:mt-6 md:mr-3 ' style={{ float: 'right' }}>
       <div className='gap-2 flex-row hidden md:flex'>
-        <Button icon="pi pi-eye" onClick={() => showModal(order)}/>
-        <Button icon="pi pi-print" severity='help'/>
-        <Button severity="danger" icon="pi pi-trash" onClick={confirmDelete}/>
+        <Button icon="pi pi-eye" onClick={() => showModal(order)} />
+        <Button icon="pi pi-print" severity='help' />
+        <Button severity="danger" icon="pi pi-trash" onClick={confirmDelete} />
       </div>
-      <Dropdown value={selectedOption} onChange={(e) =>{
+      <Dropdown value={selectedOption} onChange={(e) => {
         setSelectedOption(e.value.code)
       }} options={options} optionLabel="name"
-      placeholder="" className="w-1 block md:hidden mt-3.5" dropdownIcon='pi pi-ellipsis-v' onShow={() => setSelectedOption(null)} onHide={() => setSelectedOption(null)}/>
+        placeholder="" className="w-1 block md:hidden mt-3.5" dropdownIcon='pi pi-ellipsis-v' onShow={() => setSelectedOption(null)} onHide={() => setSelectedOption(null)} />
     </div>
   )
 
   return (
     <>
       {order.vehiculo && (
-        <Card title={<div className='flex gap-3'>{order.vehiculo.marca} <ChipOrderState state={order.estado}/></div>}  subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl' key={order.vehiculo.id} header={header}>
+        <Card title={<div className='flex gap-3'>{order.vehiculo.marca} <ChipOrderState state={order.estado} /></div>} subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl' key={order.vehiculo.id} header={header}>
           <div className='grid w-full'>
             <div className='flex flex-column md:col-5 md:text-right sm:text-left sm:col-12'>
               <h5 className='text-primary'>
@@ -53,6 +53,9 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
               </h5>
               <span>
                 {order.comentarios}
+              </span>
+              <span>
+                <b>Fecha de entrega: </b>{new Date(order.fechaSalida).toLocaleDateString()}
               </span>
             </div>
             <Divider layout="vertical" className='col-1 hidden md:flex' color='#ffd54f'>
