@@ -27,8 +27,9 @@ export const ElementosIngresoView: React.FC<ElementsIncomeCheckboxProps> = ({ el
     <div className='elementos-ingreso-container'>
       {elementsArray.map(([key, value]) => {
         if (key === 'id') return null
+        if(key === 'limpiaparabrisas') key = 'Limpia Parabrisas'
         return (
-          <Chip key={key} label={formatText(key)} className={value ? 'bg-primary' : 'bg_primar-reverse'} icon={value ? 'pi pi-check-circle' : 'pi pi-times-circle' }/>
+          <Chip key={key} label={formatText(key)} className={(value ? 'bg-primary' : 'bg_primar-reverse') + ' text-left'} icon={value ? 'pi pi-check-circle' : 'pi pi-times-circle' }/>
         )
       })}
     </div>
