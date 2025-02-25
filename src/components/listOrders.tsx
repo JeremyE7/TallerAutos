@@ -8,6 +8,7 @@ import { Toast } from 'primereact/toast'
 import { Dialog } from 'primereact/dialog'
 import { OrderView } from './OrderView'
 import { Button } from 'primereact/button'
+import { ChipOrderState } from './ChipOrderState'
 
 interface ListOrdersProps {
   items: OrdenTrabajo[]
@@ -60,11 +61,20 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     )
   }
 
+  const HeaderModal = () => {
+    return <div className='flex justify-center items-center flex-col md:flex-row gap-3'>
+      <h1 className='text-4xl text-primary font-bold'>
+      Orden de trabajo N°{orderToShowInModal?.id}
+      </h1>
+      <ChipOrderState state={orderToShowInModal?.estado ?? ''} />
+    </div>
+  }
+
   return <>
-    <Toast ref={toast} position='bottom-right' />
+    <Toast ref={toast} position='bottom-right' className='w-10 md:w-auto'/>
     <ConfirmDialog />
     {list}
-    <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={<h1 className='text-4xl text-primary font-bold'>Orden de trabajo N°{orderToShowInModal?.id}</h1>} contentClassName='px-0' footer={<FooterModal/> } >
+    <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={HeaderModal} contentClassName='px-0' footer={<FooterModal/> } >
       <OrderView order={orderToShowInModal} />
     </Dialog>
   </>
