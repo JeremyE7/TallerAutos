@@ -1,21 +1,43 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Galleria } from 'primereact/galleria'
+import { Loader } from './Loader/Loader'
+import { Foto } from '@/app/types'
 
-export default function GalleryyOrder () {
-  const [images, setImages] = useState(null)
+interface GalleryOrderProps {
+  orderPhotos: Foto
+}
 
-  const itemTemplate = (item) => {
-    return <img src={item.itemImageSrc} alt={item.alt} style={{ width: '100%', display: 'block' }} />
+interface PhotoGalleryProps {
+  source?: string
+  alt?: string
+}
+
+export default function GalleryyOrder ({ orderPhotos }: GalleryOrderProps) {
+
+  const [images, setImages] = useState<PhotoGalleryProps[]>([])
+
+  useEffect(() => {
+    if(orderPhotos) {
+      setImages([
+        { source: orderPhotos.frontal, alt: 'Imagen frontal del vehiculo' },
+        { source: orderPhotos.trasera, alt: 'Imagen trasera del vehiculo' },
+        { source: orderPhotos.derecha, alt: 'Imagen lateral derecha del vehiculo' },
+        { source: orderPhotos.izquierda, alt: 'Imagen lateral izquierda del vehiculo' },
+        { source: orderPhotos.superior, alt: 'Imagen superior del vehiculo' },
+        { source: orderPhotos.interior, alt: 'Imagen interior del vehiculo' }
+      ])
+    }
+  }, [orderPhotos])
+
+  const itemTemplate = (photo: PhotoGalleryProps) => {
+    return <img src={photo.source} alt={photo.alt} style={{ width: '100%', display: 'block' }} />
   }
 
-  const thumbnailTemplate = (item) => {
-    return <img src={item.thumbnailImageSrc} alt={item.alt} style={{ display: 'block' }} />
-  }
+  if(!images) return <Loader widthPercentaje={50} heightPercentaje={50} />
 
   return (
-    <div className="card">
-      <Galleria value={images} numVisible={5} circular style={{ maxWidth: '640px' }}
-        showThumbnails={false} showItemNavigators item={itemTemplate} thumbnail={thumbnailTemplate} />
-    </div>
+    <Galleria value={images} numVisible={5} circular
+      showItemNavigators showItemNavigatorsOnHover showIndicators
+      showThumbnails={false} item={itemTemplate} />
   )
 }

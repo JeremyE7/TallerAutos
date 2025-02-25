@@ -10,6 +10,13 @@ export enum MetodoPago {
   TARJETA_CREDITO = 'Tarjeta de crédito',
 }
 
+export enum EstadosOrden {
+  PENDIENTE = 'Pendiente',
+  EN_PROCESO = 'En proceso',
+  FINALIZADA = 'Finalizada',
+  CANCELADA = 'Cancelada',
+}
+
 // Tipo para Cliente
 export interface Cliente {
   id: number,
@@ -70,9 +77,10 @@ export interface OrdenTrabajo {
   total?: number
   comentarios?: string
   vehiculo: Vehiculo // Relación: cada orden se asocia a un vehículo
-  elementos_ingreso: ElementosIngreso // Relación: la orden contiene los elementos revisados
+  elementosIngreso: ElementosIngreso // Relación: la orden contiene los elementos revisados
   forma_pago: MetodoPago // Relación: la orden define un método de pago
   foto?: Foto
+  estado: EstadosOrden
 }
 
 export interface Foto {
