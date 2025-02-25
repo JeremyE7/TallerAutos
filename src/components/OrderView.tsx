@@ -5,6 +5,8 @@ import GalleryyOrder from './GalleryOrder'
 import { LabelShow } from './LabelShow'
 import { ElementosIngresoView } from './ElementosIngresoView'
 import { Knob } from 'primereact/knob'
+import { FormaPago } from './FormaPago'
+import { TextAreaShow } from './TextAreaShow'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null
@@ -62,6 +64,23 @@ export const OrderView: React.FC<OrderViewProps> = ({ order }) => {
         <Divider align='left'><h2 className='text-left text-2xl'>Orden de Trabajo</h2></Divider>
         <div className='label-show-container text-center ml-0'>
           <LabelShow label='Operaciones solicitadas' value={order.operaciones_solicitadas} order='column'/>
+        </div>
+      </section>
+      <section className='mt-4'>
+        <Divider align='left'><h2 className='text-left text-2xl'>Forma de Pago</h2></Divider>
+        <div className='flex justify-center gap-10 flex-col'>
+          <FormaPago order={order} />
+          <div className='flex w-full justify-evenly flex-col md:flex-row'>
+            <div className='label-show-container text-center m-0'>
+              <LabelShow label='Total M/O' value={order.total_mo} />
+              <LabelShow label='Total REP' value={order.total_rep} />
+              <LabelShow label='IVA' value={order.iva} />
+              <LabelShow label='TOTAL' value={order.total} />
+            </div>
+            <div className='text-area-show-container text-center mt-10 items-start md:mt-0'>
+              <TextAreaShow label='Comentarios' value={order.comentarios} order='column'/>
+            </div>
+          </div>
         </div>
       </section>
     </article>
