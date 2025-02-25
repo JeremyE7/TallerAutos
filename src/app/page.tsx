@@ -23,7 +23,7 @@ export default function Home () {
     <>
       {isLoading ? <Loader widthPercentaje={10} heightPercentaje={50} /> :
         (orders && orders.length > 0) ? (
-          <DataView value={orders} listTemplate={(items: OrdenTrabajo[]) => <ListOrders items={items} />} className='px-0 pb-5 gap-2 w-10'  />
+          <DataView value={orders} listTemplate={(items: OrdenTrabajo[]) => <ListOrders items={items} />} className='px-0 pb-5 gap-2 w-10' paginator rows={5} />
         ) : (<Loader widthPercentaje={10} heightPercentaje={50} />)
       }
     </>
