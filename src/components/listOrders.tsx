@@ -9,9 +9,9 @@ import { Dialog } from 'primereact/dialog'
 import { OrderView } from './OrderView'
 
 interface ListOrdersProps {
-    items: OrdenTrabajo[]
+  items: OrdenTrabajo[]
 }
-export const ListOrders = ({items} : ListOrdersProps) => {
+export const ListOrders = ({ items }: ListOrdersProps) => {
 
   const toast = useRef<Toast>(null)
   const [visible, setVisible] = useState(false)
@@ -31,13 +31,13 @@ export const ListOrders = ({items} : ListOrdersProps) => {
   }
 
   const showModal = (order: OrdenTrabajo) => {
-    if(visible) return
+    if (visible) return
     setOrderToShowInModal(order)
     setVisible(true)
   }
 
   const hideModal = () => {
-    if(!visible) return
+    if (!visible) return
     setVisible(false)
   }
 
@@ -45,15 +45,24 @@ export const ListOrders = ({items} : ListOrdersProps) => {
   if (!items || items.length === 0) return null
 
   const list = items.map((order) => {
-    return ListItemOrder({order: order, confirmDelete, showModal})
+    return ListItemOrder({ order: order, confirmDelete, showModal })
   })
 
-  return <>
-    <Toast ref={toast} position='bottom-right'/>
-    <ConfirmDialog />
-    {list}
-    <Dialog visible={visible} maximizable style={{ width: '50vw' }} onHide={hideModal}>
-      <OrderView order={orderToShowInModal}/>
-    </Dialog>
-  </>
+  return (
+    <>
+      <Toast ref={toast} position="bottom-right" />
+      <ConfirmDialog />
+      {items.map((order) => (
+        <ListItemOrder
+          key={order.vehiculo.placa} // Asegúrate de que `order.id` sea único
+          order={order}
+          confirmDelete={confirmDelete}
+          showModal={showModal}
+        />
+      ))}
+      <Dialog visible={visible} maximizable style={{ width: '50vw' }} onHide={hideModal}>
+        <OrderView order={orderToShowInModal} />
+      </Dialog>
+    </>
+  )
 }
