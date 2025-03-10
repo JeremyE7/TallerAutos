@@ -12,7 +12,7 @@ cloudinary.config({
 })
 
 // GET: Obtener todas las órdenes
-export async function GET() {
+export async function GET () {
   try {
     const allOrders = await db.query.OrdenTrabajo.findMany({
       with: {
@@ -44,7 +44,7 @@ export async function GET() {
 }
 
 // POST: Crear una nueva orden
-export async function POST(request: Request) {
+export async function POST (request: Request) {
   try {
     const body = await request.json()
 
@@ -57,13 +57,13 @@ export async function POST(request: Request) {
       !body.fechaSalida ||
       !body.forma_pago
     ) {
-      return NextResponse.json(createApiResponse('Faltan campos obligatorios', 400));
+      return NextResponse.json(createApiResponse('Faltan campos obligatorios', 400))
     }
 
     const result = await db.transaction(async (tx) => {
       // Verificar si el cliente ya existe
       let existingCliente = await tx.query.Cliente.findFirst({
-        where: (c, { eq }) => eq(c.cedula, body.cliente.cedula),
+        where: (c, { eq }) => eq(c.cedula, body.cliente.cedula)
       })
 
       if (!existingCliente) {
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
           cedula: body.cliente.cedula,
           direccion: body.cliente.direccion || null,
           email: body.cliente.email || null,
-          telefono: body.cliente.telefono || null,
+          telefono: body.cliente.telefono || null
         }).returning().then(res => res[0])
       }
 
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
         extintor: body.elementosIngreso.extintor || false,
         encendedor: body.elementosIngreso.encendedor || false,
         antena: body.elementosIngreso.antena || false,
-        llanta_emergencia: body.elementosIngreso.llanta_emergencia || false,
+        llanta_emergencia: body.elementosIngreso.llanta_emergencia || false
       }).returning()
 
       const newFotos = await tx.insert(Fotos).values({

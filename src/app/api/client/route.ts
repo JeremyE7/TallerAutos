@@ -1,0 +1,68 @@
+import { Cliente as ClienteType } from '@/app/types'
+import { db } from '@/db'
+import { Cliente } from '@/db/schema'
+import { createApiResponse } from '@/lib/api'
+import { clientSchema } from '@/utils/client'
+import { eq } from 'drizzle-orm'
+import { NextResponse } from 'next/server'
+
+export async function GET  () {
+  try {
+    const allClients = await db.query.Cliente.findMany({
+      with: {
+        vehiculos: true
+      }
+    })
+
+    if (!allClients || allClients.length === 0) {
+      return NextResponse.json(
+        createApiResponse('No clients found', 404)
+      )
+    }
+
+    return NextResponse.json(
+      createApiResponse('Clients retrieved successfully', 200, allClients)
+    )
+  } catch (error) {
+    console.error('Error fetching clients:', error)
+    return NextResponse.json(
+      createApiResponse('Internal server error. Please try again later.', 500)
+    )
+  }
+}
+
+export async function POST (request: Request){
+  try{
+    if(!request.body){
+      return NextResponse.json(
+        createApiResponse('Missing request body', 400)
+      )
+    }
+    const body:ClienteType = await request.json()
+    const validateBody = clientSchema.safeParse(body)
+    if(!validateBody.success){
+      return NextResponse.json(
+        createApiResponse(JSON.parse(validateBody.error.message), 400)
+      )
+    }
+
+    const existingClient = await db.query.Cliente.findFirst({
+      where: eq(Cliente.cedula, body.cedula)
+    })
+
+    if(existingClient){
+      return NextResponse.json(
+        createApiResponse('Client already exists', 400)
+      )
+    }
+
+    await db.insert(Cliente).values(body)
+    return NextResponse.json(createApiResponse('Client created successfully', 200))
+
+  }catch(error: unknown){
+    console.error('Error creating client:', error)
+    return NextResponse.json(
+      createApiResponse('Internal server error. Please try again later.', 500)
+    )
+  }
+}

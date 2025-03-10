@@ -1,0 +1,19 @@
+meta {
+  name: CrearVehiculo
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/api/vehiculo
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "marca": "Toyota",
+    "placa": "ABC-234234",
+    "cliente_id":9 
+  }
+}
