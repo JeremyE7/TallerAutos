@@ -21,18 +21,6 @@ export const Navigator = () => {
       }
     },
     {
-      icon: 'pi pi-address-book',
-      command: () => {
-        router.push('/clients')
-      }
-    },
-    {
-      icon: 'pi pi-car',
-      command: () => {
-        router.push('/cars')
-      }
-    },
-    {
       icon: 'pi pi-cog',
       command: () => {
         router.push('/settings')

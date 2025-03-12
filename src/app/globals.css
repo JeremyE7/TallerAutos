@@ -17,15 +17,15 @@ body {
   padding-bottom: 20px;
 }
 
-main {
-  height: 80%;
-}
-
 body,
 main {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+}
+
+main{
+  overflow: visible;
 }
 
 h1 {
@@ -35,6 +35,10 @@ h1 {
 
 section {
   overflow-x: hidden;
+}
+
+.shadow{
+  box-shadow: 10px 10px 10px 10px #0000001a;
 }
 
 *,
@@ -134,18 +138,24 @@ legend{
 
 .p-chip {
   color: black;
+  box-shadow: 10px 10px 10px 10px #0000001a;
 }
 
-.p-dropdown {
+.hiddeInput  {
   background: transparent;
   border: none;
 }
 
-.p-dropdown-label{
+.hiddeInput:focus {
+  outline: none;
+  border: none;
+}
+
+.hiddeInput .p-dropdown-label {
   display: none;
 }
 
-.p-hidden-accessible input{
+.hiddeInput .p-hidden-accessible {
   display: none;
 }
 
@@ -163,4 +173,47 @@ legend{
   gap: 30px 5px;
   grid-template-columns: repeat(auto-fit, minmax(250px, 40%));
   justify-content: center;
+}
+
+.filter-container{
+  display: grid;
+  grid-template-areas: "filter attribute value button restart";
+  gap: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.filter-container .filter{
+  grid-area: filter;
+}
+
+.filter-container .attribute{
+  grid-area: attribute;
+}
+
+.search{
+  grid-area: button;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding: 2px;
+  margin-top: 21px;
+}
+
+.value{
+  grid-area: value;
+  width: 100%;
+}
+
+.value h2{
+  margin-bottom: 2px;
+}
+
+.restart{
+  grid-area: restart;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding: 2px;
+  margin-top: 21px;
 }

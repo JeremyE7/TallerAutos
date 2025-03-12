@@ -50,9 +50,9 @@ export default function RootLayout ({
     <html lang="es">
       <PrimeReactProvider value={value}>
         <body className={`${geistMono.variable} ${roboto.variable} ${geist.variable} text-center z-1 relative `}>
-          <header className=' p-4 flex align-items-center text-white h-8rem gap-5'>
-            <img src="logo.png" alt="" className='w-11rem overflow-hidden ml-8 z-1'  />
-            <h1 className='z-1 text-6xl hidden md:block' >Autocolisiones</h1>
+          <header className=' p-1 flex align-items-center text-white h-5rem gap-5 shadow-gray-50 shadow'>
+            <img src="logo.png" alt="" className='w-8rem overflow-hidden ml-8 z-1'  />
+            <h1 className='z-1 text-4xl hidden md:block' >Autocolisiones</h1>
           </header>
           <main className='align-items-center flex flex-column'>
             {children}

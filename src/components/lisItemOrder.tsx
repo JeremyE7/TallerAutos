@@ -38,14 +38,14 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
       <Dropdown value={selectedOption} onChange={(e) => {
         setSelectedOption(e.value.code)
       }} options={options} optionLabel="name"
-        placeholder="" className="w-1 block md:hidden mt-3.5" dropdownIcon='pi pi-ellipsis-v' onShow={() => setSelectedOption(null)} onHide={() => setSelectedOption(null)} />
+      placeholder="" className="hiddeInput w-1 block md:hidden mt-3.5" dropdownIcon='pi pi-ellipsis-v' onShow={() => setSelectedOption(null)} onHide={() => setSelectedOption(null)} />
     </div>
   )
 
   return (
     <>
       {order.vehiculo && (
-        <Card title={<div className='flex gap-3'>{order.vehiculo.marca} <ChipOrderState state={order.estado} /></div>} subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl' key={order.vehiculo.id} header={header}>
+        <Card title={<div className='flex gap-3'>{order.vehiculo.marca} <ChipOrderState state={order.estado} /></div>} subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl shadow' key={order.vehiculo.id} header={header}>
           <div className='grid w-full'>
             <div className='flex flex-column md:col-5 md:text-right sm:text-left sm:col-12'>
               <h5 className='text-primary'>

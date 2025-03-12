@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { isValidCI } from './general'
+import { Cliente, Response } from '@/app/types'
 
 export const clientSchema = z.object({
   nombre: z.string(),
@@ -12,3 +13,18 @@ export const clientSchema = z.object({
 })
 
 export const clientUpdateSchema= clientSchema.partial().strict()
+
+export const getClients = async () => {
+  try{
+    const response = await fetch('api/client')
+    const data: Response<Cliente[]> = await response.json()
+    if(data.code !== 200){
+      console.error('Error fetching clients:', data.message)
+      return []
+    }
+    console.info(data.message)
+    return data.data
+  } catch(error){
+    console.error('Error fetching clients:', error)
+  }
+}

@@ -10,20 +10,19 @@ import { useEffect, useState } from 'react'
 
 export default function Home () {
   const [isLoading, setIsLoading] = useState(true)
-  const { orders } = useOrders()
-  console.log(orders)
+  const { filteredOrders } = useOrders()
 
   useEffect(() => {
-    if (orders) {
+    if (filteredOrders) {
       setIsLoading(false)
     }
-  }, [orders])
+  }, [filteredOrders])
 
   return (
     <>
       {isLoading ? <Loader widthPercentaje={10} heightPercentaje={50} /> :
-        (orders && orders.length > 0) ? (
-          <DataView value={orders} listTemplate={(items: OrdenTrabajo[]) => <ListOrders items={items} />} className='px-0 pb-5 gap-2 w-10' paginator rows={5} />
+        (filteredOrders && filteredOrders.length > 0) ? (
+          <DataView value={filteredOrders} listTemplate={(items: OrdenTrabajo[]) => <ListOrders items={items} />} className='px-0 pb-5 gap-2 w-10' paginator rows={5} paginatorClassName='mt-10 rounded-lg!'/>
         ) : (<Loader widthPercentaje={10} heightPercentaje={50} />)
       }
     </>

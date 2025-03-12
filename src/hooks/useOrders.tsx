@@ -1,11 +1,11 @@
 'use client'
 
-import { OrdenTrabajo } from '@/app/types'
+import { orderStore } from '@/store/orderStore'
 import { getOrders } from '@/utils/orders'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 export const useOrders = () => {
-  const [orders, setOrders] = useState<OrdenTrabajo[]>([])
+  const {setOrders,orders,filteredOrders,setFilteredOrders} = orderStore()
 
 
   useEffect(() => {
@@ -18,7 +18,10 @@ export const useOrders = () => {
 
 
   return {
-    orders
+    orders,
+    setOrders,
+    filteredOrders,
+    setFilteredOrders
   }
 
 }
