@@ -5,7 +5,7 @@ import { getOrders } from '@/utils/orders'
 import { useEffect } from 'react'
 
 export const useOrders = () => {
-  const {setOrders,orders,filteredOrders,setFilteredOrders} = orderStore()
+  const {setOrders,orders,filteredOrders,setFilteredOrders, updateOrder} = orderStore()
 
 
   useEffect(() => {
@@ -21,7 +21,8 @@ export const useOrders = () => {
     orders,
     setOrders,
     filteredOrders,
-    setFilteredOrders
+    setFilteredOrders,
+    updateOrder
   }
 
 }

@@ -4,6 +4,12 @@ export interface Response<T> {
   data?: T
 }
 
+export interface Option {
+  name: string;
+  icon: string;
+  code: string;
+}
+
 // Enumerado para los métodos de pago
 export enum MetodoPago {
   EFECTIVO = 'Efectivo',

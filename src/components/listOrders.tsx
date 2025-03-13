@@ -10,6 +10,7 @@ import { OrderView } from './OrderView'
 import { Button } from 'primereact/button'
 import { ChipOrderState } from './ChipOrderState'
 import { SearchOrders } from './SearchOrders'
+import { Chip } from 'primereact/chip'
 
 interface ListOrdersProps {
   items: OrdenTrabajo[]
@@ -19,6 +20,8 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const toast = useRef<Toast>(null)
   const [visible, setVisible] = useState(false)
   const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
+  const [edit, setEdit] = useState(false)
+
   const accept = () => {
     toast.current?.show({ severity: 'success', summary: 'Acción completada', detail: 'Orden eliminada con exito', life: 1000 })
     hideModal()
@@ -43,6 +46,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const hideModal = () => {
     if (!visible) return
     setVisible(false)
+    setEdit(false)
   }
 
 
@@ -52,10 +56,26 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     return <ListItemOrder key={order.id} order={order} confirmDelete={confirmDelete} showModal={showModal} />
   })
 
+
+  const handleSaveEdit = () => {
+    toast.current?.show({ severity: 'success', summary: 'Acción completada', detail: 'Orden editada con exito', life: 1000 })
+    setEdit(false)
+  }
+
+  const handleCancelEdit = () => {
+    setEdit(false)
+  }
+
   const FooterModal = () => {
+    if(edit){
+      return(<section className='flex justify-evenly pt-3'>
+        <Button icon='pi pi-save' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} onClick={handleSaveEdit}/>
+        <Button icon='pi pi-times' severity='danger' className='w-2 md:w-1' onClick={handleCancelEdit} />
+      </section>)
+    }
     return (
       <section className='flex gap-1.5 drop-shadow-lg pt-3'>
-        <Button icon='pi pi-pencil' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} />
+        <Button icon='pi pi-pencil' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} onClick={() => setEdit(true)}/>
         <Button icon='pi pi-print' severity='help' className='w-2 md:w-1' />
         <Button icon='pi pi-trash' severity='danger' className='w-2 ml-auto md:w-1' onClick={confirmDelete} />
       </section>
@@ -67,7 +87,9 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
       <h1 className='text-4xl text-primary font-bold'>
         Orden de trabajo N°{orderToShowInModal?.id}
       </h1>
-      <ChipOrderState state={orderToShowInModal?.estado ?? ''} />
+      {!edit ? <ChipOrderState state={orderToShowInModal?.estado ?? ''} /> : (
+        <Chip label={'Editando'} className='bg-primary-reverse' />
+      )}
     </div>
   }
 
@@ -81,7 +103,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     <ConfirmDialog />
     {list}
     <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={HeaderModal} contentClassName='px-0' footer={<FooterModal />} >
-      <OrderView order={orderToShowInModal} />
+      <OrderView order={orderToShowInModal} edit={edit} />
     </Dialog>
   </>
 }

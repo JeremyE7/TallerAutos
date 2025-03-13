@@ -1,4 +1,4 @@
-import { OrdenTrabajo } from '@/app/types'
+import { Option, OrdenTrabajo } from '@/app/types'
 import { useOrders } from '@/hooks/useOrders'
 import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
@@ -6,12 +6,6 @@ import { DropdownProps } from 'primereact/dropdown'
 import { InputText } from 'primereact/inputtext'
 import { OverlayPanel } from 'primereact/overlaypanel'
 import { useEffect, useRef, useState } from 'react'
-
-interface Option {
-    name: string;
-    icon: string;
-    code: string;
-}
 
 const options: Option[] = [
   {
