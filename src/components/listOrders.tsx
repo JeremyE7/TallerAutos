@@ -72,9 +72,9 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   }
 
   return <>
-    <div className='flex row justify-between items-center w-full sticky top-0 z-10 pt-4' style={{ background: 'var(--surface-ground	)' }}>
+    <div className='flex row justify-between items-center w-full sticky top-0 z-10 pt-4 pb-2 shadow' style={{ background: 'var(--surface-ground	)' }}>
       <SearchOrders />
-      <Button label='Crear orden' icon='pi pi-plus' className='p-button-raised p-button-rounded p-button-primary mt-2 shadow' />
+      <Button label='Crear orden' icon='pi pi-plus' className='p-button-raised p-button-primary shadow' />
     </div>
 
     <Toast ref={toast} position='bottom-right' className='w-10 md:w-auto' />
