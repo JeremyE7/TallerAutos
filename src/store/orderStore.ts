@@ -46,9 +46,3 @@ export const orderStore = create<OrderStore>((set) => ({
   resetFilteredOrders: () => set((state) => ({ filteredOrders: state.orders }))
 }))
 
-orderStore.subscribe((state) =>{
-  state.filteredOrders = state.orders
-  console.log('filteredOrders:', state.filteredOrders)
-
-})
-

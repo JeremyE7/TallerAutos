@@ -23,7 +23,6 @@ export function isValidCI (ci: string | number): boolean {
     individual = ciString.substring(position, position + 1)
 
     if (isNaN(Number(individual))) {
-      console.log(ci, position, individual, isNaN(Number(individual)))
       isNumeric = false
       break
     } else {
@@ -62,7 +61,6 @@ export function isValidCI (ci: string | number): boolean {
       return false
     }
 
-    console.log('Cédula válida:', ci)
     return true
   }
 

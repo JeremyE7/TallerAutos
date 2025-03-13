@@ -13,11 +13,9 @@ export const ElementosIngresoView: React.FC<ElementsIncomeCheckboxProps> = ({ el
   const [elementsArray, setElementsArray] = useState<[string, boolean][]>([])
 
   useEffect(() => {
-    console.log(elements)
     if(!elements) return
 
     const elementsArray = Object.entries(elements).sort((a, b) => b[1] - a[1])
-    console.log(elementsArray)
 
     setElementsArray(elementsArray)
   }, [elements])

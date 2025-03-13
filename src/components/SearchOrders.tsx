@@ -29,8 +29,6 @@ const options: Option[] = [
 const filterMappings: Record<string, Record<string, (order: OrdenTrabajo, value: string) => boolean>> = {
   client: {
     name: (order, value) => {
-      console.log('order:', order)
-      console.log('value:', value)
       return order.vehiculo.cliente.nombre.includes(value)
     },
     phone: (order, value) => order.vehiculo.cliente.telefono?.includes(value) ?? false,
@@ -43,7 +41,6 @@ const filterMappings: Record<string, Record<string, (order: OrdenTrabajo, value:
   },
   state: {
     inProcess: (order) => {
-      console.log('order:', order)
       return order.estado === 'En proceso'
     },
     finished: (order) => order.estado === 'Finalizada',
@@ -176,10 +173,6 @@ export const SearchOrders = () => {
     if(op.current?.toggle){
       op.current.hide()
     }
-    console.log('Filter:', selectedFilter)
-    console.log('Attribute:', selectedAttribute)
-    console.log('Value:', value)
-    // Implement the search logic here
 
     if (value.trim() === '' && selectedFilter?.code !== 'state') {
       setFilteredOrders(orders)
@@ -187,7 +180,6 @@ export const SearchOrders = () => {
     }
 
     const filterFunction = selectedFilter && selectedAttribute ? filterMappings[selectedFilter.code]?.[selectedAttribute.code] : undefined
-    console.log('Filter function:', filterFunction)
 
     const filteredOrders = orders.filter((order) => filterFunction ? filterFunction(order, value) : true)
     setFilteredOrders(filteredOrders)

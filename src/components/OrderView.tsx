@@ -8,8 +8,8 @@ import { Knob } from 'primereact/knob'
 import { FormaPago } from './FormaPago'
 import { TextAreaShow } from './TextAreaShow'
 import { Button } from 'primereact/button'
-import { Dropdown, DropdownProps } from 'primereact/dropdown'
-import { useEffect, useState } from 'react'
+import { Dropdown } from 'primereact/dropdown'
+import { useState } from 'react'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null,
@@ -42,12 +42,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit }) => {
     }
   ]
 
-  useEffect(() => {
-    console.log(selectedEditedState)
-
-  },[])
-
-  const selectedFilterTemplate = (option: Option | null, props: DropdownProps) => {
+  const selectedFilterTemplate = (option: Option | null) => {
     if (option) {
       return (
         <div className="flex align-items-center">
@@ -56,7 +51,9 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit }) => {
       )
     }
 
-    return <span>{props.placeholder}</span>
+    return <div className="flex align-items-center">
+      <div className='ml-2'>{selectedEditedState}</div>
+    </div>
   }
 
 
@@ -65,7 +62,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit }) => {
   return (
     <article>
       <section>
-        <Divider align='left'><h2 className='text-left text-2xl'>Imagenes</h2></Divider>
+        <Divider align='left'><h2 className='text-left text-2xl'>Imagenes{edit && <Button icon='pi pi-pencil' className='ml-2'/>}</h2></Divider>
         {order.foto ? (
           <GalleryyOrder orderPhotos={order.foto}/>
         ): (
@@ -113,7 +110,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit }) => {
         </div>
         {edit && <div className='mt-3 flex justify-center gap-1 flex-col w-5 m-auto'>
           <label htmlFor="">Estado:</label>
-          <Dropdown value={selectedEditedState} onChange={(e) => setSelectedEditedState(e.value)} options={optionsEditedState} optionLabel="name" className="flex justify-center" valueTemplate={selectedFilterTemplate}/>
+          <Dropdown value={selectedEditedState} onChange={(e) => setSelectedEditedState(e.value)} options={optionsEditedState} optionLabel="name" className="flex justify-center h-10 w-12 m-auto md:w-6" valueTemplate={selectedFilterTemplate} placeholder='Escoge una opción'/>
         </div>}
       </section>
       <section className='mt-4'>
