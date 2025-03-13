@@ -4,7 +4,8 @@ import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
 import { DropdownProps } from 'primereact/dropdown'
 import { InputText } from 'primereact/inputtext'
-import { useEffect, useState } from 'react'
+import { OverlayPanel } from 'primereact/overlaypanel'
+import { useEffect, useRef, useState } from 'react'
 
 interface Option {
     name: string;
@@ -64,6 +65,8 @@ export const SearchOrders = () => {
   const [attributeOptions, setAttributeOptions] = useState<Option[]>([])
   const [value, setValue] = useState('')
   const { setFilteredOrders, orders, filteredOrders } = useOrders()
+  const op = useRef<OverlayPanel>(null)
+
 
   useEffect(() => {
     setSelectedFilter(options[0])
@@ -176,6 +179,9 @@ export const SearchOrders = () => {
   }
 
   const handleClick = () => {
+    if(op.current?.toggle){
+      op.current.hide()
+    }
     console.log('Filter:', selectedFilter)
     console.log('Attribute:', selectedAttribute)
     console.log('Value:', value)
@@ -200,31 +206,57 @@ export const SearchOrders = () => {
 
 
   return (
-    <div className='filter-container' style={{ gridTemplateAreas: selectedFilter?.code === 'state' ? '"filter attribute button restart"' : '"filter attribute value button restart"' }}>
-      <section className='filter'>
-        <h2>Buscar por:</h2>
-        <Dropdown value={selectedFilter} onChange={handleChangeFilter} options={options} optionLabel="name" placeholder="Escoge una opcion"
-          valueTemplate={selectedFilterTemplate} itemTemplate={itemFilterTemplate} className="w-full md:w-10rem p-inputtext-sm"
-        />
-      </section>
-      <section className='attribute'>
-        <h2>Atributo:</h2>
-        <Dropdown value={selectedAttribute} onChange={(e) => setSelectedAttribute(e.value)} options={attributeOptions} optionLabel="name" placeholder="Escoge una opcion"
-          valueTemplate={selectedFilterTemplate} itemTemplate={itemFilterTemplate} className="w-full md:w-10rem p-inputtext-sm"
-        />
-      </section>
-      <section className='value' style={{ display: selectedFilter?.code === 'state' ? 'none' : 'block' }}>
-        <h2>Valor:</h2>
-        <InputText value={value} onChange={(e) => setValue(e.target.value)} className='p-inputtext-sm w-full md:w-10rem m-0' />
-      </section>
+    <>
+      <div className='filter-container hidden md:grid!' style={{ gridTemplateAreas: selectedFilter?.code === 'state' ? '"filter attribute button restart"' : '"filter attribute value button restart"' }}>
+        <section className='filter'>
+          <h2>Buscar por:</h2>
+          <Dropdown value={selectedFilter} onChange={handleChangeFilter} options={options} optionLabel="name" placeholder="Escoge una opcion"
+            valueTemplate={selectedFilterTemplate} itemTemplate={itemFilterTemplate} className="w-full md:w-10rem p-inputtext-sm"
+          />
+        </section>
+        <section className='attribute'>
+          <h2>Atributo:</h2>
+          <Dropdown value={selectedAttribute} onChange={(e) => setSelectedAttribute(e.value)} options={attributeOptions} optionLabel="name" placeholder="Escoge una opcion"
+            valueTemplate={selectedFilterTemplate} itemTemplate={itemFilterTemplate} className="w-full md:w-10rem p-inputtext-sm"
+          />
+        </section>
+        <section className='value' style={{ display: selectedFilter?.code === 'state' ? 'none' : 'block' }}>
+          <h2>Valor:</h2>
+          <InputText value={value} onChange={(e) => setValue(e.target.value)} className='p-inputtext-sm w-full md:w-10rem m-0' />
+        </section>
 
-      <section className='search'>
-        <Button icon="pi pi-search" className='p-button-rounded p-button-primary shadow' onClick={handleClick} />
-      </section>
-      <section className='restart' >
-        <Button icon="pi pi-refresh" className='p-button-rounded p-button-primary' onClick={handleRestart} disabled={orders === filteredOrders}/>
-      </section>
-    </div>
+        <section className='search'>
+          <Button icon="pi pi-search" className='p-button-rounded p-button-primary shadow' onClick={handleClick} />
+        </section>
+        <section className='restart' >
+          <Button icon="pi pi-refresh" className='p-button-rounded p-button-primary' onClick={handleRestart} disabled={orders === filteredOrders}/>
+        </section>
+      </div>
+      <div className="card justify-content-center flex md:hidden">
+        <Button type="button" icon="pi pi-search" onClick={(e) => op.current && op.current.toggle(e)} />
+        <OverlayPanel ref={op}>
+          <div className="flex flex-col gap-2 min-w-50">
+            <div className="">
+              <Dropdown value={selectedFilter} onChange={handleChangeFilter} options={options} optionLabel="name" placeholder="Escoge una opcion"
+                valueTemplate={selectedFilterTemplate} itemTemplate={itemFilterTemplate} className="w-full p-inputtext-sm"
+              />
+            </div>
+            <div className="">
+              <Dropdown value={selectedAttribute} onChange={(e) => setSelectedAttribute(e.value)} options={attributeOptions} optionLabel="name" placeholder="Escoge una opcion"
+                valueTemplate={selectedFilterTemplate} itemTemplate={itemFilterTemplate} className="w-full p-inputtext-sm"
+              />
+            </div>
+            <div className="" style={{ display: selectedFilter?.code === 'state' ? 'none' : 'block' }}>
+              <InputText value={value} onChange={(e) => setValue(e.target.value)} className='p-inputtext-sm w-full' />
+            </div>
+            <div className="flex gap-2 justify-center mt-2">
+              <Button icon="pi pi-search" className='p-button-rounded p-button-primary shadow' onClick={handleClick} />
+              <Button icon="pi pi-refresh" className='p-button-rounded p-button-primary' onClick={handleRestart} disabled={orders === filteredOrders}/>
+            </div>
+          </div>
+        </OverlayPanel>
+      </div>
+    </>
   )
 }
 
