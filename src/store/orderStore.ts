@@ -22,7 +22,9 @@ export const orderStore = create<OrderStore>((set) => ({
   })),
 
   removeOrder: (id) => set((state) => ({
-    orders: state.orders.filter((order) => order.id !== id)
+    orders: state.orders.filter((order) => {
+      return order.id !== id
+    })
   })),
 
   updateOrder: (id, updatedOrder) =>

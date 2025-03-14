@@ -9,15 +9,15 @@ import { FormaPago } from './FormaPago'
 import { TextAreaShow } from './TextAreaShow'
 import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
-import { useState } from 'react'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null,
-  edit: boolean
+  edit: boolean,
+  editedOrder: OrdenTrabajo | null,
+  setEditedOrder: (order: OrdenTrabajo) => void
 }
-export const OrderView: React.FC<OrderViewProps> = ({ order, edit }) => {
+export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, setEditedOrder }) => {
 
-  const [selectedEditedState, setSelectedEditedState] = useState<string | undefined>(order?.estado)
 
   const optionsEditedState: Option[] = [
     {
@@ -52,8 +52,17 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit }) => {
     }
 
     return <div className="flex align-items-center">
-      <div className='ml-2'>{selectedEditedState}</div>
+      <div className='ml-2'>{editedOrder?.estado}</div>
     </div>
+  }
+
+  const handleChangeInput = (value: string, fieldKey: keyof OrdenTrabajo ) => {
+    if (editedOrder) {
+      setEditedOrder({
+        ...editedOrder,
+        [fieldKey]: value
+      })
+    }
   }
 
 
@@ -106,26 +115,26 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit }) => {
       <section className='mt-4'>
         <Divider align='left'><h2 className='text-left text-2xl'>Orden de Trabajo</h2></Divider>
         <div className='label-show-container text-center ml-0'>
-          <TextAreaShow label='Operaciones solicitadas' value={order.operaciones_solicitadas} order='column' editable={edit}/>
+          <TextAreaShow label='Operaciones solicitadas' value={editedOrder?.operaciones_solicitadas} order='column' editable={edit} onChange={(value: string) => handleChangeInput(value, 'operaciones_solicitadas')}/>
         </div>
         {edit && <div className='mt-3 flex justify-center gap-1 flex-col w-5 m-auto'>
           <label htmlFor="">Estado:</label>
-          <Dropdown value={selectedEditedState} onChange={(e) => setSelectedEditedState(e.value)} options={optionsEditedState} optionLabel="name" className="flex justify-center h-10 w-12 m-auto md:w-6" valueTemplate={selectedFilterTemplate} placeholder='Escoge una opción'/>
+          <Dropdown value={editedOrder?.estado} onChange={(e) => handleChangeInput(e.value.code, 'estado')} options={optionsEditedState} optionLabel="name" className="flex justify-center h-10 w-12 m-auto md:w-6" valueTemplate={selectedFilterTemplate} placeholder='Escoge una opción'/>
         </div>}
       </section>
       <section className='mt-4'>
         <Divider align='left'><h2 className='text-left text-2xl'>Forma de Pago</h2></Divider>
         <div className='flex justify-center gap-10 flex-col'>
-          <FormaPago order={order} editable={edit} />
+          <FormaPago order={editedOrder} editable={edit} onChange={(value: string) => handleChangeInput(value, 'forma_pago')}/>
           <div className='flex w-full justify-evenly flex-col md:flex-row'>
             <div className='label-show-container text-center m-0'>
-              <LabelShow label='Total M/O' value={order.total_mo} editable={edit}/>
-              <LabelShow label='Total REP' value={order.total_rep} editable={edit}/>
-              <LabelShow label='IVA' value={order.iva} editable={edit}/>
-              <LabelShow label='TOTAL' value={order.total} editable={edit}/>
+              <LabelShow label='Total M/O' value={editedOrder?.total_mo} editable={edit} onChange={(value: string) => handleChangeInput(value, 'total_mo')} type='money'/>
+              <LabelShow label='Total REP' value={editedOrder?.total_rep} editable={edit} onChange={(value: string) => handleChangeInput(value, 'total_rep')} type='money'/>
+              <LabelShow label='IVA' value={editedOrder?.iva} editable={edit} onChange={(value: string) => handleChangeInput(value, 'iva')} type='money'/>
+              <LabelShow label='TOTAL' value={editedOrder?.total} />
             </div>
             <div className='text-area-show-container text-center mt-10 items-start md:mt-0'>
-              <TextAreaShow label='Comentarios' value={order.comentarios} order='column' editable={edit}/>
+              <TextAreaShow label='Comentarios' value={editedOrder?.comentarios} order='column' editable={edit} onChange={(value: string) => handleChangeInput(value, 'comentarios')} />
             </div>
           </div>
         </div>

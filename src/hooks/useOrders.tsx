@@ -1,11 +1,13 @@
 'use client'
 
+import { OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
-import { getOrders } from '@/utils/orders'
+import { deleteOrder, editOrder, getOrders } from '@/utils/orders'
 import { useEffect } from 'react'
 
 export const useOrders = () => {
-  const {setOrders,orders,filteredOrders,setFilteredOrders, updateOrder} = orderStore()
+  const {setOrders,orders,filteredOrders,setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder} = orderStore()
+
 
 
   useEffect(() => {
@@ -15,14 +17,28 @@ export const useOrders = () => {
     })
   },[])
 
+  const saveEditedOrder = async (editedOrder: OrdenTrabajo) => {
+    updateOrder(editedOrder.id, editedOrder)
+    resetFilteredOrders()
+    const editedOrderAux = await editOrder(editedOrder.id, editedOrder)
+    return editedOrderAux
+  }
 
+  const eliminateOrder = async (id: number) => {
+    removeOrder(id)
+    resetFilteredOrders()
+    const deletedOrder = await deleteOrder(id)
+    return deletedOrder
+  }
 
   return {
     orders,
     setOrders,
     filteredOrders,
     setFilteredOrders,
-    updateOrder
+    updateOrder,
+    saveEditedOrder,
+    eliminateOrder
   }
 
 }
