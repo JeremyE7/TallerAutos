@@ -180,6 +180,7 @@ export const SearchOrders = () => {
     }
 
     const filterFunction = selectedFilter && selectedAttribute ? filterMappings[selectedFilter.code]?.[selectedAttribute.code] : undefined
+    console.log(orders)
 
     const filteredOrders = orders.filter((order) => filterFunction ? filterFunction(order, value) : true)
     setFilteredOrders(filteredOrders)
