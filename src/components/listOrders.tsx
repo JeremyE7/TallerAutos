@@ -9,7 +9,6 @@ import { Dialog } from 'primereact/dialog'
 import { OrderView } from './OrderView'
 import { Button } from 'primereact/button'
 import { ChipOrderState } from './ChipOrderState'
-import { SearchOrders } from './SearchOrders'
 import { Chip } from 'primereact/chip'
 import { useOrders } from '@/hooks/useOrders'
 
