@@ -25,7 +25,7 @@ export default function Home () {
       {(isLoading) ? <Loader widthPercentaje={10} heightPercentaje={50} /> :
         (
           <>
-            <div className='flex row justify-between items-center w-full sticky top-0 z-10 pt-4 pb-2 shadow px-10 md:px-50!' style={{ background: 'var(--surface-ground	)' }}>
+            <div className='flex row justify-between items-center w-full sticky top-0 z-10 pt-4 pb-2 px-10 md:px-50!' style={{ background: 'var(--surface-0	)' }}>
               <SearchOrders />
               <Button label='' icon='pi pi-plus' className='p-button-raised p-button-primary shadow' />
             </div>
