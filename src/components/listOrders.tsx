@@ -10,7 +10,7 @@ import { OrderView } from './OrderView'
 import { Button } from 'primereact/button'
 import { ChipOrderState } from './ChipOrderState'
 import { SearchOrders } from './SearchOrders'
-
+import OrdenTrabajoModal from './NewOrder'
 interface ListOrdersProps {
   items: OrdenTrabajo[]
 }
@@ -19,6 +19,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const toast = useRef<Toast>(null)
   const [visible, setVisible] = useState(false)
   const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
+  const [newOrderModalVisible, setNewOrderModalVisible] = useState(false)
   const accept = () => {
     toast.current?.show({ severity: 'success', summary: 'Acción completada', detail: 'Orden eliminada con exito', life: 1000 })
     hideModal()
@@ -45,7 +46,13 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     setVisible(false)
   }
 
+  const showNewOrderModal = () => {
+    setNewOrderModalVisible(true) // Abre el modal de nueva orden
+  }
 
+  const hideNewOrderModal = () => {
+    setNewOrderModalVisible(false) // Cierra el modal de nueva orden
+  }
   if (!items || items.length === 0) return null
 
   const list = items.map((order) => {
@@ -74,7 +81,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   return <>
     <div className='flex row justify-between items-center w-full sticky top-0 z-10 pt-4' style={{ background: 'var(--surface-ground	)' }}>
       <SearchOrders />
-      <Button label='Crear orden' icon='pi pi-plus' className='p-button-raised p-button-rounded p-button-primary mt-2 shadow' />
+      <Button onClick={showNewOrderModal} label='Crear orden' icon='pi pi-plus' className='p-button-raised p-button-rounded p-button-primary mt-2 shadow' />
     </div>
 
     <Toast ref={toast} position='bottom-right' className='w-10 md:w-auto' />
@@ -82,6 +89,10 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     {list}
     <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={HeaderModal} contentClassName='px-0' footer={<FooterModal />} >
       <OrderView order={orderToShowInModal} />
+    </Dialog>
+
+    <Dialog visible={newOrderModalVisible} style={{ width: '50vw' }} onHide={hideNewOrderModal} header="Nueva Orden">
+      <OrdenTrabajoModal visible={newOrderModalVisible} onHide={hideNewOrderModal} />
     </Dialog>
   </>
 }
