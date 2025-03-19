@@ -3,7 +3,7 @@ import { ListItemOrder } from './lisItemOrder'
 
 import { ConfirmDialog } from 'primereact/confirmdialog' // For <ConfirmDialog /> component
 import { confirmDialog } from 'primereact/confirmdialog' // For confirmDialog method
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Toast } from 'primereact/toast'
 import { Dialog } from 'primereact/dialog'
 import { OrderView } from './OrderView'
@@ -11,18 +11,42 @@ import { Button } from 'primereact/button'
 import { ChipOrderState } from './ChipOrderState'
 import { SearchOrders } from './SearchOrders'
 import OrdenTrabajoModal from './NewOrder'
+import { Chip } from 'primereact/chip'
+import { useOrders } from '@/hooks/useOrders'
+
 interface ListOrdersProps {
   items: OrdenTrabajo[]
 }
 export const ListOrders = ({ items }: ListOrdersProps) => {
 
-  const toast = useRef<Toast>(null)
   const [visible, setVisible] = useState(false)
   const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
   const [newOrderModalVisible, setNewOrderModalVisible] = useState(false)
+  const [editedOrder, setEditedOrder] = useState<OrdenTrabajo | null>(orderToShowInModal)
+  const [edit, setEdit] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const { saveEditedOrder, eliminateOrder } = useOrders()
+  const toast = useRef<Toast>(null)
   const accept = () => {
     toast.current?.show({ severity: 'success', summary: 'Acción completada', detail: 'Orden eliminada con exito', life: 1000 })
     hideModal()
+  }
+  useEffect(() => {
+    setEditedOrder(orderToShowInModal)
+  }, [orderToShowInModal])
+
+
+  const acceptDelete = async () => {
+    if (!orderToShowInModal) return
+    setIsLoading(true)
+    const success = await eliminateOrder(orderToShowInModal.id)
+    setIsLoading(false)
+    if (success) {
+      toast.current?.show({ severity: 'success', summary: 'Acción completada', detail: 'Orden eliminada con exito', life: 2000 })
+      hideModal()
+    } else {
+      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar la orden', life: 2000 })
+    }
   }
 
   const confirmDelete = () => {
@@ -31,7 +55,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
       header: 'Confirmación',
       icon: 'pi pi-exclamation-triangle',
       defaultFocus: 'accept',
-      accept
+      accept: acceptDelete
     })
   }
 
@@ -44,6 +68,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const hideModal = () => {
     if (!visible) return
     setVisible(false)
+    setEdit(false)
   }
 
   const showNewOrderModal = () => {
@@ -53,16 +78,51 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const hideNewOrderModal = () => {
     setNewOrderModalVisible(false) // Cierra el modal de nueva orden
   }
-  if (!items || items.length === 0) return null
+
+  if (!items || items.length === 0) return <h1>No se encontraron resultados</h1>
 
   const list = items.map((order) => {
     return <ListItemOrder key={order.id} order={order} confirmDelete={confirmDelete} showModal={showModal} />
   })
 
+
+  const handleSaveEdit = async () => {
+    if (!editedOrder) return
+    setIsLoading(true)
+    const succesEditedOrder = await saveEditedOrder(editedOrder)
+    setIsLoading(false)
+    if (succesEditedOrder) {
+      toast.current?.show({ severity: 'success', summary: 'Acción completada', detail: 'Orden editada con exito', life: 1000 })
+      setEdit(false)
+    } else {
+      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Error al editar la orden', life: 1000 })
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEdit(false)
+    setEditedOrder(orderToShowInModal)
+  }
+
   const FooterModal = () => {
+    if (isLoading) {
+      return (
+        <section className='flex justify-center pt-3'>
+          <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'var(--primary-color)' }}></i>
+        </section>
+      )
+    }
+    if (edit) {
+      return (
+        <section className='flex justify-evenly pt-3'>
+          <Button icon='pi pi-save' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} onClick={handleSaveEdit} />
+          <Button icon='pi pi-times' severity='danger' className='w-2 md:w-1' onClick={handleCancelEdit} />
+        </section>
+      )
+    }
     return (
       <section className='flex gap-1.5 drop-shadow-lg pt-3'>
-        <Button icon='pi pi-pencil' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} />
+        <Button icon='pi pi-pencil' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} onClick={() => setEdit(true)} />
         <Button icon='pi pi-print' severity='help' className='w-2 md:w-1' />
         <Button icon='pi pi-trash' severity='danger' className='w-2 ml-auto md:w-1' onClick={confirmDelete} />
       </section>
@@ -70,11 +130,14 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   }
 
   const HeaderModal = () => {
+
     return <div className='flex justify-center items-center flex-col md:flex-row gap-3'>
       <h1 className='text-4xl text-primary font-bold'>
-        Orden de trabajo N°{orderToShowInModal?.id}
+        Orden de trabajo N°{editedOrder?.id}
       </h1>
-      <ChipOrderState state={orderToShowInModal?.estado ?? ''} />
+      {!edit ? <ChipOrderState state={editedOrder?.estado ?? ''} /> : (
+        <Chip label={'Editando'} className='bg-primary-reverse' />
+      )}
     </div>
   }
 
@@ -88,7 +151,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     <ConfirmDialog />
     {list}
     <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={HeaderModal} contentClassName='px-0' footer={<FooterModal />} >
-      <OrderView order={orderToShowInModal} />
+      <OrderView order={orderToShowInModal} edit={edit} editedOrder={editedOrder} setEditedOrder={setEditedOrder} />
     </Dialog>
 
     <Dialog visible={newOrderModalVisible} style={{ width: '50vw' }} onHide={hideNewOrderModal} header="Nueva Orden">

@@ -26,6 +26,7 @@ main {
 
 main{
   overflow: visible;
+  height: 80vh;
 }
 
 h1 {
@@ -70,7 +71,7 @@ h5{
 }
 
 .label-show .label{
-  width: 40%;
+  width: 200px;
   text-align: left;
 }
 

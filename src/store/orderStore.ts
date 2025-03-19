@@ -6,7 +6,7 @@ interface OrderStore {
   filteredOrders: OrdenTrabajo[]
   addOrder: (order: OrdenTrabajo) => void
   removeOrder: (id: number) => void
-  updateOrder: (id: number, status: string) => void,
+  updateOrder: (id: number, updatedOrder: OrdenTrabajo) => void,
   setOrders: (orders: OrdenTrabajo[]) => void
   clearOrders: () => void
   resetFilteredOrders: () => void
@@ -22,14 +22,19 @@ export const orderStore = create<OrderStore>((set) => ({
   })),
 
   removeOrder: (id) => set((state) => ({
-    orders: state.orders.filter((order) => order.id !== id)
+    orders: state.orders.filter((order) => {
+      return order.id !== id
+    })
   })),
 
-  updateOrder: (id, updatedOrder) => set((state) => ({
-    orders: state.orders.map((order) =>
-      order.id === id ? { ...order, updatedOrder } : order
-    )
-  })),
+  updateOrder: (id, updatedOrder) =>
+    set((state) => ({
+      orders: state.orders.map((order) =>{
+        console.log('order.id:', order.id, id)
+        return  order.id === id ? { ...order, ...updatedOrder } : order
+      }
+      )
+    })),
 
   setOrders: (orders: OrdenTrabajo[]) => set(() => ({
     orders: orders,
@@ -44,3 +49,4 @@ export const orderStore = create<OrderStore>((set) => ({
 
   resetFilteredOrders: () => set((state) => ({ filteredOrders: state.orders }))
 }))
+
