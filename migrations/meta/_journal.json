@@ -22,6 +22,20 @@
       "when": 1740378466139,
       "tag": "0002_military_blacklash",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1742367965512,
+      "tag": "0003_slow_jane_foster",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1742368016108,
+      "tag": "0004_striped_vision",
+      "breakpoints": true
     }
   ]
 }
