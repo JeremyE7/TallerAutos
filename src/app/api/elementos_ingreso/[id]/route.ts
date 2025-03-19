@@ -1,7 +1,7 @@
 import { db } from '@/db'
 import { NextResponse } from 'next/server'
 import { createApiResponse } from '@/lib/api'
-import { OrdenTrabajo } from '@/db/schema'
+import { ElementosIngreso } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
 
@@ -9,19 +9,19 @@ import { eq } from 'drizzle-orm'
 export async function GET (req: Request, { params }) {
   try {
     const { id } = await params
-    const orden = await db.select().from(OrdenTrabajo).where(eq(OrdenTrabajo.id, parseInt(id)))
-    if (!orden) {
+    const elementoIngreso = await db.select().from(ElementosIngreso).where(eq(ElementosIngreso.id, parseInt(id)))
+    if (!elementoIngreso) {
       return NextResponse.json(
-        createApiResponse('No order found', 404)
+        createApiResponse('No se encontro los elementos de ingreso', 404)
       )
     }
     return NextResponse.json(
-      createApiResponse('Orden encontrada', 200, orden)
+      createApiResponse('Elementos de Ingreso encontrado', 200, elementoIngreso)
     )
   } catch (error) {
     console.error('Error fetching order:', error)
     return NextResponse.json(
-      createApiResponse('Orden no encontrada', 500)
+      createApiResponse('lementos de Ingreso no encontrado', 500)
     )
   }
 }
@@ -31,14 +31,14 @@ export async function PUT (req: Request, { params }) {
   try {
     const { id } = await params
     const body = await req.json()
-    const orden = await db.update(OrdenTrabajo).set(body).where(eq(OrdenTrabajo.id, parseInt(id))).returning()
+    const orden = await db.update(ElementosIngreso).set(body).where(eq(ElementosIngreso.id, parseInt(id))).returning()
     return NextResponse.json(
-      createApiResponse('Orden actualizada', 200, orden)
+      createApiResponse('Elementos de Ingreso actualizados', 200, orden)
     )
   } catch (error) {
     console.error('Error fetching order:', error)
     return NextResponse.json(
-      createApiResponse('Orden no encontrada', 500)
+      createApiResponse('Elementos de Ingreso no encontrados', 500)
     )
   }
 }
@@ -47,9 +47,9 @@ export async function PUT (req: Request, { params }) {
 export async function DELETE (req: Request, { params }) {
   try {
     const { id } = await params
-    const orden = await db.delete(OrdenTrabajo).where(eq(OrdenTrabajo.id, parseInt(id)))
+    const orden = await db.delete(ElementosIngreso).where(eq(ElementosIngreso.id, parseInt(id)))
     return NextResponse.json(
-      createApiResponse('Orden ' + id + ' eliminada', 200, orden)
+      createApiResponse('Elementos de Ingreso ' + id + ' eliminados', 200, orden)
     )
   } catch (error) {
     console.error('Error fetching order:', error)

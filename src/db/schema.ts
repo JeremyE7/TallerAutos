@@ -19,7 +19,6 @@ export const Vehiculo = sqliteTable('Vehiculo', {
   color: text('color'),
   placa: text('placa').notNull().unique(),
   kilometraje: integer('kilometraje'),
-  combustible: integer('combustible'),
   cliente_id: integer('cliente_id').notNull().references(() => Cliente.id)
 })
 
@@ -42,7 +41,8 @@ export const ElementosIngreso = sqliteTable('ElementosIngreso', {
   extintor: integer('extintor', { mode: 'boolean' }),
   encendedor: integer('encendedor', { mode: 'boolean' }),
   antena: integer('antena', { mode: 'boolean' }),
-  llanta_emergencia: integer('llanta_emergencia', { mode: 'boolean' })
+  llanta_emergencia: integer('llanta_emergencia', { mode: 'boolean' }),
+  combustible: integer('combustible').default(0)
 })
 
 export const Fotos = sqliteTable('Fotos', {

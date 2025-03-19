@@ -2,6 +2,7 @@
 
 import { OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
+import { editElementosIngreso } from '@/utils/ElementosIngreso'
 import { deleteOrder, editOrder, getOrders } from '@/utils/orders'
 import { useEffect } from 'react'
 
@@ -18,9 +19,12 @@ export const useOrders = () => {
   },[])
 
   const saveEditedOrder = async (editedOrder: OrdenTrabajo) => {
+    console.log('Saving edited order:', editedOrder)
+
     updateOrder(editedOrder.id, editedOrder)
     resetFilteredOrders()
     const editedOrderAux = await editOrder(editedOrder.id, editedOrder)
+    console.log('editedOrderAux:', editedOrderAux)
     return editedOrderAux
   }
 
@@ -31,6 +35,15 @@ export const useOrders = () => {
     return deletedOrder
   }
 
+  const saveElementosIngreso = async (editedOrder: OrdenTrabajo) => {
+    console.log('Saving edited elementos de ingreso:', editedOrder.elementosIngreso)
+    updateOrder(editedOrder.id, editedOrder)
+    resetFilteredOrders()
+    const editedElementosIngreso = await editElementosIngreso(editedOrder.elementosIngreso.id, editedOrder.elementosIngreso)
+    console.log('editedElementosIngreso:', editedElementosIngreso)
+    return editedElementosIngreso
+  }
+
   return {
     orders,
     setOrders,
@@ -38,7 +51,8 @@ export const useOrders = () => {
     setFilteredOrders,
     updateOrder,
     saveEditedOrder,
-    eliminateOrder
+    eliminateOrder,
+    saveElementosIngreso
   }
 
 }

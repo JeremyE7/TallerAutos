@@ -44,7 +44,6 @@ export interface Vehiculo {
   color?: string
   placa: string
   kilometraje?: number
-  combustible?: number
   cliente: Cliente // Relación: cada vehículo pertenece a un cliente
 }
 
@@ -68,7 +67,8 @@ export interface ElementosIngreso {
   extintor?: boolean
   encendedor?: boolean
   antena?: boolean
-  llanta_emergencia?: boolean
+  llanta_emergencia?: boolean,
+  combustible?: number
 }
 
 // Tipo para Orden de Trabajo (relacionado a Vehículo, que a su vez está vinculado a Cliente)
@@ -99,3 +99,9 @@ export interface Foto {
   interior?: string;
 };
 
+export interface ModalProps {
+  cliente?: Cliente,
+  vehiculo?: Vehiculo,
+  elementosIngreso?: ElementosIngreso,
+  fotos?: Foto,
+}

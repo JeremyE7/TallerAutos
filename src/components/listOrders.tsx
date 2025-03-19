@@ -32,8 +32,6 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
 
   const acceptDelete = async () => {
     if(!orderToShowInModal) return
-    console.log('Deleting order:', orderToShowInModal.id)
-
     setIsLoading(true)
     const success = await eliminateOrder(orderToShowInModal.id)
     setIsLoading(false)
@@ -119,7 +117,6 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   }
 
   const HeaderModal = () => {
-    console.log(editedOrder?.estado)
 
     return <div className='flex justify-center items-center flex-col md:flex-row gap-3'>
       <h1 className='text-4xl text-primary font-bold'>
