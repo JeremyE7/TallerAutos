@@ -22,26 +22,30 @@ export const parseElementosIngreso = (elementosIngreso: ElementosIngreso | null)
     .filter((item): item is ElementoIngresoSelectItem => item !== null)
 }
 
-export const editElementosIngreso = async (id: number, elementosIngreso: ElementosIngreso) => {
-  try{
-    const response = await fetch(`api/elementos_ingreso/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(elementosIngreso)
-    })
+export const editElementosIngreso = (id: number, elementosIngreso: ElementosIngreso) => {
+  try {
+    // Obtener los elementos de ingreso almacenados
+    const storedElementosIngreso = localStorage.getItem('elementos_ingreso')
+    if (storedElementosIngreso) {
+      const data: Response<ElementosIngreso[]> = JSON.parse(storedElementosIngreso)
+      if (data.code !== 200) {
+        console.error('Error fetching elementos de ingreso:', data.message)
+        return
+      }
 
-    const data: Response<ElementosIngreso> = await response.json()
-    if(data.code !== 200){
-      console.error('Error updating elementos de ingreso:', data.message)
-      return
+      // Buscar y editar el elemento de ingreso con el id proporcionado
+      const updatedElementosIngreso = data.data?.map((existingElement) =>
+        existingElement.id === id ? { ...existingElement, ...elementosIngreso } : existingElement
+      )
+
+      // Guardar la lista de elementos de ingreso actualizada en el localStorage
+      localStorage.setItem('elementos_ingreso', JSON.stringify({ ...data, data: updatedElementosIngreso }))
+      console.info('Elemento de ingreso editado correctamente')
+      return updatedElementosIngreso
+    } else {
+      console.error('No elementos de ingreso encontrados en local storage')
     }
-
-    console.info(data.message)
-    return data.data
-
-  }catch(error){
-    console.error('Error updating elementos de ingreso:', error)
+  } catch (error) {
+    console.error('Error editing elementos de ingreso in local storage:', error)
   }
 }
