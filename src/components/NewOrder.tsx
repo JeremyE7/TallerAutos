@@ -5,7 +5,7 @@ import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { Checkbox } from 'primereact/checkbox'
 import { AutoComplete } from 'primereact/autocomplete'
-import { FileUpload, FileUploadSelectEvent, ItemTemplateOptions } from 'primereact/fileupload'
+import { FileUpload } from 'primereact/fileupload'
 import { useClients } from '@/hooks/useClients'
 import { Cliente } from '@/app/types'
 export default function OrdenTrabajoModal ({ visible, onHide }) {
@@ -13,7 +13,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
   const [selectedClient, setSelectedClient] = useState<Cliente | null>(null) // Cliente seleccionado
   const [filteredClients, setFilteredClients] = useState<Cliente[]>([]) // Lista filtrada
   const [cedulaInput, setCedulaInput] = useState('') // Valor del input de cédula
-  const fileUploadRef = useRef<FileUpload>(null)
+  //const fileUploadRef = useRef<FileUpload>(null)
 
   // Filtrar clientes según la cédula ingresada
   const searchClients = (event) => {
