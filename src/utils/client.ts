@@ -1,6 +1,9 @@
 import { z } from 'zod'
 import { isValidCI } from './general'
 import { Cliente, Response } from '@/app/types'
+import { settingsStore } from '@/store/settingsStore'
+
+const {setError} = settingsStore.getState()
 
 export const clientSchema = z.object({
   nombre: z.string(),
@@ -26,5 +29,29 @@ export const getClients = async () => {
     return data.data
   } catch(error){
     console.error('Error fetching clients:', error)
+  }
+}
+
+
+export const editClient = async (id: number, client: Omit<Cliente,'id'>) => {
+  try{
+    const response = await fetch(`api/client/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(client)
+    })
+    const data: Response<Cliente> = await response.json()
+    if(data.code !== 200){
+      console.error('Error editing client:', data.message)
+      setError(data.message)
+      return
+    }
+    console.info(data.message)
+    return data.data
+  } catch(error){
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
+    console.error('Error editing client:', error)
   }
 }

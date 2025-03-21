@@ -9,14 +9,16 @@ import { useEffect } from 'react'
 export const useOrders = () => {
   const {setOrders,orders,filteredOrders,setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder} = orderStore()
 
-
-
   useEffect(() => {
-    getOrders().then((data) => {
-      if(!data)return
-      setOrders(data)
-    })
+    if(orders.length > 0) return
+    getAllOrders()
   },[])
+
+  const getAllOrders = async () => {
+    const data = await getOrders()
+    if(!data)return
+    setOrders(data)
+  }
 
   const saveEditedOrder = async (editedOrder: OrdenTrabajo) => {
     console.log('Saving edited order:', editedOrder)
@@ -52,7 +54,8 @@ export const useOrders = () => {
     updateOrder,
     saveEditedOrder,
     eliminateOrder,
-    saveElementosIngreso
+    saveElementosIngreso,
+    getAllOrders
   }
 
 }

@@ -31,18 +31,30 @@ export const PUT = async (req: Request, { params }) => {
   try {
     const { id } = await params
     const body = await req.json()
+    if(body.id){
+      return NextResponse.json(
+        createApiResponse('You cannot update the id', 400)
+      )
+    }
     const validateBody = clientUpdateSchema.safeParse(body)
     if (!validateBody.success) {
       return NextResponse.json(
-        createApiResponse(JSON.parse(validateBody.error.message), 400)
+        createApiResponse(validateBody.error.errors.at(-1)?.message ?? '', 400)
       )
     }
+
     const client = await db.update(Cliente).set(body).where(eq(Cliente.id, parseInt(id)))
     return NextResponse.json(
       createApiResponse('Client updated', 200, client)
     )
   } catch (error) {
     console.error('Error fetching order:', error)
+    if (error instanceof Error && error.message.includes('UNIQUE constraint failed')) {
+      console.error('Error: La cedula ya está registrada.')
+      return NextResponse.json(
+        createApiResponse('La cedula ya está registrada.', 400)
+      )
+    }
     return NextResponse.json(
       createApiResponse('Internal server error. Please try again later.', 500)
     )

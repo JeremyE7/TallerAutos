@@ -9,11 +9,14 @@ import { FormaPago } from './FormaPago'
 import { TextAreaShow } from './TextAreaShow'
 import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { Toast } from 'primereact/toast'
 import { EditElementosIngreso } from './EditModals/EditElementosIngreso'
 import { useOrders } from '@/hooks/useOrders'
+import { EditClient } from './EditModals/EditClient'
+import { useClients } from '@/hooks/useClients'
+import { settingsStore } from '@/store/settingsStore'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null,
@@ -24,11 +27,13 @@ interface OrderViewProps {
 
 
 
-export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEditedOrder }) => {
+export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, setEditedOrder }) => {
 
   const [orderExtraValuesToEdit, setOrderExtraValuesToEdit] = useState<ModalProps | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const { saveElementosIngreso } = useOrders()
+  const {saveEditedClient} = useClients()
+  const {error, clearError} = settingsStore()
   const toastRef = useRef<Toast>(null)
   let toastMessage = ''
 
@@ -118,14 +123,17 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
     setIsLoading(true)
     let succesMessage = false
     if(orderExtraValuesToEdit.cliente){
-      setEditedOrder({
+      const updatedOrder = ({
         ...editedOrder,
         vehiculo: {
           ...editedOrder.vehiculo,
           cliente: orderExtraValuesToEdit.cliente
         }
       })
+      setEditedOrder(updatedOrder)
       toastMessage = 'Cliente editado con exito'
+      const succesEditedOrder = await saveEditedClient(updatedOrder.vehiculo.cliente)
+      succesMessage = !!succesEditedOrder
     }
     if(orderExtraValuesToEdit.vehiculo){
       setEditedOrder({
@@ -156,13 +164,25 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
     }
 
     if(succesMessage){
-      toastRef.current?.show({ severity: 'success', summary: 'Acción completada', detail: toastMessage, life: 1000 })
+      toastRef.current?.show({ severity: 'success', summary: 'Acción completada', detail: toastMessage, life: 90000 })
       setOrderExtraValuesToEdit(null)
     }else{
-      toastRef.current?.show({ severity: 'error', summary: 'Error', detail: 'Ocurrio un error, intente de nuevo mas tarde', life: 1000 })
+      if (order) {
+        setEditedOrder(order)
+      }
     }
     setIsLoading(false)
+    setOrderExtraValuesToEdit(null)
   }
+
+  useEffect(() => {
+    console.log('error:', error)
+
+    if(error){
+      toastRef.current?.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 })
+    }
+  },[error])
+
 
   if (!editedOrder) return <Loader widthPercentaje={50} heightPercentaje={50} />
 
@@ -172,13 +192,13 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
         orderExtraValuesToEdit && (
           <Dialog visible={orderExtraValuesToEdit != null}
             maximizable
-            style={{ width: '80vw', height: '80vh' }}
+            style={{ maxWidth: '80vw', maxHeight: '80vh', height: '40vw' }}
             onHide={hideModalEdit}
             header={<HeaderModal/>}
             contentClassName='px-0'
             footer={<FooterModal />}
           >
-            {orderExtraValuesToEdit.cliente && <h1>Cliente</h1>}
+            {orderExtraValuesToEdit.cliente && <EditClient orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
             {orderExtraValuesToEdit.vehiculo && <h1>Vehiculo</h1>}
             {orderExtraValuesToEdit.elementosIngreso && <EditElementosIngreso orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
             {orderExtraValuesToEdit.fotos && <h1>Fotos</h1>}
@@ -256,7 +276,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
           </div>
         </section>
       </article>
-      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' />
+      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' onHide={clearError} onRemove={clearError}/>
     </>
 
   )
