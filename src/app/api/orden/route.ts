@@ -85,7 +85,6 @@ export async function POST (request: Request) {
         color: body.vehiculo.color || null,
         placa: body.vehiculo.placa,
         kilometraje: body.vehiculo.kilometraje || null,
-        combustible: body.vehiculo.combustible || null,
         cliente_id: existingCliente ? existingCliente.id : 0 // or any default value
       }).returning()
 
@@ -107,7 +106,8 @@ export async function POST (request: Request) {
         extintor: body.elementosIngreso.extintor || false,
         encendedor: body.elementosIngreso.encendedor || false,
         antena: body.elementosIngreso.antena || false,
-        llanta_emergencia: body.elementosIngreso.llanta_emergencia || false
+        llanta_emergencia: body.elementosIngreso.llanta_emergencia || false,
+        combustible: body.elementosIngreso.combustible || null,
       }).returning()
 
       const newFotos = await tx.insert(Fotos).values({
