@@ -107,7 +107,7 @@ export async function POST (request: Request) {
         encendedor: body.elementosIngreso.encendedor || false,
         antena: body.elementosIngreso.antena || false,
         llanta_emergencia: body.elementosIngreso.llanta_emergencia || false,
-        combustible: body.elementosIngreso.combustible || null,
+        combustible: body.elementosIngreso.combustible || null
       }).returning()
 
       const newFotos = await tx.insert(Fotos).values({
