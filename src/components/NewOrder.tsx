@@ -84,8 +84,8 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
   const emptyTemplate = (text) => {
     return (
       <div className="flex align-items-center flex-column" onClick={() => {
-        const fileInput = document.querySelector('.p-fileupload input[type="file"]')
-        if (fileInput) fileInput.click() // Solo hace click si el input existe
+        //const fileInput = document.querySelector('.p-fileupload input[type="file"]')
+        //if (fileInput) fileInput.click() // Solo hace click si el input existe
       }}>
         <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
         <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
