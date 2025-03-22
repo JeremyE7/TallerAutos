@@ -103,7 +103,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
 
 
   useEffect(() => {
-    if (editedOrder?.iva !== null, editedOrder?.total_mo !== null, editedOrder?.total_rep !== null) {
+    if (editedOrder?.iva, editedOrder?.total_mo, editedOrder?.total_rep) {
       const total = calcTotal(editedOrder)
       setEditedOrder({
         ...editedOrder,
