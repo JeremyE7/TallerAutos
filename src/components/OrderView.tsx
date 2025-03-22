@@ -17,6 +17,8 @@ import { useOrders } from '@/hooks/useOrders'
 import { EditClient } from './EditModals/EditClient'
 import { useClients } from '@/hooks/useClients'
 import { settingsStore } from '@/store/settingsStore'
+import { EditVehicle } from './EditModals/EditVehicle'
+import { useVehicle } from '@/hooks/useVehicle'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null,
@@ -31,12 +33,13 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
 
   const [orderExtraValuesToEdit, setOrderExtraValuesToEdit] = useState<ModalProps | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const { saveElementosIngreso } = useOrders()
   const {saveEditedClient} = useClients()
   const {error, clearError} = settingsStore()
   const toastRef = useRef<Toast>(null)
   let toastMessage = ''
 
+  const { saveElementosIngreso } = useOrders()
+  const { saveEditedVehicle } = useVehicle()
 
   const optionsEditedState: Option[] = [
     {
@@ -119,9 +122,12 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
   }
 
   const handleSaveEdit = async () => {
+
     if (!orderExtraValuesToEdit || !editedOrder) return
+
     setIsLoading(true)
     let succesMessage = false
+
     if(orderExtraValuesToEdit.cliente){
       const updatedOrder = ({
         ...editedOrder,
@@ -135,13 +141,18 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
       const succesEditedOrder = await saveEditedClient(updatedOrder.vehiculo.cliente)
       succesMessage = !!succesEditedOrder
     }
+
     if(orderExtraValuesToEdit.vehiculo){
-      setEditedOrder({
+      const updatedOrder = ({
         ...editedOrder,
         vehiculo: orderExtraValuesToEdit.vehiculo
       })
+      setEditedOrder(updatedOrder)
       toastMessage = 'Vehiculo editado con exito'
+      const succesEditedOrder = await saveEditedVehicle(updatedOrder.vehiculo)
+      succesMessage = !!succesEditedOrder
     }
+
     if(orderExtraValuesToEdit.elementosIngreso){
       const updatedOrder = {
         ...editedOrder,
@@ -155,6 +166,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
       const succesEditedOrder = await saveElementosIngreso(updatedOrder)
       succesMessage = !!succesEditedOrder
     }
+
     if(orderExtraValuesToEdit.fotos){
       setEditedOrder({
         ...editedOrder,
@@ -171,6 +183,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
         setEditedOrder(order)
       }
     }
+
     setIsLoading(false)
     setOrderExtraValuesToEdit(null)
   }
@@ -190,14 +203,14 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
         orderExtraValuesToEdit && (
           <Dialog visible={orderExtraValuesToEdit != null}
             maximizable
-            style={{ maxWidth: '70vw', maxHeight: '90vh' }}
+            style={{ width: '80vw', maxHeight: '90vh' }}
             onHide={hideModalEdit}
             header={<HeaderModal/>}
             contentClassName='px-0'
             footer={<FooterModal />}
           >
             {orderExtraValuesToEdit.cliente && <EditClient orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
-            {orderExtraValuesToEdit.vehiculo && <h1>Vehiculo</h1>}
+            {orderExtraValuesToEdit.vehiculo && <EditVehicle orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
             {orderExtraValuesToEdit.elementosIngreso && <EditElementosIngreso orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
             {orderExtraValuesToEdit.fotos && <h1>Fotos</h1>}
           </Dialog>

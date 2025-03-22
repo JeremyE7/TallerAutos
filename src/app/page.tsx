@@ -10,17 +10,21 @@ import { useEffect, useState } from 'react'
 import { SearchOrders } from '@/components/SearchOrders'
 import { Button } from 'primereact/button'
 import OrdenTrabajoModal from '@/components/NewOrder'
+import { useClients } from '@/hooks/useClients'
+import { useVehicle } from '@/hooks/useVehicle'
 
 export default function Home () {
   const [newOrderModalVisible, setNewOrderModalVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const { filteredOrders } = useOrders()
+  const {clients} = useClients()
+  const { vehicles } = useVehicle()
 
   useEffect(() => {
-    if (filteredOrders && filteredOrders.length > 0) {
+    if (filteredOrders && filteredOrders.length > 0 && clients.length > 0 && vehicles.length > 0) {
       setIsLoading(false)
     }
-  }, [filteredOrders])
+  }, [filteredOrders, clients, vehicles])
 
   const showNewOrderModal = () => {
     setNewOrderModalVisible(true) // Abre el modal de nueva orden

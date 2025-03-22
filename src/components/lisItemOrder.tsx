@@ -7,6 +7,7 @@ import { Dropdown } from 'primereact/dropdown'
 import { useEffect, useState } from 'react'
 import { ChipOrderState } from './ChipOrderState'
 import { useClients } from '@/hooks/useClients'
+import { useVehicle } from '@/hooks/useVehicle'
 
 interface ListItemOrderProps {
   order: OrdenTrabajo
@@ -17,8 +18,10 @@ interface ListItemOrderProps {
 export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrderProps) => {
 
   const [selectedOption, setSelectedOption] = useState(null)
-  const {getClient} = useClients()
-  const client = getClient(order.vehiculo.cliente.id)
+  const {getClientById} = useClients()
+  const {getVehicleById} = useVehicle()
+  const client = getClientById(order.vehiculo.cliente.id)
+  const vehicle = getVehicleById(order.vehiculo.id)
 
   const options = [
     { name: 'Ver', code: 'view' },
@@ -49,7 +52,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
   return (
     <>
       {order.vehiculo && (
-        <Card title={<div className='flex gap-3'>{order.vehiculo.marca} <ChipOrderState state={order.estado} /></div>} subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl shadow' key={order.vehiculo.id} header={header}>
+        <Card title={<div className='flex gap-3'>{vehicle?.marca} <ChipOrderState state={order.estado} /></div>} subTitle={vehicle?.modelo} className='p-2 text-left border-round-2xl shadow' key={vehicle?.id} header={header}>
           <div className='grid w-full'>
             <div className='flex flex-column md:col-5 md:text-right sm:text-left sm:col-12'>
               <h5 className='text-primary'>
@@ -71,7 +74,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
             <div className='grid md:col-5 row-gap-3 p-0 m-0 sm:col-12'>
               <div className='label-show col-6'>
                 <span className='label text-gray-400 text-xs font-bold'>Placa de Automovil:</span>
-                <span className='value'>{order.vehiculo.placa}</span>
+                <span className='value'>{vehicle?.placa}</span>
               </div>
               <div className='label-show col-6'>
                 <span className='label text-gray-400 text-xs font-bold'>Nombre:</span>

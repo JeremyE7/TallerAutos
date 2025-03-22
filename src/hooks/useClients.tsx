@@ -25,7 +25,7 @@ export const useClients = () => {
     return data
   }
 
-  const getClient = (id: number) => {
+  const getClientById = (id: number) => {
     return clients.find(client => client.id === id)
   }
 
@@ -33,6 +33,6 @@ export const useClients = () => {
     clients,
     saveEditedClient,
     gellAllClients,
-    getClient
+    getClientById
   }
 }

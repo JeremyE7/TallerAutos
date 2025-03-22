@@ -81,7 +81,7 @@ legend{
 
 .label-show-container{
   display: grid;
-  gap: 30px 5px;
+  gap: 30px 30px;
   grid-template-columns: repeat(auto-fit, minmax(250px, 40%));
   justify-content: center;
   margin-top: 20px;
