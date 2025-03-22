@@ -19,6 +19,7 @@ import { useClients } from '@/hooks/useClients'
 import { settingsStore } from '@/store/settingsStore'
 import { EditVehicle } from './EditModals/EditVehicle'
 import { useVehicle } from '@/hooks/useVehicle'
+import { Calendar } from 'primereact/calendar'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null,
@@ -79,6 +80,18 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
   }
 
   const handleChangeInput = (value: string, fieldKey: keyof OrdenTrabajo) => {
+
+    if(fieldKey === 'fechaIngreso' || fieldKey === 'fechaSalida'){
+      console.log('xd', value)
+      if(editedOrder){
+        setEditedOrder({
+          ...editedOrder,
+          [fieldKey]: new Date(value)
+        })
+      }
+      return
+    }
+
     if (editedOrder) {
       setEditedOrder({
         ...editedOrder,
@@ -86,6 +99,12 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
       })
     }
   }
+
+
+  useEffect(() => {
+    console.log(editedOrder)
+
+  },[editedOrder])
 
   const FooterModal = () => {
     return (
@@ -233,7 +252,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
             <LabelShow label='CI/RUC' value={editedOrder.vehiculo.cliente.cedula} />
             <LabelShow label='Tel. Celular' value={editedOrder.vehiculo.cliente.telefono} />
             <LabelShow label='Dirección' value={editedOrder.vehiculo.cliente.direccion} />
-            <LabelShow label='Fecha de Ingreso' value={editedOrder.fechaIngreso.toString()} />
+            <LabelShow label='Fecha de Ingreso' value={(new Date(editedOrder.fechaIngreso)).toLocaleString()} />
           </div>
         </section>
         <section className='mt-4'>
@@ -264,9 +283,13 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
           <div className='label-show-container text-center ml-0'>
             <TextAreaShow label='Operaciones solicitadas' value={editedOrder?.operaciones_solicitadas} order='column' editable={edit} onChange={(value: string) => handleChangeInput(value, 'operaciones_solicitadas')} />
           </div>
-          {edit && <div className='mt-3 flex justify-center gap-1 flex-col w-5 m-auto'>
+          {edit && <div className='mt-3 flex justify-center flex-col w-5 m-auto gap-2'>
             <label htmlFor="">Estado:</label>
             <Dropdown value={editedOrder?.estado} onChange={(e) => handleChangeInput(e.value.code, 'estado')} options={optionsEditedState} optionLabel="name" className="flex justify-center h-10 w-12 m-auto md:w-6" valueTemplate={selectedFilterTemplate} placeholder='Escoge una opción' />
+            <label htmlFor="">Fecha de Ingreso:</label>
+            <Calendar value={new Date(editedOrder.fechaIngreso)} onChange={(e) => handleChangeInput(e.target.value?.toISOString() ?? '', 'fechaIngreso')} dateFormat='dd/mm/yy'showTime hourFormat="24"  className="flex justify-center h-10 w-12 m-auto md:w-6" />
+            <label htmlFor="">Fecha de Salida:</label>
+            <Calendar value={new Date(editedOrder.fechaSalida)} onChange={(e) => handleChangeInput(e.target.value?.toISOString() ?? '', 'fechaSalida')} dateFormat='dd/mm/yy'showTime hourFormat="24" className="flex justify-center h-10 w-12 m-auto md:w-6"/>
           </div>}
         </section>
         <section className='mt-4'>

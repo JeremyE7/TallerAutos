@@ -62,7 +62,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
                 {order.comentarios}
               </span>
               <span>
-                <b>Fecha de entrega: </b>{new Date(order.fechaSalida).toLocaleDateString()}
+                <b>Fecha de entrega: </b>{new Date(order.fechaSalida).toLocaleString()}
               </span>
             </div>
             <Divider layout="vertical" className='col-1 hidden md:flex' color='#ffd54f'>
