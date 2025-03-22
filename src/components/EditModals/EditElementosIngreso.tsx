@@ -85,7 +85,7 @@ export const EditElementosIngreso: React.FC<EditElementosIngresoProps> = ({ orde
         </div>
       </div>
       { elementsToDisplay &&
-          <ElementosIngresoView elements={elementsToDisplay} className='overflow-y-scroll h-full p-1 mt-20 md:mt-0 w-9/12 ml-1 hidden md:grid!' />
+          <ElementosIngresoView elements={elementsToDisplay} className='overflow-y-scroll h-72 p-1 mt-20 md:mt-0 w-9/12 ml-1 hidden md:grid!' />
       }
     </div>
   )

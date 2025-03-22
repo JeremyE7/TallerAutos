@@ -20,6 +20,7 @@ import { settingsStore } from '@/store/settingsStore'
 import { EditVehicle } from './EditModals/EditVehicle'
 import { useVehicle } from '@/hooks/useVehicle'
 import { Calendar } from 'primereact/calendar'
+import { calcTotal } from '@/utils/orders'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null,
@@ -102,9 +103,14 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
 
 
   useEffect(() => {
-    console.log(editedOrder)
-
-  },[editedOrder])
+    if (editedOrder?.iva !== null, editedOrder?.total_mo !== null, editedOrder?.total_rep !== null) {
+      const total = calcTotal(editedOrder)
+      setEditedOrder({
+        ...editedOrder,
+        total: total
+      })
+    }
+  },[editedOrder?.iva, editedOrder?.total_mo, editedOrder?.total_rep])
 
   const FooterModal = () => {
     return (
