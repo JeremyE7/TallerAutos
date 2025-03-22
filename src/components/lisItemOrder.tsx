@@ -6,6 +6,7 @@ import { Divider } from 'primereact/divider'
 import { Dropdown } from 'primereact/dropdown'
 import { useEffect, useState } from 'react'
 import { ChipOrderState } from './ChipOrderState'
+import { useClients } from '@/hooks/useClients'
 
 interface ListItemOrderProps {
   order: OrdenTrabajo
@@ -16,6 +17,9 @@ interface ListItemOrderProps {
 export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrderProps) => {
 
   const [selectedOption, setSelectedOption] = useState(null)
+  const {getClient} = useClients()
+  const client = getClient(order.vehiculo.cliente.id)
+
   const options = [
     { name: 'Ver', code: 'view' },
     { name: 'Imprimir', code: 'print' },
@@ -71,15 +75,15 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
               </div>
               <div className='label-show col-6'>
                 <span className='label text-gray-400 text-xs font-bold'>Nombre:</span>
-                <span className='value'>{order.vehiculo.cliente.nombre}</span>
+                <span className='value'>{client?.nombre}</span>
               </div>
               <div className='label-show col-6'>
                 <span className='label text-gray-400 text-xs font-bold'>Cedula:</span>
-                <span className='value'>{order.vehiculo.cliente.cedula}</span>
+                <span className='value'>{client?.cedula}</span>
               </div>
               <div className='label-show col-6'>
                 <span className='label text-gray-400 text-xs font-bold'>Teléfono:</span>
-                <span className='value'>{order.vehiculo.cliente.telefono}</span>
+                <span className='value'>{client?.telefono}</span>
               </div>
             </div>
           </div>

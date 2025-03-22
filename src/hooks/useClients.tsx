@@ -25,9 +25,14 @@ export const useClients = () => {
     return data
   }
 
+  const getClient = (id: number) => {
+    return clients.find(client => client.id === id)
+  }
+
   return {
     clients,
     saveEditedClient,
-    gellAllClients
+    gellAllClients,
+    getClient
   }
 }

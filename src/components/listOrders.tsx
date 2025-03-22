@@ -95,8 +95,8 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const FooterModal = () => {
     if (isLoading) {
       return (
-        <section className='flex justify-center pt-3'>
-          <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'var(--primary-color)' }}></i>
+        <section className='flex justify-center overflow-hidden'>
+          <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'var(--primary-color)', overflow: 'hidden' }}></i>
         </section>
       )
     }

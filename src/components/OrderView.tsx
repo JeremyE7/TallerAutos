@@ -87,12 +87,12 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
   const FooterModal = () => {
     return (
       isLoading ? (
-        <section className='flex justify-center pt-3'>
+        <section className='flex justify-center pt-3 overflow-hidden'>
           <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'var(--primary-color)' }}></i>
         </section>
       ) : (
         <section className='flex justify-evenly pt-3'>
-          <Button icon='pi pi-save' severity='warning' className='w-2 md:w-1' onClick={() => handleSaveEdit()} />
+          <Button icon='pi pi-save' severity='warning' className='w-2' onClick={() => handleSaveEdit()} />
         </section>
       )
     )
@@ -164,7 +164,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
     }
 
     if(succesMessage){
-      toastRef.current?.show({ severity: 'success', summary: 'Acción completada', detail: toastMessage, life: 90000 })
+      toastRef.current?.show({ severity: 'success', summary: 'Acción completada', detail: toastMessage, life: 1000 })
       setOrderExtraValuesToEdit(null)
     }else{
       if (order) {
@@ -176,8 +176,6 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
   }
 
   useEffect(() => {
-    console.log('error:', error)
-
     if(error){
       toastRef.current?.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 })
     }
@@ -192,7 +190,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
         orderExtraValuesToEdit && (
           <Dialog visible={orderExtraValuesToEdit != null}
             maximizable
-            style={{ maxWidth: '80vw', maxHeight: '80vh', height: '40vw' }}
+            style={{ maxWidth: '70vw', maxHeight: '90vh' }}
             onHide={hideModalEdit}
             header={<HeaderModal/>}
             contentClassName='px-0'
