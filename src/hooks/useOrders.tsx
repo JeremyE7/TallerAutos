@@ -1,8 +1,9 @@
 'use client'
 
-import { OrdenTrabajo } from '@/app/types'
+import { Foto, OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
 import { editElementosIngreso } from '@/utils/ElementosIngreso'
+import { editFotos } from '@/utils/fotos'
 import { deleteOrder, editOrder, getOrders } from '@/utils/orders'
 import { useEffect } from 'react'
 
@@ -46,6 +47,16 @@ export const useOrders = () => {
     return editedElementosIngreso
   }
 
+  const saveFotos = async (id: number, fotos: Omit<Foto, 'id'>) => {
+    // console.log('Saving edited fotos:', editedOrder.foto)
+    // updateOrder(editedOrder.id, editedOrder)
+    // resetFilteredOrders()
+    if(fotos === undefined) return
+    const editedFotos = await editFotos(id, fotos)
+    // console.log('editedFotos:', editedFotos)
+    return editedFotos
+  }
+
   return {
     orders,
     setOrders,
@@ -55,7 +66,8 @@ export const useOrders = () => {
     saveEditedOrder,
     eliminateOrder,
     saveElementosIngreso,
-    getAllOrders
+    getAllOrders,
+    saveFotos
   }
 
 }

@@ -21,6 +21,7 @@ import { EditVehicle } from './EditModals/EditVehicle'
 import { useVehicle } from '@/hooks/useVehicle'
 import { Calendar } from 'primereact/calendar'
 import { calcTotal } from '@/utils/orders'
+import { EditFotos } from './EditModals/EditFotos'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null,
@@ -118,7 +119,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
         <section className='flex justify-center pt-3 overflow-hidden'>
           <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'var(--primary-color)' }}></i>
         </section>
-      ) : (
+      ) : !orderExtraValuesToEdit?.fotos && (
         <section className='flex justify-evenly pt-3'>
           <Button icon='pi pi-save' severity='warning' className='w-2' onClick={() => handleSaveEdit()} />
         </section>
@@ -228,7 +229,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
         orderExtraValuesToEdit && (
           <Dialog visible={orderExtraValuesToEdit != null}
             maximizable
-            style={{ width: '80vw', maxHeight: '90vh' }}
+            style={{ width: '80vw', maxHeight: '100vh' }}
             onHide={hideModalEdit}
             header={<HeaderModal/>}
             contentClassName='px-0'
@@ -237,7 +238,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
             {orderExtraValuesToEdit.cliente && <EditClient orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
             {orderExtraValuesToEdit.vehiculo && <EditVehicle orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
             {orderExtraValuesToEdit.elementosIngreso && <EditElementosIngreso orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
-            {orderExtraValuesToEdit.fotos && <h1>Fotos</h1>}
+            {orderExtraValuesToEdit.fotos && <EditFotos orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
           </Dialog>
         )
       }

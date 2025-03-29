@@ -1,15 +1,10 @@
 import { NextResponse } from 'next/server'
-import { v2 as cloudinary } from 'cloudinary'
 // import * as schema from '@/db/schema'  // Importar todo el esquema
 import { db } from '@/db'
 import { createApiResponse } from '@/lib/api'
 import { Cliente, ElementosIngreso, Fotos, OrdenTrabajo, Vehiculo } from '@/db/schema'
 // Configurar Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-})
+
 
 // GET: Obtener todas las órdenes
 export async function GET () {
@@ -85,7 +80,6 @@ export async function POST (request: Request) {
         color: body.vehiculo.color || null,
         placa: body.vehiculo.placa,
         kilometraje: body.vehiculo.kilometraje || null,
-        combustible: body.vehiculo.combustible || null,
         cliente_id: existingCliente ? existingCliente.id : 0 // or any default value
       }).returning()
 
@@ -107,7 +101,8 @@ export async function POST (request: Request) {
         extintor: body.elementosIngreso.extintor || false,
         encendedor: body.elementosIngreso.encendedor || false,
         antena: body.elementosIngreso.antena || false,
-        llanta_emergencia: body.elementosIngreso.llanta_emergencia || false
+        llanta_emergencia: body.elementosIngreso.llanta_emergencia || false,
+        combustible: body.elementosIngreso.combustible || false
       }).returning()
 
       const newFotos = await tx.insert(Fotos).values({
