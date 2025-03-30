@@ -6,12 +6,14 @@ import { DataView } from 'primereact/dataview'
 import { OrdenTrabajo } from './types'
 import { ListOrders } from '@/components/listOrders'
 import { Loader } from '@/components/Loader/Loader'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SearchOrders } from '@/components/SearchOrders'
 import { Button } from 'primereact/button'
 import OrdenTrabajoModal from '@/components/NewOrder'
 import { useClients } from '@/hooks/useClients'
 import { useVehicle } from '@/hooks/useVehicle'
+import { settingsStore } from '@/store/settingsStore'
+import { Toast } from 'primereact/toast'
 
 export default function Home () {
   const [newOrderModalVisible, setNewOrderModalVisible] = useState(false)
@@ -19,6 +21,9 @@ export default function Home () {
   const { filteredOrders } = useOrders()
   const {clients} = useClients()
   const { vehicles } = useVehicle()
+  const {error, clearError} = settingsStore()
+  const toastRef = useRef<Toast>(null)
+  
 
   useEffect(() => {
     if (filteredOrders && filteredOrders.length > 0 && clients.length > 0 && vehicles.length > 0) {
@@ -34,6 +39,12 @@ export default function Home () {
     setNewOrderModalVisible(false) // Cierra el modal de nueva orden
   }
 
+  useEffect(() => {
+    if(error){
+      toastRef.current?.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 })
+    }
+  },[error])
+
 
   return (
     <>
@@ -48,6 +59,7 @@ export default function Home () {
               <DataView value={filteredOrders} listTemplate={(items: OrdenTrabajo[]) => <ListOrders items={items} />} className='px-0 pb-5 gap-2 w-10' paginator rows={5} paginatorClassName='mt-10 rounded-lg!' />
             }
             <OrdenTrabajoModal visible={newOrderModalVisible} onHide={hideNewOrderModal} />
+            <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' onHide={clearError} onRemove={clearError}  baseZIndex={999999999999999}/>
           </>
         )
       }

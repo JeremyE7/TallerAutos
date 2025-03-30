@@ -28,16 +28,16 @@ interface OrderViewProps {
   edit: boolean,
   editedOrder: OrdenTrabajo | null,
   setEditedOrder: (order: OrdenTrabajo) => void
+  setEdit: (edit: boolean) => void
 }
 
 
 
-export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, setEditedOrder }) => {
+export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, setEditedOrder, setEdit }) => {
 
   const [orderExtraValuesToEdit, setOrderExtraValuesToEdit] = useState<ModalProps | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const {saveEditedClient} = useClients()
-  const {error, clearError} = settingsStore()
   const toastRef = useRef<Toast>(null)
   let toastMessage = ''
 
@@ -212,13 +212,20 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
 
     setIsLoading(false)
     setOrderExtraValuesToEdit(null)
+    setEdit(false)
   }
 
+
   useEffect(() => {
-    if(error){
-      toastRef.current?.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 })
+    if(orderExtraValuesToEdit?.fotos && editedOrder){
+      console.log('orderExtraValuesToEdit.fotos', orderExtraValuesToEdit.fotos);
+      setEditedOrder({
+        ...editedOrder,
+        foto: orderExtraValuesToEdit.fotos
+      })
+      setEdit(false)
     }
-  },[error])
+  },[orderExtraValuesToEdit])
 
 
   if (!editedOrder) return <Loader widthPercentaje={50} heightPercentaje={50} />
@@ -317,7 +324,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
           </div>
         </section>
       </article>
-      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' onHide={clearError} onRemove={clearError}/>
+      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto'  baseZIndex={999999999999999}/>
     </>
 
   )

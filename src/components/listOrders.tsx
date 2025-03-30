@@ -134,7 +134,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     <ConfirmDialog />
     {list}
     <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={HeaderModal} contentClassName='px-0' footer={<FooterModal />} >
-      <OrderView order={orderToShowInModal} edit={edit} editedOrder={editedOrder} setEditedOrder={setEditedOrder} />
+      <OrderView order={orderToShowInModal} edit={edit} editedOrder={editedOrder} setEditedOrder={setEditedOrder} setEdit={setEdit}/>
     </Dialog>
   </>
 }

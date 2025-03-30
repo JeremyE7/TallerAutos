@@ -1,22 +1,39 @@
-import { Foto } from '@/app/types'
+import { Foto, ModalProps } from '@/app/types'
 import { useOrders } from '@/hooks/useOrders'
 import { Button } from 'primereact/button'
 import { FileUpload, FileUploadHandlerEvent, FileUploadHeaderTemplateOptions, FileUploadSelectEvent, ItemTemplateOptions } from 'primereact/fileupload'
+import { Image } from 'primereact/image'
 import { ProgressBar } from 'primereact/progressbar'
 import { Tag } from 'primereact/tag'
 import { Toast } from 'primereact/toast'
 import { Tooltip } from 'primereact/tooltip'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface UploaderImagesProps {
-  fotos: Foto
+  fotos: Foto,
+  setOrderToEdit?: (modal: ModalProps) => void
 }
 
-export const UploaderImages: React.FC<UploaderImagesProps> = ({fotos}) => {
+export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderToEdit }) => {
   const toastRef = useRef<Toast>(null)
   const [totalSize, setTotalSize] = useState(0)
   const fileUploadRef = useRef<FileUpload>(null)
-  const {saveFotos} = useOrders()
+  const { saveFotos, deleteFoto } = useOrders()
+  const [isLoading, setIsLoading] = useState(false)
+  const [numberOfImages, setNumberOfImages] = useState(0)
+  const [loadingDelete, setLoadingDelete] = useState(false)
+
+  useEffect(() => {
+
+    //Recuperar del objeto fotos el numero de atributos que no estan vacios
+    const keysOfFoto = Object.keys(fotos).filter((key) => key !== 'id')
+    const numberOfImages = keysOfFoto.reduce((count, key) => {
+      return fotos[key as keyof Foto] ? count + 1 : count
+    }
+      , 0)
+    console.log("🚀 ~ numberOfImages ~ numberOfImages:", numberOfImages)
+    setNumberOfImages(numberOfImages)
+  }, [fotos])
 
   const onTemplateSelect = (e: FileUploadSelectEvent) => {
     let _totalSize = totalSize
@@ -29,9 +46,34 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({fotos}) => {
     setTotalSize(_totalSize)
   }
 
+  const onDeleteFoto = (key: keyof Foto) => {
+    const updatedFotos = { ...fotos, [key]: null }
+    if (setOrderToEdit) {
+      setLoadingDelete(true)
+      deleteFoto(fotos.id, key).then((data) => {
+        if (data) {
+          setOrderToEdit({ fotos: updatedFotos })
+          toastRef.current?.show({ severity: 'info', summary: 'Success', detail: 'Foto eliminada con exito', life: 3000 })
+        }
+        setLoadingDelete(false)
+      })
+    }
+  }
+
   const onTemplateUpload = (event: FileUploadHandlerEvent) => {
+    if (totalSize > 6000000 - (numberOfImages * 1000000)) {
+      toastRef.current?.show({ severity: 'warn', summary: 'Error', detail: ('El tamaño máximo es de ' + (6000000 - (numberOfImages * 1000000)) + " MB"), life: 1000 })
+      return
+    }
+    if (event.files.length > (6 - numberOfImages)) {
+      toastRef.current?.show({ severity: 'warn', summary: 'Error', detail: ('El máximo de imagenes que puedes subir es de ' + (6 - numberOfImages)), life: 1000 })
+      return
+    }
+
+    setIsLoading(true)
+
     const fotosAux: Omit<Foto, 'id'> = {}
-    const keysOfFoto = Object.keys(fotos).filter((key) => key !== 'id')
+    const keysOfFoto = Object.keys(fotos).filter((key) => key !== 'id').filter((key) => !fotos[key as keyof Foto])
 
     const filePromises = event.files.map((file: File, index) => {
       return new Promise<void>((resolve) => {
@@ -39,15 +81,24 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({fotos}) => {
         reader.readAsDataURL(file)
         reader.onload = () => {
           const base64String = reader.result as string
-          fotosAux[keysOfFoto[index]] = base64String.split(',')[1]
+          fotosAux[keysOfFoto[index]] = base64String
           resolve()
         }
       })
     })
 
-    Promise.all(filePromises).then(() => {
-      saveFotos(fotos.id, fotosAux)
-      toastRef.current?.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 1000 })
+    Promise.all(filePromises).then(async () => {
+      const updatedFotos = await saveFotos(fotos.id, fotosAux)
+      if (!updatedFotos) return
+      if (setOrderToEdit) {
+        setOrderToEdit({ fotos: updatedFotos })
+      }
+      toastRef.current?.show({ severity: 'info', summary: 'Success', detail: 'Fotos Editadas con exito', life: 3000 })
+      setIsLoading(false)
+    }).catch((error) => {
+      console.error('Error uploading images:', error)
+      toastRef.current?.show({ severity: 'error', summary: 'Error', detail: 'Error al subir las imagenes', life: 1000 })
+      setIsLoading(false)
     })
   }
 
@@ -67,9 +118,15 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({fotos}) => {
 
     return (
       <div className={className} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
-        {chooseButton}
-        {uploadButton}
-        {cancelButton}
+        {isLoading ? (
+          <Button type="button" icon="pi pi-spin pi-spinner" className="p-button-outlined p-button-rounded p-button-info" disabled />
+        ) : (
+          <>
+            {chooseButton}
+            {uploadButton}
+            {cancelButton}
+          </>
+        )}
         <div className="flex align-items-center gap-3 ml-auto">
           <span>{formatedValue} / 6 MB</span>
           <ProgressBar value={value} showValue={false} style={{ width: '10rem', height: '12px' }}></ProgressBar>
@@ -100,7 +157,7 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({fotos}) => {
       <div className="flex align-items-center flex-column">
         <i className="pi pi-image mt-3 p-5 over" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
         <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-                    Arrasta tus imagenes aqui
+          Arrasta tus imagenes aqui
         </span>
       </div>
     )
@@ -111,15 +168,67 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({fotos}) => {
   const cancelOptions = { icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' }
 
   return (
-    <div className='px-10'>
-      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto'/>
+    <div className='px-10 flex row gap-5 justify-center'>
+      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' />
       <Tooltip target=".custom-choose-btn" content="Escoger imagenes" position="bottom" />
       <Tooltip target=".custom-upload-btn" content="Subir" position="bottom" />
       <Tooltip target=".custom-cancel-btn" content="Limpiar" position="bottom" />
       <FileUpload ref={fileUploadRef} multiple accept="image/*" maxFileSize={1000000} customUpload
         uploadHandler={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
         headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
-        chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} contentClassName='h-70 overflow-y-scroll'/>
+        chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} contentClassName='h-70 overflow-y-scroll' />
+      <div className='w-2xl'>
+        <h2>Imagenes de la orden</h2>
+        <ul className='img-list'>
+          {loadingDelete ? <ProgressBar mode="indeterminate" style={{ height: '6px' }} />
+            : (
+              <>
+                {fotos.frontal && (
+                  <li>
+                    <Image src={fotos.frontal} alt="Frontal" width={'100'} preview />
+                    <p>Imagen frontal del vehiculo</p>
+                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('frontal')} />
+                  </li>
+                )}
+                {fotos.trasera && (
+                  <li>
+                    <Image src={fotos.trasera} alt="Trasera" width={'100'} preview />
+                    <p>Imagen trasera del vehiculo</p>
+                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('trasera')} />
+                  </li>
+                )}
+                {fotos.derecha && (
+                  <li>
+                    <Image src={fotos.derecha} alt="Derecha" width={'100'} preview />
+                    <p>Imagen lateral derecha del vehiculo</p>
+                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('derecha')} />
+                  </li>
+                )}
+                {fotos.izquierda && (
+                  <li>
+                    <Image src={fotos.izquierda} alt="Izquierda" width={'100'} preview />
+                    <p>Imagen lateral izquierda del vehiculo</p>
+                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('izquierda')} />
+                  </li>
+                )}
+                {fotos.superior && (
+                  <li>
+                    <Image src={fotos.superior} alt="Superior" width={'100'} preview />
+                    <p>Imagen superior del vehiculo</p>
+                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('superior')} />
+                  </li>
+                )}
+                {fotos.interior && (
+                  <li>
+                    <Image src={fotos.interior} alt="Interior" width={'100'} preview />
+                    <p>Imagen interior del vehiculo</p>
+                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('interior')} />
+                  </li>
+                )}
+              </>
+            )}
+        </ul>
+      </div>
     </div>
   )
 }

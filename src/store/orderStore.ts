@@ -1,4 +1,4 @@
-import { OrdenTrabajo } from '@/app/types'
+import { Foto, OrdenTrabajo } from '@/app/types'
 import { create } from 'zustand'
 
 interface OrderStore {
@@ -11,6 +11,7 @@ interface OrderStore {
   clearOrders: () => void
   resetFilteredOrders: () => void
   setFilteredOrders: (orders: OrdenTrabajo[]) => void
+  updateFotosOrder: (id: number, fotos: Foto) => void
 }
 
 export const orderStore = create<OrderStore>((set) => ({
@@ -43,6 +44,22 @@ export const orderStore = create<OrderStore>((set) => ({
 
   setFilteredOrders: (orders: OrdenTrabajo[]) => set(() => ({
     filteredOrders: orders
+  })),
+
+  updateFotosOrder: (id: number, fotos: Foto) => set((state) => ({
+    orders: state.orders.map((order) => {
+      if (order.foto?.id === id) {
+        return {
+          ...order,
+          fotos: {
+            ...order.foto,
+            ...fotos
+          }
+        }
+      }
+      return order
+    }
+    )
   })),
 
   clearOrders: () => set(() => ({ orders: [] })),

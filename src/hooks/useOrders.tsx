@@ -4,11 +4,11 @@ import { Foto, OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
 import { editElementosIngreso } from '@/utils/ElementosIngreso'
 import { editFotos } from '@/utils/fotos'
-import { deleteOrder, editOrder, getOrders } from '@/utils/orders'
+import { deleteOrder, deleteOrderFoto, editOrder, getOrders } from '@/utils/orders'
 import { useEffect } from 'react'
 
 export const useOrders = () => {
-  const {setOrders,orders,filteredOrders,setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder} = orderStore()
+  const {setOrders,orders,filteredOrders,setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder, updateFotosOrder} = orderStore()
 
   useEffect(() => {
     if(orders.length > 0) return
@@ -53,8 +53,21 @@ export const useOrders = () => {
     // resetFilteredOrders()
     if(fotos === undefined) return
     const editedFotos = await editFotos(id, fotos)
-    // console.log('editedFotos:', editedFotos)
+    if(!editedFotos) return
+    updateFotosOrder(id, editedFotos)
+    resetFilteredOrders()
+    console.log('editedFotos:', editedFotos)
     return editedFotos
+  }
+
+  const deleteFoto = async (id: number, attributeToDelete: string) => {
+    console.log('Deleting foto:', id, attributeToDelete)
+    const deletedFoto = await deleteOrderFoto(id, attributeToDelete)
+    if(!deletedFoto) return
+    updateFotosOrder(id, deletedFoto)
+    resetFilteredOrders()
+    console.log('deletedFoto:', deletedFoto)
+    return deletedFoto
   }
 
   return {
@@ -67,7 +80,8 @@ export const useOrders = () => {
     eliminateOrder,
     saveElementosIngreso,
     getAllOrders,
-    saveFotos
+    saveFotos,
+    deleteFoto,
   }
 
 }

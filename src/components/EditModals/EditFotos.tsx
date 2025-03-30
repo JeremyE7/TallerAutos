@@ -6,9 +6,9 @@ interface EditFotosProps {
     setOrderToEdit: (modal: ModalProps) => void
 }
 
-export const EditFotos: React.FC<EditFotosProps> = ({orderToEdit}) => {
+export const EditFotos: React.FC<EditFotosProps> = ({orderToEdit, setOrderToEdit}) => {
   if(!orderToEdit.fotos) return null
   return (
-    <UploaderImages fotos={orderToEdit.fotos}/>
+    <UploaderImages fotos={orderToEdit.fotos} setOrderToEdit={setOrderToEdit}/>
   )
 }
