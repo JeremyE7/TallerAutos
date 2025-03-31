@@ -2,12 +2,12 @@ import { Foto, ModalProps } from '@/app/types'
 import { useOrders } from '@/hooks/useOrders'
 import { Button } from 'primereact/button'
 import { FileUpload, FileUploadHandlerEvent, FileUploadHeaderTemplateOptions, FileUploadSelectEvent, ItemTemplateOptions } from 'primereact/fileupload'
-import { Image } from 'primereact/image'
 import { ProgressBar } from 'primereact/progressbar'
 import { Tag } from 'primereact/tag'
 import { Toast } from 'primereact/toast'
 import { Tooltip } from 'primereact/tooltip'
 import { useEffect, useRef, useState } from 'react'
+import { ImageSelector } from './ImagesSelector'
 
 interface UploaderImagesProps {
   fotos: Foto,
@@ -18,10 +18,9 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
   const toastRef = useRef<Toast>(null)
   const [totalSize, setTotalSize] = useState(0)
   const fileUploadRef = useRef<FileUpload>(null)
-  const { saveFotos, deleteFoto } = useOrders()
+  const { saveFotos } = useOrders()
   const [isLoading, setIsLoading] = useState(false)
   const [numberOfImages, setNumberOfImages] = useState(0)
-  const [loadingDelete, setLoadingDelete] = useState(false)
 
   useEffect(() => {
 
@@ -30,8 +29,8 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
     const numberOfImages = keysOfFoto.reduce((count, key) => {
       return fotos[key as keyof Foto] ? count + 1 : count
     }
-      , 0)
-    console.log("🚀 ~ numberOfImages ~ numberOfImages:", numberOfImages)
+    , 0)
+    console.log('🚀 ~ numberOfImages ~ numberOfImages:', numberOfImages)
     setNumberOfImages(numberOfImages)
   }, [fotos])
 
@@ -46,23 +45,10 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
     setTotalSize(_totalSize)
   }
 
-  const onDeleteFoto = (key: keyof Foto) => {
-    const updatedFotos = { ...fotos, [key]: null }
-    if (setOrderToEdit) {
-      setLoadingDelete(true)
-      deleteFoto(fotos.id, key).then((data) => {
-        if (data) {
-          setOrderToEdit({ fotos: updatedFotos })
-          toastRef.current?.show({ severity: 'info', summary: 'Success', detail: 'Foto eliminada con exito', life: 3000 })
-        }
-        setLoadingDelete(false)
-      })
-    }
-  }
 
   const onTemplateUpload = (event: FileUploadHandlerEvent) => {
     if (totalSize > 6000000 - (numberOfImages * 1000000)) {
-      toastRef.current?.show({ severity: 'warn', summary: 'Error', detail: ('El tamaño máximo es de ' + (6000000 - (numberOfImages * 1000000)) + " MB"), life: 1000 })
+      toastRef.current?.show({ severity: 'warn', summary: 'Error', detail: ('El tamaño máximo es de ' + (6000000 - (numberOfImages * 1000000)) + ' MB'), life: 1000 })
       return
     }
     if (event.files.length > (6 - numberOfImages)) {
@@ -177,58 +163,7 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
         uploadHandler={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
         headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
         chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} contentClassName='h-70 overflow-y-scroll' />
-      <div className='w-2xl'>
-        <h2>Imagenes de la orden</h2>
-        <ul className='img-list'>
-          {loadingDelete ? <ProgressBar mode="indeterminate" style={{ height: '6px' }} />
-            : (
-              <>
-                {fotos.frontal && (
-                  <li>
-                    <Image src={fotos.frontal} alt="Frontal" width={'100'} preview />
-                    <p>Imagen frontal del vehiculo</p>
-                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('frontal')} />
-                  </li>
-                )}
-                {fotos.trasera && (
-                  <li>
-                    <Image src={fotos.trasera} alt="Trasera" width={'100'} preview />
-                    <p>Imagen trasera del vehiculo</p>
-                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('trasera')} />
-                  </li>
-                )}
-                {fotos.derecha && (
-                  <li>
-                    <Image src={fotos.derecha} alt="Derecha" width={'100'} preview />
-                    <p>Imagen lateral derecha del vehiculo</p>
-                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('derecha')} />
-                  </li>
-                )}
-                {fotos.izquierda && (
-                  <li>
-                    <Image src={fotos.izquierda} alt="Izquierda" width={'100'} preview />
-                    <p>Imagen lateral izquierda del vehiculo</p>
-                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('izquierda')} />
-                  </li>
-                )}
-                {fotos.superior && (
-                  <li>
-                    <Image src={fotos.superior} alt="Superior" width={'100'} preview />
-                    <p>Imagen superior del vehiculo</p>
-                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('superior')} />
-                  </li>
-                )}
-                {fotos.interior && (
-                  <li>
-                    <Image src={fotos.interior} alt="Interior" width={'100'} preview />
-                    <p>Imagen interior del vehiculo</p>
-                    <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('interior')} />
-                  </li>
-                )}
-              </>
-            )}
-        </ul>
-      </div>
+      <ImageSelector toastRef={toastRef} setOrderToEdit={setOrderToEdit} fotos={fotos} />
     </div>
   )
 }
