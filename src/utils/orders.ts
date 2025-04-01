@@ -13,10 +13,10 @@ export const calcTotal = (order: OrdenTrabajo) => {
 }
 
 export const getOrders = async () => {
-  try{
+  try {
     const response = await fetch('api/orden')
     const data: Response<OrdenTrabajo[]> = await response.json()
-    if(data.code !== 200){
+    if (data.code !== 200) {
       console.error('Error fetching orders:', data.message)
       return []
     }
@@ -24,13 +24,13 @@ export const getOrders = async () => {
     console.info(data.message)
     return data.data
 
-  }catch(error){
+  } catch (error) {
     console.error('Error fetching orders:', error)
   }
 }
 
 export const editOrder = async (id: number, order: OrdenTrabajo) => {
-  try{
+  try {
     const response = await fetch(`api/orden/${id}`, {
       method: 'PUT',
       headers: {
@@ -40,7 +40,7 @@ export const editOrder = async (id: number, order: OrdenTrabajo) => {
     })
 
     const data: Response<OrdenTrabajo> = await response.json()
-    if(data.code !== 200){
+    if (data.code !== 200) {
       console.error('Error updating order:', data.message)
       return
     }
@@ -48,19 +48,19 @@ export const editOrder = async (id: number, order: OrdenTrabajo) => {
     console.info(data.message)
     return data.data
 
-  }catch(error){
+  } catch (error) {
     console.error('Error updating order:', error)
   }
 }
 
 export const deleteOrder = async (id: number) => {
-  try{
+  try {
     const response = await fetch(`api/orden/${id}`, {
       method: 'DELETE'
     })
 
     const data: Response<OrdenTrabajo> = await response.json()
-    if(data.code !== 200){
+    if (data.code !== 200) {
       console.error('Error deleting order:', data.message)
       return
     }
@@ -68,8 +68,34 @@ export const deleteOrder = async (id: number) => {
     console.info(data.message)
     return data.data
 
-  }catch(error){
+  } catch (error) {
     console.error('Error deleting order:', error)
   }
 
+}
+
+export const printOrder = async (id: number) => {
+  try {
+    const response = await fetch(`api/orden/document/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/pdf'
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error('Error generating PDF')
+    }
+
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `Orden_Trabajo-${id}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  } catch (error) {
+    console.error('Error generating PDF:', error)
+  }
 }

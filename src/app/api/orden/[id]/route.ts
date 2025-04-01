@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm'
 
 
 // obtener una orden por su id de param
-export async function GET (req: Request, { params }) {
+export async function GET(req: Request, { params }) {
   try {
     const { id } = await params
     const orden = await db.select().from(OrdenTrabajo).where(eq(OrdenTrabajo.id, parseInt(id)))
@@ -27,7 +27,7 @@ export async function GET (req: Request, { params }) {
 }
 
 // Actualizar una orden por su id de param
-export async function PUT (req: Request, { params }) {
+export async function PUT(req: Request, { params }) {
   try {
     const { id } = await params
     const body = await req.json()
@@ -44,7 +44,7 @@ export async function PUT (req: Request, { params }) {
 }
 
 // Eliminar una orden por su id de param
-export async function DELETE (req: Request, { params }) {
+export async function DELETE(req: Request, { params }) {
   try {
     const { id } = await params
     const orden = await db.delete(OrdenTrabajo).where(eq(OrdenTrabajo.id, parseInt(id)))

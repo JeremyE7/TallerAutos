@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .checkbox {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border: 1px solid #000;
+            margin-right: 5px;
+        }
+
+        .checked {
+            background-color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Orden de Trabajo #{{orden.id}}</h1>
+    </div>
+
+    <!-- Tabla de datos del cliente -->
+    <table>
+        <tr>
+            <th colspan="2">Datos del Cliente</th>
+        </tr>
+        <tr>
+            <td>Nombre:</td>
+            <td>{{cliente.nombre}}</td>
+        </tr>
+        <tr>
+            <td>Teléfono:</td>
+            <td>{{cliente.telefono}}</td>
+        </tr>
+    </table>
+
+    <!-- Tabla de vehículo con celdas combinadas -->
+    <table>
+        <tr>
+            <th colspan="3">Datos del Vehículo</th>
+        </tr>
+        <tr>
+            <td>Marca/Modelo:</td>
+            <td colspan="2">{{vehiculo.marca}} {{vehiculo.modelo}}</td>
+        </tr>
+        <tr>
+            <td>Placa:</td>
+            <td colspan="2">{{vehiculo.placa}}</td>
+        </tr>
+    </table>
+
+    <!-- Checkboxes condicionales -->
+    <div style="margin-top: 15px;">
+        <div style="display: flex; align-items: center;">
+            <div class="checkbox {{elementos.tiene_llaves ? 'checked' : ''}}"></div>
+            <span>Incluye llaves</span>
+        </div>
+    </div>
+</body>
+
+</html>

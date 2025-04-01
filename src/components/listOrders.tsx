@@ -1,5 +1,6 @@
 import { EstadosOrden, OrdenTrabajo } from '@/app/types'
 import { ListItemOrder } from './lisItemOrder'
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 import { ConfirmDialog } from 'primereact/confirmdialog' // For <ConfirmDialog /> component
 import { confirmDialog } from 'primereact/confirmdialog' // For confirmDialog method
@@ -25,7 +26,9 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const [editedOrder, setEditedOrder] = useState<OrdenTrabajo | null>(orderToShowInModal)
   const [edit, setEdit] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { saveEditedOrder, eliminateOrder } = useOrders()
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [pdfGenerationStatus, setPdfGenerationStatus] = useState('');
+  const { saveEditedOrder, eliminateOrder, printOrder } = useOrders()
   const toast = useRef<Toast>(null)
   const accept = () => {
     toast.current?.show({ severity: 'success', summary: 'Acción completada', detail: 'Orden eliminada con exito', life: 1000 })
@@ -81,8 +84,33 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
 
   if (!items || items.length === 0) return <h1>No se encontraron resultados</h1>
 
+  const printOrderPDF = async (order: OrdenTrabajo) => {
+    console.log('Printing order with ID:', order.id);
+    console.log('Printing order:', orderToShowInModal);
+    if (!order) return;
+
+    setIsGeneratingPDF(true);
+    setPdfGenerationStatus('Generando PDF...');
+
+    try {
+      await printOrder(order.id);
+      setPdfGenerationStatus('¡PDF listo! La descarga comenzará automáticamente');
+
+      // Cierra el modal después de un breve retraso
+      setTimeout(() => {
+        setIsGeneratingPDF(false);
+      }, 1500);
+
+    } catch (error) {
+      setPdfGenerationStatus('Error al generar el PDF');
+      setTimeout(() => {
+        setIsGeneratingPDF(false);
+      }, 2000);
+      console.error('Error generating PDF:', error);
+    }
+  }
   const list = items.map((order) => {
-    return <ListItemOrder key={order.id} order={order} confirmDelete={confirmDelete} showModal={showModal} />
+    return <ListItemOrder key={order.id} order={order} confirmDelete={confirmDelete} showModal={showModal} printOrder={printOrderPDF} />
   })
 
 
@@ -123,7 +151,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     return (
       <section className='flex gap-1.5 drop-shadow-lg pt-3'>
         <Button icon='pi pi-pencil' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} onClick={() => setEdit(true)} />
-        <Button icon='pi pi-print' severity='help' className='w-2 md:w-1' />
+        <Button icon='pi pi-print' severity='help' className='w-2 md:w-1' onClick={() => orderToShowInModal && printOrderPDF(orderToShowInModal)} />
         <Button icon='pi pi-trash' severity='danger' className='w-2 ml-auto md:w-1' onClick={confirmDelete} />
       </section>
     )
@@ -140,7 +168,6 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
       )}
     </div>
   }
-
   return <>
     <div className='flex row justify-between items-center w-full sticky top-0 z-10 pt-4' style={{ background: 'var(--surface-ground	)' }}>
       <SearchOrders />
@@ -156,6 +183,33 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
 
     <Dialog visible={newOrderModalVisible} style={{ width: '50vw' }} onHide={hideNewOrderModal} header="Nueva Orden">
       <OrdenTrabajoModal visible={newOrderModalVisible} onHide={hideNewOrderModal} />
+    </Dialog>
+
+    <Dialog
+      visible={isGeneratingPDF}
+      onHide={() => setIsGeneratingPDF(false)}
+      closable={false}
+      header="Generando documento"
+      style={{ width: '400px' }}
+    >
+      <div className="flex flex-column align-items-center">
+        <ProgressSpinner
+          style={{ width: '50px', height: '50px' }}
+          strokeWidth="4"
+          animationDuration=".5s"
+        />
+        <p className="mt-4 text-center font-medium">
+          {pdfGenerationStatus}
+        </p>
+        {pdfGenerationStatus.includes('Error') && (
+          <Button
+            label="Cerrar"
+            icon="pi pi-times"
+            className="p-button-text mt-3"
+            onClick={() => setIsGeneratingPDF(false)}
+          />
+        )}
+      </div>
     </Dialog>
   </>
 }

@@ -11,9 +11,10 @@ interface ListItemOrderProps {
   order: OrdenTrabajo
   confirmDelete: () => void,
   showModal: (order: OrdenTrabajo) => void,
+  printOrder: (order: OrdenTrabajo) => void
 }
 
-export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrderProps) => {
+export const ListItemOrder = ({ order, confirmDelete, showModal, printOrder }: ListItemOrderProps) => {
 
   const [selectedOption, setSelectedOption] = useState(null)
   const options = [
@@ -25,20 +26,20 @@ export const ListItemOrder = ({ order, confirmDelete, showModal }: ListItemOrder
   useEffect(() => {
     if (selectedOption === 'view') showModal(order)
     if (selectedOption === 'delete') confirmDelete()
-
+    if (selectedOption === 'print') printOrder(order)
   }, [selectedOption])
 
   const header = (
     <div className='buttons mr-1 mt-2 md:mt-6 md:mr-3 ' style={{ float: 'right' }}>
       <div className='gap-2 flex-row hidden md:flex'>
         <Button icon="pi pi-eye" onClick={() => showModal(order)} />
-        <Button icon="pi pi-print" severity='help' />
+        <Button icon="pi pi-print" severity='help' onClick={() => printOrder(order)} />
         <Button severity="danger" icon="pi pi-trash" onClick={confirmDelete} />
       </div>
       <Dropdown value={selectedOption} onChange={(e) => {
         setSelectedOption(e.value.code)
       }} options={options} optionLabel="name"
-      placeholder="" className="hiddeInput w-1 block md:hidden mt-3.5" dropdownIcon='pi pi-ellipsis-v' onShow={() => setSelectedOption(null)} onHide={() => setSelectedOption(null)} />
+        placeholder="" className="hiddeInput w-1 block md:hidden mt-3.5" dropdownIcon='pi pi-ellipsis-v' onShow={() => setSelectedOption(null)} onHide={() => setSelectedOption(null)} />
     </div>
   )
 

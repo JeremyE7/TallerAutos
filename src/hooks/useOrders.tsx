@@ -3,20 +3,24 @@
 import { OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
 import { editElementosIngreso } from '@/utils/ElementosIngreso'
-import { deleteOrder, editOrder, getOrders } from '@/utils/orders'
+import { deleteOrder, editOrder, getOrders, printOrder as printOrderFunction } from '@/utils/orders'
 import { useEffect } from 'react'
 
 export const useOrders = () => {
-  const {setOrders,orders,filteredOrders,setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder} = orderStore()
+  const { setOrders, orders, filteredOrders, setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder } = orderStore()
 
 
 
   useEffect(() => {
     getOrders().then((data) => {
-      if(!data)return
+      if (!data) return
       setOrders(data)
     })
-  },[])
+  }, [])
+
+  const printOrder = async (id: number) => {
+    return printOrderFunction(id);
+  }
 
   const saveEditedOrder = async (editedOrder: OrdenTrabajo) => {
     console.log('Saving edited order:', editedOrder)
@@ -52,7 +56,8 @@ export const useOrders = () => {
     updateOrder,
     saveEditedOrder,
     eliminateOrder,
-    saveElementosIngreso
+    saveElementosIngreso,
+    printOrder,
   }
 
 }

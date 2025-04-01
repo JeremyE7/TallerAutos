@@ -12,7 +12,7 @@ cloudinary.config({
 })
 
 // GET: Obtener todas las órdenes
-export async function GET () {
+export async function GET() {
   try {
     const allOrders = await db.query.OrdenTrabajo.findMany({
       with: {
@@ -44,7 +44,7 @@ export async function GET () {
 }
 
 // POST: Crear una nueva orden
-export async function POST (request: Request) {
+export async function POST(request: Request) {
   try {
     const body = await request.json()
 
@@ -85,7 +85,6 @@ export async function POST (request: Request) {
         color: body.vehiculo.color || null,
         placa: body.vehiculo.placa,
         kilometraje: body.vehiculo.kilometraje || null,
-        combustible: body.vehiculo.combustible || null,
         cliente_id: existingCliente ? existingCliente.id : 0 // or any default value
       }).returning()
 
@@ -107,7 +106,8 @@ export async function POST (request: Request) {
         extintor: body.elementosIngreso.extintor || false,
         encendedor: body.elementosIngreso.encendedor || false,
         antena: body.elementosIngreso.antena || false,
-        llanta_emergencia: body.elementosIngreso.llanta_emergencia || false
+        llanta_emergencia: body.elementosIngreso.llanta_emergencia || false,
+        combustible: body.elementosIngreso.combustible || 0
       }).returning()
 
       const newFotos = await tx.insert(Fotos).values({

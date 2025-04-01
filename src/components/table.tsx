@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Button } from 'primereact/button'
-export default function Table () {
+export default function Table() {
   const handleEdit = (rowData: any) => {
     console.log('Editar:', rowData)
   }

@@ -1,0 +1,408 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name=Generator content="Microsoft Word 15 (filtered)">
+    <style>
+        <!--
+        /* Font Definitions */
+        @font-face {
+            font-family: "Cambria Math";
+            panose-1: 2 4 5 3 5 4 6 3 2 4;
+        }
+
+        @font-face {
+            font-family: Calibri;
+            panose-1: 2 15 5 2 2 2 4 3 2 4;
+        }
+
+        /* Style Definitions */
+        p.MsoNormal,
+        li.MsoNormal,
+        div.MsoNormal {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 8.0pt;
+            margin-left: 0cm;
+            line-height: 107%;
+            font-size: 11.0pt;
+            font-family: "Calibri", sans-serif;
+        }
+
+        p.MsoHeader,
+        li.MsoHeader,
+        div.MsoHeader {
+            mso-style-link: "Encabezado Car";
+            margin: 0cm;
+            font-size: 11.0pt;
+            font-family: "Calibri", sans-serif;
+        }
+
+        span.EncabezadoCar {
+            mso-style-name: "Encabezado Car";
+            mso-style-link: Encabezado;
+        }
+
+        .MsoChpDefault {
+            font-family: "Calibri", sans-serif;
+        }
+
+        .MsoPapDefault {
+            margin-bottom: 8.0pt;
+            line-height: 107%;
+        }
+
+        /* Page Definitions */
+        @page WordSection1 {
+            size: 595.3pt 841.9pt;
+            margin: 36.0pt 36.0pt 36.0pt 36.0pt;
+        }
+
+        div.WordSection1 {
+            page: WordSection1;
+        }
+        -->
+        .header-image
+        {
+        width:
+        100%;
+        max-height:
+        150px;
+        object-fit:
+        contain;
+        margin-bottom:
+        20px;
+        }
+    </style>
+
+</head>
+
+<body lang=ES style='word-wrap:break-word'>
+
+    <div class=WordSection1>
+        <img src="{{headerImage}}" class="header-image">
+
+        <p class=MsoNormal align=center style='text-align:center'><b><span
+                    style='font-size:16.0pt;line-height:107%'>ORDEN DE TRABAJO N. {{orden.id}}</span></b></p>
+
+        <p class=MsoNormal><b>CLIENTE</b></p>
+
+        <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%"
+            style='width:100.0%;border-collapse:collapse;border:none'>
+            <tr>
+                <td width="50%" valign=top style='width:50.0%;border:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b>Nombre: </b>{{cliente.nombre}}
+                    </p>
+                </td>
+                <td width="50%" valign=top style='width:50.0%;border:solid windowtext 1.0pt;
+  border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b>Email: </b>{{cliente.email}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" valign=top style='width:50.0%;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b>C.I.: </b>{{cliente.cedula}}</p>
+                </td>
+                <td width="50%" valign=top style='width:50.0%;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b>Telf: </b>{{cliente.telefono}}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td width="100%" colspan=2 valign=top style='width:100.0%;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b>Dirección:
+                        </b>{{cliente.direccion}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" valign=top style='width:50.0%;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b>Fecha
+                            Ingreso: </b> {{orden.fechaIngreso}} </p>
+                </td>
+                <td width="50%" valign=top style='width:50.0%;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b>Fecha
+                            Salida: </b> {{orden.fechaSalida}} </p>
+                </td>
+            </tr>
+        </table>
+
+        <p class=MsoNormal><b>VEHÍCULO</b></p>
+
+        <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse;border:none'>
+            <tr>
+                <td width=349 valign=top style='width:261.4pt;border:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Marca:
+                            </span></b>{{vehiculo.marca}}</p>
+                </td>
+                <td width=349 valign=top style='width:261.4pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Motor:
+                            </span></b>{{vehiculo.motor}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td width=349 valign=top style='width:261.4pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Modelo:
+                            </span></b>{{vehiculo.modelo}}</p>
+                </td>
+                <td width=349 valign=top style='width:261.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Color:
+                            </span></b>{{vehiculo.color}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td width=349 valign=top style='width:261.4pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Año:
+                            </span></b>{{vehiculo.anio}}
+                    </p>
+                </td>
+                <td width=349 valign=top style='width:261.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Placa:
+                            </span></b>{{vehiculo.placa}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td width=349 valign=top style='width:261.4pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Chasis:
+                            </span></b>{{vehiculo.chasis}}</p>
+                </td>
+                <td width=349 valign=top style='width:261.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Kilometraje:
+                            </span></b>{{vehiculo.kilometraje}}</p>
+                </td>
+            </tr>
+        </table>
+
+        <p class=MsoNormal><b><span lang=ES-EC>ELEMENTOS DE INGRESO DEL VEHÍCULO</span></b></p>
+
+        <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse;border:none'>
+            <tr>
+                <td width=232 valign=top style='width:174.25pt;border:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class="MsoNormal" style="margin-bottom:0cm;line-height:normal">
+                        <!-- CHECKBOX:limpiaparabrisas -->
+                        <b><span lang="ES-EC">Limpiaparabrisas</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top
+                    style='width:174.25pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:control_alarma -->
+                        <b><span lang=ES-EC>Control de alarma</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top
+                    style='width:174.3pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:gata -->
+                        <b><span lang=ES-EC>Gata</span></b>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td width=232 valign=top
+                    style='width:174.25pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:espejos -->
+                        <b><span lang=ES-EC>Espejos</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top
+                    style='width:174.25pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:tapetes -->
+                        <b><span lang=ES-EC>Tapetes</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top
+                    style='width:174.3pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:llave_ruedas -->
+                        <b><span lang=ES-EC>Llave de ruedas</span></b>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td width=232 valign=top style='width:174.25pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:luces -->
+                        <b><span lang=ES-EC>Luces</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top style='width:174.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:aire_acondicionado -->
+                        <b><span lang=ES-EC>A/C</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top style='width:174.3pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:extintor -->
+                        <b><span lang=ES-EC>Extintor</span></b>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td width=232 valign=top style='width:174.25pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:placas -->
+                        <b><span lang=ES-EC>Placas</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top style='width:174.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:matricula -->
+                        <b><span lang=ES-EC>Matricula</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top style='width:174.3pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:encendedor -->
+                        <b><span lang=ES-EC>Encendedor</span></b>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td width=232 valign=top style='width:174.25pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:emblemas -->
+                        <b><span lang=ES-EC>Emblemas</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top style='width:174.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:herramientas -->
+                        <b><span lang=ES-EC>Herramientas</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top style='width:174.3pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:antena -->
+                        <b><span lang=ES-EC>Antena</span></b>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td width=232 valign=top style='width:174.25pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:radio -->
+                        <b><span lang=ES-EC>Radio</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top style='width:174.25pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:tuerca_seguridad -->
+                        <b><span lang=ES-EC>Tuerca de
+                                seguridad</span></b>
+                    </p>
+                </td>
+                <td width=232 valign=top style='width:174.3pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>
+                        <!-- CHECKBOX:llanta_emergencia -->
+                        <b><span lang=ES-EC>Llanta de
+                                emergencia</span></b>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td width=697 colspan=3 valign=top style='width:522.8pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Combustible:
+                            </span></b> {{elementosIngreso.combustible}} Lt</p>
+                </td>
+            </tr>
+        </table>
+
+        <p class=MsoNormal><b><span lang=ES-EC>&nbsp;</span></b></p>
+
+        <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=695
+            style='width:521.5pt;border-collapse:collapse;border:none'>
+            <tr style='height:167.05pt'>
+                <td width=695 valign=top style='width:521.5pt;border:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt;height:167.05pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Operaciones
+                                Solicitadas: </span></b>{{orden.operaciones_solicitadas}}</p>
+                </td>
+            </tr>
+        </table>
+
+        <p class=MsoNormal><b><span lang=ES-EC>PAGO</span></b></p>
+
+        <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 style='border-collapse:collapse;border:none'>
+            <tr>
+                <td width=349 valign=top style='width:261.4pt;border:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span lang=ES-EC>Forma de
+                                pago</span></b></p>
+                </td>
+                <td width=349 valign=top style='width:261.4pt;border:solid windowtext 1.0pt;
+  border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
+                                lang=ES-EC>VALORES</span></b></p>
+                </td>
+            </tr>
+            <tr>
+                <td width=349 valign=top style='width:261.4pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
+                            lang=ES-EC>{{orden.forma_pago}}</span></p>
+                </td>
+                <td width=349 valign=top style='width:261.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span lang=ES-EC>ABONO: $
+                        </span>{{orden.abono}}</p>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span lang=ES-EC>SALDO: $
+                        </span>{{orden.saldo}}</p>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span lang=ES-EC>TOTAL: $
+                        </span>{{orden.total}}</p>
+                </td>
+            </tr>
+        </table>
+
+        <p class=MsoNormal><b><span lang=ES-EC>&nbsp;</span></b></p>
+
+    </div>
+
+</body>
+
+</html>
