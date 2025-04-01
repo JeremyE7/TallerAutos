@@ -6,6 +6,8 @@ import { Divider } from 'primereact/divider'
 import { Dropdown } from 'primereact/dropdown'
 import { useEffect, useState } from 'react'
 import { ChipOrderState } from './ChipOrderState'
+import { useClients } from '@/hooks/useClients'
+import { useVehicle } from '@/hooks/useVehicle'
 
 interface ListItemOrderProps {
   order: OrdenTrabajo
@@ -17,6 +19,11 @@ interface ListItemOrderProps {
 export const ListItemOrder = ({ order, confirmDelete, showModal, printOrder }: ListItemOrderProps) => {
 
   const [selectedOption, setSelectedOption] = useState(null)
+  const {getClientById} = useClients()
+  const {getVehicleById} = useVehicle()
+  const client = getClientById(order.vehiculo.cliente.id)
+  const vehicle = getVehicleById(order.vehiculo.id)
+
   const options = [
     { name: 'Ver', code: 'view' },
     { name: 'Imprimir', code: 'print' },
@@ -46,7 +53,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal, printOrder }: L
   return (
     <>
       {order.vehiculo && (
-        <Card title={<div className='flex gap-3'>{order.vehiculo.marca} <ChipOrderState state={order.estado} /></div>} subTitle={order.vehiculo.modelo} className='p-2 text-left border-round-2xl shadow' key={order.vehiculo.id} header={header}>
+        <Card title={<div className='flex gap-3'>{vehicle?.marca} <ChipOrderState state={order.estado} /></div>} subTitle={vehicle?.modelo} className='p-2 text-left border-round-2xl shadow' key={vehicle?.id} header={header}>
           <div className='grid w-full'>
             <div className='flex flex-column md:col-5 md:text-right sm:text-left sm:col-12'>
               <h5 className='text-primary'>
@@ -56,7 +63,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal, printOrder }: L
                 {order.comentarios}
               </span>
               <span>
-                <b>Fecha de entrega: </b>{new Date(order.fechaSalida).toLocaleDateString()}
+                <b>Fecha de entrega: </b>{new Date(order.fechaSalida).toLocaleString()}
               </span>
             </div>
             <Divider layout="vertical" className='col-1 hidden md:flex' color='#ffd54f'>
@@ -68,19 +75,19 @@ export const ListItemOrder = ({ order, confirmDelete, showModal, printOrder }: L
             <div className='grid md:col-5 row-gap-3 p-0 m-0 sm:col-12'>
               <div className='label-show col-6'>
                 <span className='label text-gray-400 text-xs font-bold'>Placa de Automovil:</span>
-                <span className='value'>{order.vehiculo.placa}</span>
+                <span className='value'>{vehicle?.placa}</span>
               </div>
               <div className='label-show col-6'>
                 <span className='label text-gray-400 text-xs font-bold'>Nombre:</span>
-                <span className='value'>{order.vehiculo.cliente.nombre}</span>
+                <span className='value'>{client?.nombre}</span>
               </div>
               <div className='label-show col-6'>
                 <span className='label text-gray-400 text-xs font-bold'>Cedula:</span>
-                <span className='value'>{order.vehiculo.cliente.cedula}</span>
+                <span className='value'>{client?.cedula}</span>
               </div>
               <div className='label-show col-6'>
                 <span className='label text-gray-400 text-xs font-bold'>Teléfono:</span>
-                <span className='value'>{order.vehiculo.cliente.telefono}</span>
+                <span className='value'>{client?.telefono}</span>
               </div>
             </div>
           </div>

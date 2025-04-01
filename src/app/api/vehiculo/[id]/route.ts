@@ -33,7 +33,7 @@ export const PUT = async (req: Request, { params }) => {
     const validateBody = vehicleUpdateSchema.safeParse(body)
     if (!validateBody.success) {
       return NextResponse.json(
-        createApiResponse(JSON.parse(validateBody.error.message), 400)
+        createApiResponse(validateBody.error.errors.at(-1)?.message ?? '', 400)
       )
     }
     const vehicle = await db.update(Vehiculo).set(body).where(eq(Vehiculo.id, parseInt(id)))

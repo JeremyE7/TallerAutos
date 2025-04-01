@@ -9,29 +9,40 @@ import { FormaPago } from './FormaPago'
 import { TextAreaShow } from './TextAreaShow'
 import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { Toast } from 'primereact/toast'
 import { EditElementosIngreso } from './EditModals/EditElementosIngreso'
 import { useOrders } from '@/hooks/useOrders'
+import { EditClient } from './EditModals/EditClient'
+import { useClients } from '@/hooks/useClients'
+import { settingsStore } from '@/store/settingsStore'
+import { EditVehicle } from './EditModals/EditVehicle'
+import { useVehicle } from '@/hooks/useVehicle'
+import { Calendar } from 'primereact/calendar'
+import { calcTotal } from '@/utils/orders'
+import { EditFotos } from './EditModals/EditFotos'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null,
   edit: boolean,
   editedOrder: OrdenTrabajo | null,
   setEditedOrder: (order: OrdenTrabajo) => void
+  setEdit: (edit: boolean) => void
 }
 
 
 
-export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEditedOrder }) => {
+export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, setEditedOrder, setEdit }) => {
 
   const [orderExtraValuesToEdit, setOrderExtraValuesToEdit] = useState<ModalProps | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const { saveElementosIngreso } = useOrders()
+  const {saveEditedClient} = useClients()
   const toastRef = useRef<Toast>(null)
   let toastMessage = ''
 
+  const { saveElementosIngreso } = useOrders()
+  const { saveEditedVehicle } = useVehicle()
 
   const optionsEditedState: Option[] = [
     {
@@ -71,6 +82,18 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
   }
 
   const handleChangeInput = (value: string, fieldKey: keyof OrdenTrabajo) => {
+
+    if(fieldKey === 'fechaIngreso' || fieldKey === 'fechaSalida'){
+      console.log('xd', value)
+      if(editedOrder){
+        setEditedOrder({
+          ...editedOrder,
+          [fieldKey]: new Date(value)
+        })
+      }
+      return
+    }
+
     if (editedOrder) {
       setEditedOrder({
         ...editedOrder,
@@ -79,15 +102,26 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
     }
   }
 
+
+  useEffect(() => {
+    if (editedOrder?.iva, editedOrder?.total_mo, editedOrder?.total_rep) {
+      const total = calcTotal(editedOrder)
+      setEditedOrder({
+        ...editedOrder,
+        total: total
+      })
+    }
+  },[editedOrder?.iva, editedOrder?.total_mo, editedOrder?.total_rep])
+
   const FooterModal = () => {
     return (
       isLoading ? (
-        <section className='flex justify-center pt-3'>
+        <section className='flex justify-center pt-3 overflow-hidden'>
           <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'var(--primary-color)' }}></i>
         </section>
-      ) : (
+      ) : !orderExtraValuesToEdit?.fotos && (
         <section className='flex justify-evenly pt-3'>
-          <Button icon='pi pi-save' severity='warning' className='w-2 md:w-1' onClick={() => handleSaveEdit()} />
+          <Button icon='pi pi-save' severity='warning' className='w-2' onClick={() => handleSaveEdit()} />
         </section>
       )
     )
@@ -114,26 +148,37 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
   }
 
   const handleSaveEdit = async () => {
+
     if (!orderExtraValuesToEdit || !editedOrder) return
+
     setIsLoading(true)
     let succesMessage = false
+
     if(orderExtraValuesToEdit.cliente){
-      setEditedOrder({
+      const updatedOrder = ({
         ...editedOrder,
         vehiculo: {
           ...editedOrder.vehiculo,
           cliente: orderExtraValuesToEdit.cliente
         }
       })
+      setEditedOrder(updatedOrder)
       toastMessage = 'Cliente editado con exito'
+      const succesEditedOrder = await saveEditedClient(updatedOrder.vehiculo.cliente)
+      succesMessage = !!succesEditedOrder
     }
+
     if(orderExtraValuesToEdit.vehiculo){
-      setEditedOrder({
+      const updatedOrder = ({
         ...editedOrder,
         vehiculo: orderExtraValuesToEdit.vehiculo
       })
+      setEditedOrder(updatedOrder)
       toastMessage = 'Vehiculo editado con exito'
+      const succesEditedOrder = await saveEditedVehicle(updatedOrder.vehiculo)
+      succesMessage = !!succesEditedOrder
     }
+
     if(orderExtraValuesToEdit.elementosIngreso){
       const updatedOrder = {
         ...editedOrder,
@@ -147,6 +192,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
       const succesEditedOrder = await saveElementosIngreso(updatedOrder)
       succesMessage = !!succesEditedOrder
     }
+
     if(orderExtraValuesToEdit.fotos){
       setEditedOrder({
         ...editedOrder,
@@ -159,10 +205,28 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
       toastRef.current?.show({ severity: 'success', summary: 'Acción completada', detail: toastMessage, life: 1000 })
       setOrderExtraValuesToEdit(null)
     }else{
-      toastRef.current?.show({ severity: 'error', summary: 'Error', detail: 'Ocurrio un error, intente de nuevo mas tarde', life: 1000 })
+      if (order) {
+        setEditedOrder(order)
+      }
     }
+
     setIsLoading(false)
+    setOrderExtraValuesToEdit(null)
+    setEdit(false)
   }
+
+
+  useEffect(() => {
+    if(orderExtraValuesToEdit?.fotos && editedOrder){
+      console.log('orderExtraValuesToEdit.fotos', orderExtraValuesToEdit.fotos);
+      setEditedOrder({
+        ...editedOrder,
+        foto: orderExtraValuesToEdit.fotos
+      })
+      setEdit(false)
+    }
+  },[orderExtraValuesToEdit])
+
 
   if (!editedOrder) return <Loader widthPercentaje={50} heightPercentaje={50} />
 
@@ -172,16 +236,16 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
         orderExtraValuesToEdit && (
           <Dialog visible={orderExtraValuesToEdit != null}
             maximizable
-            style={{ width: '80vw', height: '80vh' }}
+            style={{ width: '80vw', maxHeight: '100vh' }}
             onHide={hideModalEdit}
             header={<HeaderModal/>}
             contentClassName='px-0'
             footer={<FooterModal />}
           >
-            {orderExtraValuesToEdit.cliente && <h1>Cliente</h1>}
-            {orderExtraValuesToEdit.vehiculo && <h1>Vehiculo</h1>}
+            {orderExtraValuesToEdit.cliente && <EditClient orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
+            {orderExtraValuesToEdit.vehiculo && <EditVehicle orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
             {orderExtraValuesToEdit.elementosIngreso && <EditElementosIngreso orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
-            {orderExtraValuesToEdit.fotos && <h1>Fotos</h1>}
+            {orderExtraValuesToEdit.fotos && <EditFotos orderToEdit={orderExtraValuesToEdit} setOrderToEdit={setOrderExtraValuesToEdit} />}
           </Dialog>
         )
       }
@@ -202,7 +266,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
             <LabelShow label='CI/RUC' value={editedOrder.vehiculo.cliente.cedula} />
             <LabelShow label='Tel. Celular' value={editedOrder.vehiculo.cliente.telefono} />
             <LabelShow label='Dirección' value={editedOrder.vehiculo.cliente.direccion} />
-            <LabelShow label='Fecha de Ingreso' value={editedOrder.fechaIngreso.toString()} />
+            <LabelShow label='Fecha de Ingreso' value={(new Date(editedOrder.fechaIngreso)).toLocaleString()} />
           </div>
         </section>
         <section className='mt-4'>
@@ -233,9 +297,13 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
           <div className='label-show-container text-center ml-0'>
             <TextAreaShow label='Operaciones solicitadas' value={editedOrder?.operaciones_solicitadas} order='column' editable={edit} onChange={(value: string) => handleChangeInput(value, 'operaciones_solicitadas')} />
           </div>
-          {edit && <div className='mt-3 flex justify-center gap-1 flex-col w-5 m-auto'>
+          {edit && <div className='mt-3 flex justify-center flex-col w-5 m-auto gap-2'>
             <label htmlFor="">Estado:</label>
             <Dropdown value={editedOrder?.estado} onChange={(e) => handleChangeInput(e.value.code, 'estado')} options={optionsEditedState} optionLabel="name" className="flex justify-center h-10 w-12 m-auto md:w-6" valueTemplate={selectedFilterTemplate} placeholder='Escoge una opción' />
+            <label htmlFor="">Fecha de Ingreso:</label>
+            <Calendar value={new Date(editedOrder.fechaIngreso)} onChange={(e) => handleChangeInput(e.target.value?.toISOString() ?? '', 'fechaIngreso')} dateFormat='dd/mm/yy'showTime hourFormat="24"  className="flex justify-center h-10 w-12 m-auto md:w-6" />
+            <label htmlFor="">Fecha de Salida:</label>
+            <Calendar value={new Date(editedOrder.fechaSalida)} onChange={(e) => handleChangeInput(e.target.value?.toISOString() ?? '', 'fechaSalida')} dateFormat='dd/mm/yy'showTime hourFormat="24" className="flex justify-center h-10 w-12 m-auto md:w-6"/>
           </div>}
         </section>
         <section className='mt-4'>
@@ -256,7 +324,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ edit, editedOrder, setEdit
           </div>
         </section>
       </article>
-      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' />
+      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto'  baseZIndex={999999999999999}/>
     </>
 
   )

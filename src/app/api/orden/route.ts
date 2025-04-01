@@ -1,15 +1,10 @@
 import { NextResponse } from 'next/server'
-import { v2 as cloudinary } from 'cloudinary'
 // import * as schema from '@/db/schema'  // Importar todo el esquema
 import { db } from '@/db'
 import { createApiResponse } from '@/lib/api'
 import { Cliente, ElementosIngreso, Fotos, OrdenTrabajo, Vehiculo } from '@/db/schema'
 // Configurar Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-})
+
 
 // GET: Obtener todas las órdenes
 export async function GET() {

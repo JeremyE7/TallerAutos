@@ -81,7 +81,7 @@ legend{
 
 .label-show-container{
   display: grid;
-  gap: 30px 5px;
+  gap: 30px 30px;
   grid-template-columns: repeat(auto-fit, minmax(250px, 40%));
   justify-content: center;
   margin-top: 20px;
@@ -95,7 +95,7 @@ legend{
 }
 
 .p-galleria-item img{
-  width: 50% !important;
+  width: 100% !important;
   object-fit: contain;
   aspect-ratio: 2/1;
 }
@@ -217,4 +217,28 @@ legend{
   justify-content: center;
   padding: 2px;
   margin-top: 21px;
+}
+
+.p-toast {
+  z-index: 999999999999 !important;
+}
+
+.img-list{
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  height: 300px;
+  overflow-y: scroll;
+  padding: 20px;
+}
+
+.img-list li{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }

@@ -42,7 +42,7 @@ export const POST = async (request: Request) => {
     const validateBody = vehicleSchema.safeParse(body)
     if(!validateBody.success){
       return NextResponse.json(
-        createApiResponse(JSON.parse(validateBody.error.message), 400)
+        createApiResponse(validateBody.error.errors.at(-1)?.message ?? '', 400)
       )
     }
 

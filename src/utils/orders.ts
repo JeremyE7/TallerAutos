@@ -99,3 +99,26 @@ export const printOrder = async (id: number) => {
     console.error('Error generating PDF:', error)
   }
 }
+export const deleteOrderFoto = async (id: number, attributeToDelete: string) => {
+  try {
+    const response = await fetch(`api/orden/${id}/fotos`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ attributeToDelete })
+    })
+
+    const data: Response<OrdenTrabajo> = await response.json()
+    if (data.code !== 200) {
+      console.error('Error deleting order foto:', data.message)
+      return
+    }
+
+    console.info(data.message)
+    return data.data
+
+  } catch (error) {
+    console.error('Error deleting order foto:', error)
+  }
+}

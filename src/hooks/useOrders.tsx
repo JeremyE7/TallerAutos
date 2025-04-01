@@ -1,25 +1,29 @@
 'use client'
 
-import { OrdenTrabajo } from '@/app/types'
+import { Foto, OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
 import { editElementosIngreso } from '@/utils/ElementosIngreso'
-import { deleteOrder, editOrder, getOrders, printOrder as printOrderFunction } from '@/utils/orders'
+import { deleteOrder, deleteOrderFoto, editOrder, getOrders, printOrder as printOrderFunction } from '@/utils/orders'
 import { useEffect } from 'react'
+import { editFotos } from '@/utils/fotos'
 
 export const useOrders = () => {
-  const { setOrders, orders, filteredOrders, setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder } = orderStore()
-
-
+  const { setOrders, orders, filteredOrders, setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder, updateFotosOrder } = orderStore()
 
   useEffect(() => {
-    getOrders().then((data) => {
-      if (!data) return
-      setOrders(data)
-    })
+    if (orders.length > 0) return
+    getAllOrders()
   }, [])
+
 
   const printOrder = async (id: number) => {
     return printOrderFunction(id);
+  }
+
+  const getAllOrders = async () => {
+    const data = await getOrders()
+    if (!data) return
+    setOrders(data)
   }
 
   const saveEditedOrder = async (editedOrder: OrdenTrabajo) => {
@@ -48,6 +52,29 @@ export const useOrders = () => {
     return editedElementosIngreso
   }
 
+  const saveFotos = async (id: number, fotos: Omit<Foto, 'id'>) => {
+    // console.log('Saving edited fotos:', editedOrder.foto)
+    // updateOrder(editedOrder.id, editedOrder)
+    // resetFilteredOrders()
+    if (fotos === undefined) return
+    const editedFotos = await editFotos(id, fotos)
+    if (!editedFotos) return
+    updateFotosOrder(id, editedFotos)
+    resetFilteredOrders()
+    console.log('editedFotos:', editedFotos)
+    return editedFotos
+  }
+
+  const deleteFoto = async (id: number, attributeToDelete: string) => {
+    console.log('Deleting foto:', id, attributeToDelete)
+    const deletedFoto = await deleteOrderFoto(id, attributeToDelete)
+    if (!deletedFoto) return
+    updateFotosOrder(id, deletedFoto)
+    resetFilteredOrders()
+    console.log('deletedFoto:', deletedFoto)
+    return deletedFoto
+  }
+
   return {
     orders,
     setOrders,
@@ -58,6 +85,9 @@ export const useOrders = () => {
     eliminateOrder,
     saveElementosIngreso,
     printOrder,
+    getAllOrders,
+    saveFotos,
+    deleteFoto,
   }
 
 }

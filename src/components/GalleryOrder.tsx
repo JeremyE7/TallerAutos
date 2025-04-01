@@ -12,12 +12,12 @@ interface PhotoGalleryProps {
   alt?: string
 }
 
-export default function GalleryyOrder ({ orderPhotos }: GalleryOrderProps) {
+export default function GalleryyOrder({ orderPhotos }: GalleryOrderProps) {
 
   const [images, setImages] = useState<PhotoGalleryProps[]>([])
 
   useEffect(() => {
-    if(orderPhotos) {
+    if (orderPhotos) {
       setImages([
         { source: orderPhotos.frontal, alt: 'Imagen frontal del vehiculo' },
         { source: orderPhotos.trasera, alt: 'Imagen trasera del vehiculo' },
@@ -33,11 +33,13 @@ export default function GalleryyOrder ({ orderPhotos }: GalleryOrderProps) {
     return <img src={photo.source} alt={photo.alt} style={{ width: '100%', display: 'block' }} />
   }
 
-  if(!images) return <Loader widthPercentaje={50} heightPercentaje={50} />
+  if (!images) return <Loader widthPercentaje={50} heightPercentaje={50} />
 
   return (
-    <Galleria value={images} numVisible={5} circular
-      showItemNavigators showItemNavigatorsOnHover showIndicators
-      showThumbnails={false} item={itemTemplate} />
+    <div className='flex justify-content-center'>
+      <Galleria value={images} numVisible={6} circular
+        showItemNavigators showItemNavigatorsOnHover showIndicators
+        showThumbnails={false} item={itemTemplate} className='w-96' />
+    </div>
   )
 }
