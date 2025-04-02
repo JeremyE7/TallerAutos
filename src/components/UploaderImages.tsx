@@ -23,7 +23,6 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
   const [numberOfImages, setNumberOfImages] = useState(0)
 
   useEffect(() => {
-
     //Recuperar del objeto fotos el numero de atributos que no estan vacios
     const keysOfFoto = Object.keys(fotos).filter((key) => key !== 'id')
     const numberOfImages = keysOfFoto.reduce((count, key) => {
@@ -154,7 +153,7 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
   const cancelOptions = { icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' }
 
   return (
-    <div className='px-10 flex row gap-5 justify-center'>
+    <div className='px-10 flex flex-col md:flex-row gap-5 justify-center '>
       <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' />
       <Tooltip target=".custom-choose-btn" content="Escoger imagenes" position="bottom" />
       <Tooltip target=".custom-upload-btn" content="Subir" position="bottom" />

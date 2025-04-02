@@ -3,6 +3,7 @@ import { useOrders } from '@/hooks/useOrders'
 import { Button } from 'primereact/button'
 import { Image } from 'primereact/image'
 import { ProgressBar } from 'primereact/progressbar'
+import { Tag } from 'primereact/tag'
 import { Toast } from 'primereact/toast'
 import { RefObject, useState } from 'react'
 
@@ -29,9 +30,10 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({ fotos, setOrderToE
       })
     }
   }
+
   return (
-    <div className='w-2xl'>
-      <h2>Imagenes de la orden</h2>
+    <div className='md:w-2xl'>
+      <h2 className='text-yellow-500'>Imagenes de la orden</h2>
       <ul className='img-list'>
         {loadingDelete ? <ProgressBar mode="indeterminate" style={{ height: '6px' }} />
           : (
@@ -39,43 +41,42 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({ fotos, setOrderToE
               {fotos.frontal && (
                 <li>
                   <Image src={fotos.frontal} alt="Frontal" width={'100'} preview />
-                  <p>Imagen frontal del vehiculo</p>
-                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('frontal')} />
+                  <Tag value='Imagen frontal del vehiculo' className='w-60 bg-yellow-400! ml-auto' />
+                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger md:ml-auto p-5!" onClick={() => onDeleteFoto('frontal')} />
                 </li>
               )}
               {fotos.trasera && (
                 <li>
                   <Image src={fotos.trasera} alt="Trasera" width={'100'} preview />
-                  <p>Imagen trasera del vehiculo</p>
-                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('trasera')} />
+                  <Tag value='Imagen trasera del vehiculo' className='w-60 bg-yellow-400! ml-auto' />
+                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger md:ml-auto p-5!" onClick={() => onDeleteFoto('trasera')} />
                 </li>
               )}
               {fotos.derecha && (
                 <li>
                   <Image src={fotos.derecha} alt="Derecha" width={'100'} preview />
-                  <p>Imagen lateral derecha del vehiculo</p>
-                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('derecha')} />
-                </li>
-              )}
+                  <Tag value='Imagen lateral derecha del vehiculo' className='w-60 bg-yellow-400! ml-auto' />
+                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger md:ml-auto p-5!" onClick={() => onDeleteFoto('derecha')} />
+                </li>)}
               {fotos.izquierda && (
                 <li>
                   <Image src={fotos.izquierda} alt="Izquierda" width={'100'} preview />
-                  <p>Imagen lateral izquierda del vehiculo</p>
-                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('izquierda')} />
+                  <Tag value='Imagen lateral izquierda del vehiculo' className='w-60 bg-yellow-400! ml-auto' />
+                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger md:ml-auto p-5!" onClick={() => onDeleteFoto('izquierda')} />
                 </li>
               )}
               {fotos.superior && (
                 <li>
                   <Image src={fotos.superior} alt="Superior" width={'100'} preview />
-                  <p>Imagen superior del vehiculo</p>
-                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('superior')} />
+                  <Tag value='Imagen Superior del vehiculo' className='w-60 bg-yellow-400! ml-auto' />
+                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger md:ml-auto p-5!" onClick={() => onDeleteFoto('superior')} />
                 </li>
               )}
               {fotos.interior && (
                 <li>
                   <Image src={fotos.interior} alt="Interior" width={'100'} preview />
-                  <p>Imagen interior del vehiculo</p>
-                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger ml-auto" onClick={() => onDeleteFoto('interior')} />
+                  <Tag value='Imagen Interior del vehiculo' className='w-60 bg-yellow-400! ml-auto' />
+                  <Button icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger md:ml-auto p-5!" onClick={() => onDeleteFoto('interior')} />
                 </li>
               )}
             </>

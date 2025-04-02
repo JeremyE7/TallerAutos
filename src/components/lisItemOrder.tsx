@@ -19,8 +19,8 @@ interface ListItemOrderProps {
 export const ListItemOrder = ({ order, confirmDelete, showModal, printOrder }: ListItemOrderProps) => {
 
   const [selectedOption, setSelectedOption] = useState(null)
-  const {getClientById} = useClients()
-  const {getVehicleById} = useVehicle()
+  const { getClientById } = useClients()
+  const { getVehicleById } = useVehicle()
   const client = getClientById(order.vehiculo.cliente.id)
   const vehicle = getVehicleById(order.vehiculo.id)
 

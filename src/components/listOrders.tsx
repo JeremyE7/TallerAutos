@@ -7,7 +7,7 @@ import { confirmDialog } from 'primereact/confirmdialog' // For confirmDialog me
 import { useEffect, useRef, useState } from 'react'
 import { Toast } from 'primereact/toast'
 import { Dialog } from 'primereact/dialog'
-import { OrderView } from './OrderView'
+import { OrderView } from './OrderView/OrderView'
 import { Button } from 'primereact/button'
 import { ChipOrderState } from './ChipOrderState'
 import { Chip } from 'primereact/chip'
@@ -161,7 +161,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     <ConfirmDialog />
     {list}
     <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={HeaderModal} contentClassName='px-0' footer={<FooterModal />} >
-      <OrderView order={orderToShowInModal} edit={edit} editedOrder={editedOrder} setEditedOrder={setEditedOrder} setEdit={setEdit}/>
+      <OrderView order={orderToShowInModal} edit={edit} editedOrder={editedOrder} setEditedOrder={setEditedOrder} setEdit={setEdit} />
     </Dialog>
 
     <Dialog
