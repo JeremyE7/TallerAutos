@@ -12,6 +12,9 @@ import { Button } from 'primereact/button'
 import { ChipOrderState } from './ChipOrderState'
 import { Chip } from 'primereact/chip'
 import { useOrders } from '@/hooks/useOrders'
+import { HeaderOrderModal } from './OrderView/HeaderModal';
+import { FooterModal } from './OrderView/FooterModal';
+import { DialogOrder } from './OrderView/DialogOrder';
 
 interface ListOrdersProps {
   items: OrdenTrabajo[]
@@ -21,11 +24,10 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const [visible, setVisible] = useState(false)
   const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
   const [editedOrder, setEditedOrder] = useState<OrdenTrabajo | null>(orderToShowInModal)
-  const [edit, setEdit] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [pdfGenerationStatus, setPdfGenerationStatus] = useState('');
-  const { saveEditedOrder, eliminateOrder, printOrder } = useOrders()
+  const { eliminateOrder, printOrder } = useOrders()
   const toast = useRef<Toast>(null)
 
   useEffect(() => {
@@ -65,10 +67,7 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const hideModal = () => {
     if (!visible) return
     setVisible(false)
-    setEdit(false)
   }
-
-
 
   if (!items || items.length === 0) return <h1>No se encontraron resultados</h1>
 
@@ -101,68 +100,11 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
     return <ListItemOrder key={order.id} order={order} confirmDelete={confirmDelete} showModal={showModal} printOrder={printOrderPDF} />
   })
 
-
-  const handleSaveEdit = async () => {
-    if (!editedOrder) return
-    setIsLoading(true)
-    const succesEditedOrder = await saveEditedOrder(editedOrder)
-    setIsLoading(false)
-    if (succesEditedOrder) {
-      toast.current?.show({ severity: 'success', summary: 'Acción completada', detail: 'Orden editada con exito', life: 1000 })
-      setEdit(false)
-    } else {
-      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Error al editar la orden', life: 1000 })
-    }
-  }
-
-  const handleCancelEdit = () => {
-    setEdit(false)
-    setEditedOrder(orderToShowInModal)
-  }
-
-  const FooterModal = () => {
-    if (isLoading) {
-      return (
-        <section className='flex justify-center overflow-hidden'>
-          <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'var(--primary-color)', overflow: 'hidden' }}></i>
-        </section>
-      )
-    }
-    if (edit) {
-      return (
-        <section className='flex justify-evenly pt-3'>
-          <Button icon='pi pi-save' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} onClick={handleSaveEdit} />
-          <Button icon='pi pi-times' severity='danger' className='w-2 md:w-1' onClick={handleCancelEdit} />
-        </section>
-      )
-    }
-    return (
-      <section className='flex gap-1.5 drop-shadow-lg pt-3'>
-        <Button icon='pi pi-pencil' severity='warning' className={'w-2 md:w-1 ' + ((orderToShowInModal?.estado !== EstadosOrden.FINALIZADA) ? '' : 'hidden  ')} onClick={() => setEdit(true)} />
-        <Button icon='pi pi-print' severity='help' className='w-2 md:w-1' onClick={() => orderToShowInModal && printOrderPDF(orderToShowInModal)} />
-        <Button icon='pi pi-trash' severity='danger' className='w-2 ml-auto md:w-1' onClick={confirmDelete} />
-      </section>
-    )
-  }
-
-  const HeaderModal = () => {
-
-    return <div className='flex justify-center items-center flex-col md:flex-row gap-3'>
-      <h1 className='text-4xl text-primary font-bold'>
-        Orden de trabajo N°{editedOrder?.id}
-      </h1>
-      {!edit ? <ChipOrderState state={editedOrder?.estado ?? ''} /> : (
-        <Chip label={'Editando'} className='bg-primary-reverse' />
-      )}
-    </div>
-  }
   return <>
     <Toast ref={toast} position='bottom-right' className='w-10 md:w-auto' />
     <ConfirmDialog />
     {list}
-    <Dialog visible={visible} maximizable style={{ width: '95vw' }} onHide={hideModal} header={HeaderModal} contentClassName='px-0' footer={<FooterModal />} >
-      <OrderView order={orderToShowInModal} edit={edit} editedOrder={editedOrder} setEditedOrder={setEditedOrder} setEdit={setEdit} />
-    </Dialog>
+    <DialogOrder editedOrder={editedOrder} onHide={hideModal} orderToShowInModal={orderToShowInModal} setEditedOrder={setEditedOrder} visible={visible} />
 
     <Dialog
       visible={isGeneratingPDF}
