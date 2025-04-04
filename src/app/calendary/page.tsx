@@ -100,6 +100,7 @@ export default function Calendary() {
                   Fechas de Entrega
                   {dueDates !== ordersToShow && <Button icon={'pi pi-filter-slash'} severity='warning' onClick={() => {
                     setOrdersToShow(dueDates) 
+                    setDate(null)
                   }}/>}
                 </h2>
                 <ul className='flex flex-col w-80 gap-4'>
