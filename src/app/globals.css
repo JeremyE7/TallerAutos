@@ -25,8 +25,9 @@ main {
 }
 
 main{
-  overflow: scroll;
-  height: 83vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 85vh;
 }
 
 h1 {
