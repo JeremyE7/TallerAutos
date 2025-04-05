@@ -106,7 +106,7 @@ export default function Calendary() {
                 <ul className='flex flex-col w-80 gap-4'>
                   {ordersToShow && ordersToShow.length > 0 ? ordersToShow.map((date, index) => (
                     <li key={index} className='flex flex-row w-full gap-10 items-center justify-between'>
-                      <h3>{date.vehiculo.cliente.nombre}</h3>
+                      <h3 className='w-28'>{date.vehiculo.cliente.nombre}</h3>
                       <Tag severity={'info'} value={date.fechaSalida.toLocaleDateString('en-GB')} />
                       <Button icon={'pi pi-book'} severity='success' onClick={() => showModal(date)} />
                     </li>
