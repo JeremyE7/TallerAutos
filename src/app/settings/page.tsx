@@ -1,7 +1,10 @@
+import { LabelShow } from "@/components/LabelShow";
+
 export default function Settings () {
   return (
     <div>
-      <h1>Settings</h1>
+      <LabelShow label="Clave de servidor" editable/>
+      <LabelShow label="" editable/>
     </div>
   )
 }
