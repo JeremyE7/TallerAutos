@@ -5,19 +5,17 @@ export const useSettings = () => {
     const {getServerSettings, setServerSettings,clientKey} = settingsStore()
 
     useEffect(() => {        
-        if(!clientKey && localStorage.getItem('clientKey')){            
-            const localStorageKey = localStorage.getItem('serverKey')            
+        if(!clientKey){            
+            const localStorageKey = localStorage.getItem('clientKey')            
             if(localStorageKey){
                 setServerSettings(localStorageKey )
             }
         } 
     },[])
 
-    useEffect(() => {
-        if(clientKey !== localStorage.getItem('clientKey')){
-            localStorage.setItem('clientKey', clientKey)
-        }
-    }, [clientKey])
-
-    return { getServerSettings, setServerSettings, clientKey }
+    const saveSettings = (key: string) => {
+        localStorage.setItem('clientKey', key)
+        setServerSettings(key)
+    }
+    return { getServerSettings, saveSettings , clientKey }
 }
