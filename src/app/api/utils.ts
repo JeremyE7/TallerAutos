@@ -1,6 +1,6 @@
 import { createApiResponse } from '@/lib/api'
 import { v2 as cloudinary } from 'cloudinary'
-import { createDecipheriv, createHash, scryptSync } from 'crypto'
+import { createDecipheriv, createHash } from 'crypto'
 import { NextResponse } from 'next/server'
 
 cloudinary.config({
