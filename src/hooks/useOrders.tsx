@@ -27,51 +27,43 @@ export const useOrders = () => {
   }
 
   const saveEditedOrder = async (editedOrder: OrdenTrabajo) => {
-    console.log('Saving edited order:', editedOrder)
-
+    const editedOrderAux = await editOrder(editedOrder.id, editedOrder)
+    if (!editedOrderAux) return    
     updateOrder(editedOrder.id, editedOrder)
     resetFilteredOrders()
-    const editedOrderAux = await editOrder(editedOrder.id, editedOrder)
-    console.log('editedOrderAux:', editedOrderAux)
     return editedOrderAux
   }
 
   const eliminateOrder = async (id: number) => {
+    const deletedOrder = await deleteOrder(id)
+    if (!deletedOrder) return
     removeOrder(id)
     resetFilteredOrders()
-    const deletedOrder = await deleteOrder(id)
     return deletedOrder
   }
 
   const saveElementosIngreso = async (editedOrder: OrdenTrabajo) => {
-    console.log('Saving edited elementos de ingreso:', editedOrder.elementosIngreso)
+    const editedElementosIngreso = await editElementosIngreso(editedOrder.elementosIngreso.id, editedOrder.elementosIngreso)
+    if (!editedElementosIngreso) return
     updateOrder(editedOrder.id, editedOrder)
     resetFilteredOrders()
-    const editedElementosIngreso = await editElementosIngreso(editedOrder.elementosIngreso.id, editedOrder.elementosIngreso)
-    console.log('editedElementosIngreso:', editedElementosIngreso)
     return editedElementosIngreso
   }
 
   const saveFotos = async (id: number, fotos: Omit<Foto, 'id'>) => {
-    // console.log('Saving edited fotos:', editedOrder.foto)
-    // updateOrder(editedOrder.id, editedOrder)
-    // resetFilteredOrders()
     if (fotos === undefined) return
     const editedFotos = await editFotos(id, fotos)
     if (!editedFotos) return
     updateFotosOrder(id, editedFotos)
     resetFilteredOrders()
-    console.log('editedFotos:', editedFotos)
     return editedFotos
   }
 
   const deleteFoto = async (id: number, attributeToDelete: string) => {
-    console.log('Deleting foto:', id, attributeToDelete)
     const deletedFoto = await deleteOrderFoto(id, attributeToDelete)
     if (!deletedFoto) return
     updateFotosOrder(id, deletedFoto)
     resetFilteredOrders()
-    console.log('deletedFoto:', deletedFoto)
     return deletedFoto
   }
 
