@@ -30,7 +30,6 @@ export const ButtonShowAlert: React.FC<ButtonProps> = ({severity, iconButton, on
 
   return(
     <>
-      <ConfirmDialog />
       <Button severity={severity} icon={iconButton} onClick={showAlert} label={label} className={classNameButton}/>
     </>
   )
