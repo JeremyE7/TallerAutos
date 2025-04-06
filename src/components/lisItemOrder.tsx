@@ -11,7 +11,7 @@ import { useVehicle } from '@/hooks/useVehicle'
 
 interface ListItemOrderProps {
   order: OrdenTrabajo
-  confirmDelete: () => void,
+  confirmDelete: (orden: OrdenTrabajo) => void,
   showModal: (order: OrdenTrabajo) => void,
   printOrder: (order: OrdenTrabajo) => void
 }
@@ -32,7 +32,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal, printOrder }: L
 
   useEffect(() => {
     if (selectedOption === 'view') showModal(order)
-    if (selectedOption === 'delete') confirmDelete()
+    if (selectedOption === 'delete') confirmDelete(order)
     if (selectedOption === 'print') printOrder(order)
   }, [selectedOption])
 
@@ -41,7 +41,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal, printOrder }: L
       <div className='gap-2 flex-row hidden md:flex'>
         <Button icon="pi pi-eye" onClick={() => showModal(order)} />
         <Button icon="pi pi-print" severity='help' onClick={() => printOrder(order)} />
-        <Button severity="danger" icon="pi pi-trash" onClick={confirmDelete} />
+        <Button severity="danger" icon="pi pi-trash" onClick={() => confirmDelete(order)} />
       </div>
       <Dropdown value={selectedOption} onChange={(e) => {
         setSelectedOption(e.value.code)
