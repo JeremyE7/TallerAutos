@@ -1,20 +1,15 @@
-import { EstadosOrden, OrdenTrabajo } from '@/app/types'
+import { OrdenTrabajo } from '@/app/types'
 import { ListItemOrder } from './lisItemOrder'
 import { ProgressSpinner } from 'primereact/progressspinner';
 
-import { ConfirmDialog } from 'primereact/confirmdialog' // For <ConfirmDialog /> component
 import { confirmDialog } from 'primereact/confirmdialog' // For confirmDialog method
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Toast } from 'primereact/toast'
 import { Dialog } from 'primereact/dialog'
-import { OrderView } from './OrderView/OrderView'
 import { Button } from 'primereact/button'
-import { ChipOrderState } from './ChipOrderState'
-import { Chip } from 'primereact/chip'
 import { useOrders } from '@/hooks/useOrders'
-import { HeaderOrderModal } from './OrderView/HeaderModal';
-import { FooterModal } from './OrderView/FooterModal';
 import { DialogOrder } from './OrderView/DialogOrder';
+import { settingsStore } from '@/store/settingsStore';
 
 interface ListOrdersProps {
   items: OrdenTrabajo[]
@@ -24,37 +19,38 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const [visible, setVisible] = useState(false)
   const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
   const [editedOrder, setEditedOrder] = useState<OrdenTrabajo | null>(orderToShowInModal)
-  const [isLoading, setIsLoading] = useState(false)
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [pdfGenerationStatus, setPdfGenerationStatus] = useState('');
+  const [isLoading, setIsLoading] = useState(false)
   const { eliminateOrder, printOrder } = useOrders()
-  const toast = useRef<Toast>(null)
+  const {setSuccess, setError} = settingsStore()
 
   useEffect(() => {
     setEditedOrder(orderToShowInModal)
   }, [orderToShowInModal])
 
 
-  const acceptDelete = async () => {
-    if (!orderToShowInModal) return
+  const acceptDelete = async (order: OrdenTrabajo) => {    
+    console.log('Eliminando orden', order);
+    if (!order) return
     setIsLoading(true)
-    const success = await eliminateOrder(orderToShowInModal.id)
-    setIsLoading(false)
+    const success = await eliminateOrder(order.id)
     if (success) {
-      toast.current?.show({ severity: 'success', summary: 'Acción completada', detail: 'Orden eliminada con exito', life: 2000 })
+      setSuccess('Orden eliminada con éxito')
       hideModal()
     } else {
-      toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Error al eliminar la orden', life: 2000 })
+      setError('Error al eliminar la orden')
     }
+    setIsLoading(false)
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = (order: OrdenTrabajo) => {
     confirmDialog({
       message: 'Estas seguro de que deseas eliminar esta orden?',
       header: 'Confirmación',
       icon: 'pi pi-exclamation-triangle',
       defaultFocus: 'accept',
-      accept: acceptDelete
+      accept: () => acceptDelete(order)
     })
   }
 
@@ -72,8 +68,6 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   if (!items || items.length === 0) return <h1>No se encontraron resultados</h1>
 
   const printOrderPDF = async (order: OrdenTrabajo) => {
-    console.log('Printing order with ID:', order.id);
-    console.log('Printing order:', orderToShowInModal);
     if (!order) return;
 
     setIsGeneratingPDF(true);
@@ -94,15 +88,20 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
         setIsGeneratingPDF(false);
       }, 2000);
       console.error('Error generating PDF:', error);
+      
     }
   }
   const list = items.map((order) => {
-    return <ListItemOrder key={order.id} order={order} confirmDelete={confirmDelete} showModal={showModal} printOrder={printOrderPDF} />
+    return <ListItemOrder key={order.id} order={order} confirmDelete={(order: OrdenTrabajo) => confirmDelete(order)} showModal={showModal} printOrder={printOrderPDF}/>
   })
 
+  if(isLoading) {
+    return <div className='flex justify-content-center align-items-center h-screen'>
+      <ProgressSpinner style={{ width: '50px', height: '50px' }} strokeWidth="4" animationDuration=".5s" />
+    </div>
+  }
+
   return <>
-    <Toast ref={toast} position='bottom-right' className='w-10 md:w-auto' />
-    <ConfirmDialog />
     {list}
     <DialogOrder editedOrder={editedOrder} onHide={hideModal} orderToShowInModal={orderToShowInModal} setEditedOrder={setEditedOrder} visible={visible} />
 
