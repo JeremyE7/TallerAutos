@@ -2,9 +2,11 @@ import { Cliente } from '@/app/types'
 import { editClient, getClients } from '@/utils/client'
 import { useEffect } from 'react'
 import { clientStore } from '@/store/clientStore'
+import { useSettings } from './useSettings'
 
 export const useClients = () => {
   const {clients, setClients, updateClient} = clientStore()
+  const {clientKey} = useSettings()
 
   useEffect(() => {
     if(clients.length > 0) return
@@ -19,9 +21,10 @@ export const useClients = () => {
 
   const saveEditedClient = async (client: Cliente) => {
     const {id, ...clientWithoutId} = client
-    updateClient(id, client)
-    const data = await editClient(id, clientWithoutId)
+    
+    const data = await editClient(id, clientWithoutId, clientKey)
     if(!data)return
+    updateClient(id, client)
     return data
   }
 
