@@ -1,19 +1,20 @@
 import { Foto, ModalProps } from '@/app/types'
 import { useOrders } from '@/hooks/useOrders'
+import { settingsStore } from '@/store/settingsStore'
 import { Button } from 'primereact/button'
 import { Image } from 'primereact/image'
 import { ProgressBar } from 'primereact/progressbar'
 import { Tag } from 'primereact/tag'
-import { Toast } from 'primereact/toast'
-import { RefObject, useState } from 'react'
+import { useState } from 'react'
 
 interface ImageSelectorProps {
   fotos: Foto,
   setOrderToEdit?: (modal: ModalProps) => void
-  toastRef: RefObject<Toast | null>;
 }
 
-export const ImageSelector: React.FC<ImageSelectorProps> = ({ fotos, setOrderToEdit, toastRef }) => {
+export const ImageSelector: React.FC<ImageSelectorProps> = ({ fotos, setOrderToEdit }) => {
+
+  const {setSuccess} = settingsStore()
 
   const [loadingDelete, setLoadingDelete] = useState(false)
   const { deleteFoto } = useOrders()
@@ -24,7 +25,7 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({ fotos, setOrderToE
       deleteFoto(fotos.id, key).then((data) => {
         if (data) {
           setOrderToEdit({ fotos: updatedFotos })
-          toastRef.current?.show({ severity: 'info', summary: 'Success', detail: 'Foto eliminada con exito', life: 3000 })
+          setSuccess('Imagen eliminada correctamente')
         }
         setLoadingDelete(false)
       })
