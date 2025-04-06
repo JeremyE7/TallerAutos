@@ -11,6 +11,9 @@ import 'primeicons/primeicons.css'
 
 import { Tooltip } from 'primereact/tooltip'
 import { Navigator } from '@/components/Navigator'
+import { ConfirmDialog } from 'primereact/confirmdialog'
+import { ConfirmDialogGeneral } from '@/components/ConfirmDialog'
+import { ToastGeneral } from '@/components/ToastGeneral'
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
@@ -57,7 +60,8 @@ export default function RootLayout ({
           <main className='align-items-center flex flex-column'>
             {children}
           </main>
-          <Tooltip target=".speeddial-bottom-left .p-speeddial-action" />
+          <ConfirmDialogGeneral />
+          <ToastGeneral />
           <Navigator />
         </body>
       </PrimeReactProvider>
