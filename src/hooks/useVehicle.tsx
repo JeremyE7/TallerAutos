@@ -25,9 +25,9 @@ export const useVehicle = () => {
 
   const saveEditedVehicle = (updatedVehicle: Vehiculo) => {
     const {id, cliente, ...vehicleWithoutId} = updatedVehicle
-    console.log(cliente)
-    updateVehicle(id, updatedVehicle)
     const data = editVehicle(id, vehicleWithoutId)
+    if(!data) return
+    updateVehicle(id, updatedVehicle)
     return data
   }
 
