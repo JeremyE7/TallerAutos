@@ -1,15 +1,14 @@
 import { OrdenTrabajo } from '@/app/types'
 import { ListItemOrder } from './lisItemOrder'
-import { ProgressSpinner } from 'primereact/progressspinner';
+import { ProgressSpinner } from 'primereact/progressspinner'
 
 import { confirmDialog } from 'primereact/confirmdialog' // For confirmDialog method
 import { useEffect, useState } from 'react'
-import { Toast } from 'primereact/toast'
 import { Dialog } from 'primereact/dialog'
 import { Button } from 'primereact/button'
 import { useOrders } from '@/hooks/useOrders'
-import { DialogOrder } from './OrderView/DialogOrder';
-import { settingsStore } from '@/store/settingsStore';
+import { DialogOrder } from './OrderView/DialogOrder'
+import { settingsStore } from '@/store/settingsStore'
 
 interface ListOrdersProps {
   items: OrdenTrabajo[]
@@ -19,8 +18,8 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   const [visible, setVisible] = useState(false)
   const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
   const [editedOrder, setEditedOrder] = useState<OrdenTrabajo | null>(orderToShowInModal)
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [pdfGenerationStatus, setPdfGenerationStatus] = useState('');
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
+  const [pdfGenerationStatus, setPdfGenerationStatus] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { eliminateOrder, printOrder } = useOrders()
   const {setSuccess, setError} = settingsStore()
@@ -30,8 +29,8 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   }, [orderToShowInModal])
 
 
-  const acceptDelete = async (order: OrdenTrabajo) => {    
-    console.log('Eliminando orden', order);
+  const acceptDelete = async (order: OrdenTrabajo) => {
+    console.log('Eliminando orden', order)
     if (!order) return
     setIsLoading(true)
     const success = await eliminateOrder(order.id)
@@ -68,27 +67,27 @@ export const ListOrders = ({ items }: ListOrdersProps) => {
   if (!items || items.length === 0) return <h1>No se encontraron resultados</h1>
 
   const printOrderPDF = async (order: OrdenTrabajo) => {
-    if (!order) return;
+    if (!order) return
 
-    setIsGeneratingPDF(true);
-    setPdfGenerationStatus('Generando PDF...');
+    setIsGeneratingPDF(true)
+    setPdfGenerationStatus('Generando PDF...')
 
     try {
-      await printOrder(order.id);
-      setPdfGenerationStatus('¡PDF listo! La descarga comenzará automáticamente');
+      await printOrder(order.id)
+      setPdfGenerationStatus('¡PDF listo! La descarga comenzará automáticamente')
 
       // Cierra el modal después de un breve retraso
       setTimeout(() => {
-        setIsGeneratingPDF(false);
-      }, 1500);
+        setIsGeneratingPDF(false)
+      }, 1500)
 
     } catch (error) {
-      setPdfGenerationStatus('Error al generar el PDF');
+      setPdfGenerationStatus('Error al generar el PDF')
       setTimeout(() => {
-        setIsGeneratingPDF(false);
-      }, 2000);
-      console.error('Error generating PDF:', error);
-      
+        setIsGeneratingPDF(false)
+      }, 2000)
+      console.error('Error generating PDF:', error)
+
     }
   }
   const list = items.map((order) => {

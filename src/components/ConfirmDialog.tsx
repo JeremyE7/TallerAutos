@@ -1,9 +1,9 @@
 'use client'
 
-import { ConfirmDialog } from "primereact/confirmdialog";
+import { ConfirmDialog } from 'primereact/confirmdialog'
 
 export const ConfirmDialogGeneral = () => {
-    return(
-        <ConfirmDialog/>
-    )
+  return(
+    <ConfirmDialog/>
+  )
 }

@@ -1,17 +1,17 @@
 'use client'
-import { LabelShow } from "@/components/LabelShow";
-import { useSettings } from "@/hooks/useSettings";
-import { settingsStore } from "@/store/settingsStore";
-import { Button } from "primereact/button";
-import { useEffect, useState } from "react";
+import { LabelShow } from '@/components/LabelShow'
+import { useSettings } from '@/hooks/useSettings'
+import { settingsStore } from '@/store/settingsStore'
+import { Button } from 'primereact/button'
+import { useEffect, useState } from 'react'
 
-export default function Settings() {
+export default function Settings () {
 
   const {saveSettings, clientKey } = useSettings()
   const {setSuccess} = settingsStore()
   const [serverKeyAux, setServerKey] = useState(clientKey)
 
-  useEffect(() => {    
+  useEffect(() => {
     setServerKey(clientKey)
   },[clientKey])
 

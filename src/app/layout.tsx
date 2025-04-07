@@ -9,9 +9,7 @@ import 'primereact/resources/primereact.css'
 import 'primereact/resources/themes/arya-orange/theme.css'
 import 'primeicons/primeicons.css'
 
-import { Tooltip } from 'primereact/tooltip'
 import { Navigator } from '@/components/Navigator'
-import { ConfirmDialog } from 'primereact/confirmdialog'
 import { ConfirmDialogGeneral } from '@/components/ConfirmDialog'
 import { ToastGeneral } from '@/components/ToastGeneral'
 

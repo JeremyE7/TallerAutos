@@ -23,7 +23,7 @@ export const editFotos = async (id: number, fotos: Omit<Foto, 'id'>, clientKey: 
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify(fotos)
     })
@@ -51,7 +51,7 @@ export const deleteFotos = async (id: number, clientKey: string) => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       }
     })
 

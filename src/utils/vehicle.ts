@@ -45,7 +45,7 @@ export const editVehicle = async (id: number, vehicle: Omit<Vehiculo,'id'| 'clie
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify(vehicle)
     })

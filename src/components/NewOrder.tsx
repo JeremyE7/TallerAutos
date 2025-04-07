@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { Checkbox } from 'primereact/checkbox'
 import { AutoComplete } from 'primereact/autocomplete'
-import { FileUpload, FileUploadSelectEvent, ItemTemplateOptions } from 'primereact/fileupload'
+import { FileUpload } from 'primereact/fileupload'
 import { useClients } from '@/hooks/useClients'
 import { Cliente } from '@/app/types'
 export default function OrdenTrabajoModal ({ visible, onHide }) {
@@ -13,7 +13,6 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
   const [selectedClient, setSelectedClient] = useState<Cliente | null>(null) // Cliente seleccionado
   const [filteredClients, setFilteredClients] = useState<Cliente[]>([]) // Lista filtrada
   const [cedulaInput, setCedulaInput] = useState('') // Valor del input de cédula
-  const fileUploadRef = useRef<FileUpload>(null)
 
   // Filtrar clientes según la cédula ingresada
   const searchClients = (event) => {
@@ -84,7 +83,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
   const emptyTemplate = (text) => {
     return (
       <div className="flex align-items-center flex-column" onClick={() => {
-        const fileInput = document.querySelector('.p-fileupload input[type="file"]')
+        const fileInput = document.querySelector('.p-fileupload input[type="file"]') as HTMLInputElement
         if (fileInput) fileInput.click() // Solo hace click si el input existe
       }}>
         <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>

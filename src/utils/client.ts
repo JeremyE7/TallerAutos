@@ -36,12 +36,12 @@ export const getClients = async () => {
 
 
 export const editClient = async (id: number, client: Omit<Cliente,'id'>, clientKey: string) => {
-  try{    
+  try{
     const response = await fetch(`api/client/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify(client)
     })

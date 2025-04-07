@@ -32,7 +32,7 @@ export const editElementosIngreso = async (id: number, elementosIngreso: Element
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify(elementosIngreso)
     })

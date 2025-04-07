@@ -19,7 +19,7 @@ export const useOrders = () => {
 
 
   const printOrder = async (id: number) => {
-    return printOrderFunction(id, clientKey);
+    return printOrderFunction(id, clientKey)
   }
 
   const getAllOrders = async () => {
@@ -30,7 +30,7 @@ export const useOrders = () => {
 
   const saveEditedOrder = async (editedOrder: OrdenTrabajo) => {
     const editedOrderAux = await editOrder(editedOrder.id, editedOrder, clientKey)
-    if (!editedOrderAux) return    
+    if (!editedOrderAux) return
     updateOrder(editedOrder.id, editedOrder)
     resetFilteredOrders()
     return editedOrderAux
@@ -81,7 +81,7 @@ export const useOrders = () => {
     printOrder,
     getAllOrders,
     saveFotos,
-    deleteFoto,
+    deleteFoto
   }
 
 }

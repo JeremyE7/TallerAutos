@@ -8,7 +8,7 @@ import { withHeaderValidation } from '../../utils'
 
 
 // obtener una orden por su id de param
-export async function GET(req: Request, { params }) {
+export async function GET (req: Request, { params }) {
   try {
     const { id } = await params
     const orden = await db.select().from(OrdenTrabajo).where(eq(OrdenTrabajo.id, parseInt(id)))

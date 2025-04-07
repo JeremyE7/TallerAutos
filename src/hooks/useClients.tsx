@@ -21,7 +21,7 @@ export const useClients = () => {
 
   const saveEditedClient = async (client: Cliente) => {
     const {id, ...clientWithoutId} = client
-    
+
     const data = await editClient(id, clientWithoutId, clientKey)
     if(!data)return
     updateClient(id, client)

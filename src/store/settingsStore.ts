@@ -5,7 +5,7 @@ interface SettingsStoreProps{
     error: string | null
     setError: (error: string) => void
     clearMessages: () => void
-    clientKey: string 
+    clientKey: string
     getServerSettings: () => {key: string}
     setServerSettings: (key: string) => void
     success: string | null
@@ -18,23 +18,23 @@ export const settingsStore = create<SettingsStoreProps>((set) => ({
   clientKey: '',
   success: null,
   setSuccess: (success: string) => {
-    console.log('Setting success:', success);
-    set(() => ({ success, showSuccess: true }));
+    console.log('Setting success:', success)
+    set(() => ({ success, showSuccess: true }))
   },
   setError: (error: string) => {
-    console.log('Setting error:', error);
-    set(() => ({ error, showError: true }));
+    console.log('Setting error:', error)
+    set(() => ({ error, showError: true }))
   },
   clearMessages: () => {
-    console.log('Clearing error');
-    set(() => ({ error: null, success: null }));
+    console.log('Clearing error')
+    set(() => ({ error: null, success: null }))
   },
   getServerSettings: () => {
-    const key = string().parse(settingsStore.getState().clientKey);
-    return { key };
+    const key = string().parse(settingsStore.getState().clientKey)
+    return { key }
   },
   setServerSettings: (key: string) => {
-    console.log('Setting server settings:xd', { key });
-    set(() => ({ clientKey: key }));
-  },
-}));
+    console.log('Setting server settings:xd', { key })
+    set(() => ({ clientKey: key }))
+  }
+}))

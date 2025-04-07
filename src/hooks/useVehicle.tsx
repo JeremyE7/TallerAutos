@@ -27,6 +27,7 @@ export const useVehicle = () => {
 
   const saveEditedVehicle = (updatedVehicle: Vehiculo) => {
     const {id, cliente, ...vehicleWithoutId} = updatedVehicle
+    console.log(cliente)
     const data = editVehicle(id, vehicleWithoutId, clientKey)
     if(!data) return
     updateVehicle(id, updatedVehicle)

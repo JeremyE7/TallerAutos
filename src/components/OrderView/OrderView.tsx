@@ -9,7 +9,7 @@ import { FormaPago } from '../FormaPago'
 import { TextAreaShow } from '../TextAreaShow'
 import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { EditElementosIngreso } from '../EditModals/EditElementosIngreso'
 import { useOrders } from '@/hooks/useOrders'
@@ -39,7 +39,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
   const { saveEditedClient } = useClients()
   let toastMessage = ''
 
-  const {setSuccess, setError} = settingsStore()
+  const {setSuccess} = settingsStore()
 
   const { saveElementosIngreso } = useOrders()
   const { saveEditedVehicle } = useVehicle()

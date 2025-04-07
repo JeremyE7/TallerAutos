@@ -123,7 +123,7 @@ export const deleteOrderFoto = async (id: number, attributeToDelete: string, cli
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify({ attributeToDelete })
     })

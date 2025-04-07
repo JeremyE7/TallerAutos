@@ -1,4 +1,4 @@
-import { createCipheriv, createHash, randomBytes } from 'crypto';
+import { createCipheriv, createHash, randomBytes } from 'crypto'
 
 export const formatText = (text: string) => {
   return text
@@ -69,17 +69,17 @@ export function isValidCI (ci: string | number): boolean {
   return false
 }
 
-export function encryptText(text: string, password: string): string {
-  console.log(`Encrypting text: ${text} with password: ${password}`);
-  
-  // Derivar IV y clave de la contraseña
-  const iv = randomBytes(16); // Generamos un IV aleatorio de 16 bytes
-  const key = createHash('sha256').update(password).digest(); // Generamos la clave de 32 bytes
+export function encryptText (text: string, password: string): string {
+  console.log(`Encrypting text: ${text} with password: ${password}`)
 
-  const cipher = createCipheriv('aes-256-cbc', key, iv); // Crea el cifrador AES
-  let encrypted = cipher.update(text, 'utf8', 'hex'); // Encriptamos el texto
-  encrypted += cipher.final('hex'); // Finaliza el cifrado
+  // Derivar IV y clave de la contraseña
+  const iv = randomBytes(16) // Generamos un IV aleatorio de 16 bytes
+  const key = createHash('sha256').update(password).digest() // Generamos la clave de 32 bytes
+
+  const cipher = createCipheriv('aes-256-cbc', key, iv) // Crea el cifrador AES
+  let encrypted = cipher.update(text, 'utf8', 'hex') // Encriptamos el texto
+  encrypted += cipher.final('hex') // Finaliza el cifrado
 
   // Retornamos el texto encriptado, junto con el IV necesario para desencriptar
-  return iv.toString('hex') + ':' + encrypted; 
+  return iv.toString('hex') + ':' + encrypted
 }

@@ -7,7 +7,7 @@ import { withHeaderValidation } from '../utils'
 
 
 // GET: Obtener todas las órdenes
-export async function GET() {
+export async function GET () {
   try {
     const allOrders = await db.query.OrdenTrabajo.findMany({
       with: {

@@ -1,6 +1,6 @@
 import { deleteImage, uploadImage } from '@/app/api/utils'
 import { db } from '@/db'
-import { Fotos, OrdenTrabajo } from '@/db/schema'
+import { Fotos } from '@/db/schema'
 import { createApiResponse } from '@/lib/api'
 import { fotosUpdateSchema } from '@/utils/fotos'
 import { eq } from 'drizzle-orm'
@@ -11,10 +11,10 @@ export const PUT = withHeaderValidation(async (req: Request, {params}) => {
   try{
     const body = await req.json()
     const { id } = await params
-    console.log('ID:', id, 'Body:', body);
-    
+    console.log('ID:', id, 'Body:', body)
+
     const validatedBody = fotosUpdateSchema.safeParse(body)
-  
+
     if(!validatedBody.success){
       return NextResponse.json(
         createApiResponse(validatedBody.error.errors.at(-1)?.message ?? '', 400)
@@ -46,7 +46,7 @@ export const PUT = withHeaderValidation(async (req: Request, {params}) => {
         createApiResponse('Error al actualizar las fotos', 404)
       )
     }
-  
+
     return NextResponse.json(
       createApiResponse('Fotos actualizadas', 200, updatedFotos)
     )
@@ -69,7 +69,7 @@ export const DELETE = withHeaderValidation(async (req: Request, {params}) => {
     )
   }
   const {attributeToDelete} = body
-  console.log('ID:', id, 'Body:', body);
+  console.log('ID:', id, 'Body:', body)
 
   const deletedImage = await deleteImage(id, attributeToDelete)
 

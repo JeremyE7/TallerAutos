@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server'
 import { withHeaderValidation } from '../utils'
 
 export const GET = withHeaderValidation(async () => {  // Aquí envolvemos el handler GET
-  try {    
+  try {
     // Consultamos todos los clientes, incluyendo los vehiculos relacionados
     const allClients = await db.query.Cliente.findMany({
       with: {
@@ -31,7 +31,7 @@ export const GET = withHeaderValidation(async () => {  // Aquí envolvemos el ha
   }
 })
 
-export const POST = withHeaderValidation(async(request: Request) => {
+export const POST = withHeaderValidation(async (request: Request) => {
   try{
     if(!request.body){
       return NextResponse.json(

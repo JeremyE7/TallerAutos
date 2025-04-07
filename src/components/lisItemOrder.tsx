@@ -46,7 +46,7 @@ export const ListItemOrder = ({ order, confirmDelete, showModal, printOrder }: L
       <Dropdown value={selectedOption} onChange={(e) => {
         setSelectedOption(e.value.code)
       }} options={options} optionLabel="name"
-        placeholder="" className="hiddeInput w-1 block md:hidden mt-3.5" dropdownIcon='pi pi-ellipsis-v' onShow={() => setSelectedOption(null)} onHide={() => setSelectedOption(null)} />
+      placeholder="" className="hiddeInput w-1 block md:hidden mt-3.5" dropdownIcon='pi pi-ellipsis-v' onShow={() => setSelectedOption(null)} onHide={() => setSelectedOption(null)} />
     </div>
   )
 
