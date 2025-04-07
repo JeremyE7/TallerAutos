@@ -1,5 +1,6 @@
 import { OrdenTrabajo, Response } from '@/app/types'
 import { settingsStore } from '@/store/settingsStore'
+import { encryptText } from './general'
 
 const {setError} = settingsStore.getState()
 
@@ -34,12 +35,13 @@ export const getOrders = async () => {
   }
 }
 
-export const editOrder = async (id: number, order: OrdenTrabajo) => {
+export const editOrder = async (id: number, order: OrdenTrabajo, clientKey: string) => {
   try {
     const response = await fetch(`api/orden/${id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify(order)
     })
@@ -60,10 +62,14 @@ export const editOrder = async (id: number, order: OrdenTrabajo) => {
   }
 }
 
-export const deleteOrder = async (id: number) => {
+export const deleteOrder = async (id: number, clientKey: string) => {
   try {
     const response = await fetch(`api/orden/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
+      }
     })
 
     const data: Response<OrdenTrabajo> = await response.json()
@@ -83,12 +89,13 @@ export const deleteOrder = async (id: number) => {
 
 }
 
-export const printOrder = async (id: number) => {
+export const printOrder = async (id: number, clientKey: string) => {
   try {
     const response = await fetch(`api/orden/document/${id}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/pdf'
+        'Content-Type': 'application/pdf',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       }
     })
 
@@ -110,12 +117,13 @@ export const printOrder = async (id: number) => {
     console.error('Error generating PDF:', error)
   }
 }
-export const deleteOrderFoto = async (id: number, attributeToDelete: string) => {
+export const deleteOrderFoto = async (id: number, attributeToDelete: string, clientKey: string) => {
   try {
     const response = await fetch(`api/orden/${id}/fotos`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
       },
       body: JSON.stringify({ attributeToDelete })
     })

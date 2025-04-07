@@ -70,6 +70,8 @@ export function isValidCI (ci: string | number): boolean {
 }
 
 export function encryptText(text: string, password: string): string {
+  console.log(`Encrypting text: ${text} with password: ${password}`);
+  
   // Derivar IV y clave de la contraseña
   const iv = randomBytes(16); // Generamos un IV aleatorio de 16 bytes
   const key = createHash('sha256').update(password).digest(); // Generamos la clave de 32 bytes

@@ -1,5 +1,5 @@
 import { ElementosIngreso, Response } from '@/app/types'
-import { formatText } from './general'
+import { encryptText, formatText } from './general'
 import { settingsStore } from '@/store/settingsStore'
 
 export interface ElementoIngresoSelectItem {
@@ -26,12 +26,13 @@ export const parseElementosIngreso = (elementosIngreso: ElementosIngreso | null)
     .filter((item): item is ElementoIngresoSelectItem => item !== null)
 }
 
-export const editElementosIngreso = async (id: number, elementosIngreso: ElementosIngreso) => {
+export const editElementosIngreso = async (id: number, elementosIngreso: ElementosIngreso, clientKey: string) => {
   try{
     const response = await fetch(`api/elementos_ingreso/${id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
       },
       body: JSON.stringify(elementosIngreso)
     })

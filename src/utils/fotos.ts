@@ -1,6 +1,7 @@
 import { Foto, Response } from '@/app/types'
 import { settingsStore } from '@/store/settingsStore'
 import { z } from 'zod'
+import { encryptText } from './general'
 
 const {setError} = settingsStore.getState()
 
@@ -15,13 +16,14 @@ export const fotosSchema = z.object({
 
 export const fotosUpdateSchema= fotosSchema.partial().strict()
 
-export const editFotos = async (id: number, fotos: Omit<Foto, 'id'>) => {
+export const editFotos = async (id: number, fotos: Omit<Foto, 'id'>, clientKey: string) => {
 
   try{
     const response = await fetch(`api/orden/${id}/fotos`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
       },
       body: JSON.stringify(fotos)
     })
@@ -43,10 +45,14 @@ export const editFotos = async (id: number, fotos: Omit<Foto, 'id'>) => {
 
 }
 
-export const deleteFotos = async (id: number) => {
+export const deleteFotos = async (id: number, clientKey: string) => {
   try{
     const response = await fetch(`api/orden/${id}/fotos`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
+      }
     })
 
     const data: Response<Foto> = await response.json()

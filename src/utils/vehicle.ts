@@ -1,6 +1,7 @@
 import { Response, Vehiculo } from '@/app/types'
 import { settingsStore } from '@/store/settingsStore'
 import {z} from 'zod'
+import { encryptText } from './general'
 
 
 const {setError} = settingsStore.getState()
@@ -38,12 +39,13 @@ export const getVehicles = async () => {
   }
 }
 
-export const editVehicle = async (id: number, vehicle: Omit<Vehiculo,'id'| 'cliente'>) => {
+export const editVehicle = async (id: number, vehicle: Omit<Vehiculo,'id'| 'cliente'>, clientKey: string) => {
   try{
     const response = await fetch(`api/vehiculo/${id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD'),
       },
       body: JSON.stringify(vehicle)
     })
