@@ -4,6 +4,7 @@ import { createApiResponse } from '@/lib/api'
 import { vehicleUpdateSchema } from '@/utils/vehicle'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
+import { withHeaderValidation } from '../../utils'
 
 export const GET = async (req: Request, { params }) => {
   try {
@@ -26,7 +27,7 @@ export const GET = async (req: Request, { params }) => {
   }
 }
 
-export const PUT = async (req: Request, { params }) => {
+export const PUT = withHeaderValidation(async (req: Request, { params }) => {
   try {
     const { id } = await params
     const body = await req.json()
@@ -46,9 +47,9 @@ export const PUT = async (req: Request, { params }) => {
       createApiResponse('Internal server error. Please try again later.', 500)
     )
   }
-}
+})
 
-export const DELETE = async (req: Request, { params }) => {
+export const DELETE = withHeaderValidation(async (req: Request, { params }) => {
   try {
     const { id } = await params
     const vehicle = await db.delete(Vehiculo).where(eq(Vehiculo.id, parseInt(id)))
@@ -61,4 +62,4 @@ export const DELETE = async (req: Request, { params }) => {
       createApiResponse('Internal server error. Please try again later.', 500)
     )
   }
-}
+})

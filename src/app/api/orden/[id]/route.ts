@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import { createApiResponse } from '@/lib/api'
 import { OrdenTrabajo } from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { withHeaderValidation } from '../../utils'
+
 
 
 // obtener una orden por su id de param
@@ -27,7 +29,7 @@ export async function GET(req: Request, { params }) {
 }
 
 // Actualizar una orden por su id de param
-export async function PUT(req: Request, { params }) {
+export const PUT = withHeaderValidation(async (req: Request, { params }) => {
   try {
     const { id } = await params
     const body = await req.json()
@@ -41,10 +43,10 @@ export async function PUT(req: Request, { params }) {
       createApiResponse('Orden no encontrada', 500)
     )
   }
-}
+})
 
 // Eliminar una orden por su id de param
-export async function DELETE(req: Request, { params }) {
+export const DELETE = withHeaderValidation(async (req: Request, { params }) => {
   try {
     const { id } = await params
     const orden = await db.delete(OrdenTrabajo).where(eq(OrdenTrabajo.id, parseInt(id)))
@@ -57,4 +59,4 @@ export async function DELETE(req: Request, { params }) {
       createApiResponse('Orden no encontrada', 500)
     )
   }
-}
+})

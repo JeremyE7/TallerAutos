@@ -5,8 +5,9 @@ import { createApiResponse } from '@/lib/api'
 import { fotosUpdateSchema } from '@/utils/fotos'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
+import { withHeaderValidation } from '../../../utils'
 
-export const PUT = async (req: Request, {params}) => {
+export const PUT = withHeaderValidation(async (req: Request, {params}) => {
   try{
     const body = await req.json()
     const { id } = await params
@@ -56,9 +57,9 @@ export const PUT = async (req: Request, {params}) => {
       createApiResponse('Error updating order', 500)
     )
   }
-}
+})
 
-export const DELETE = async (req: Request, {params}) => {
+export const DELETE = withHeaderValidation(async (req: Request, {params}) => {
   const { id } = await params
   const body = await req.json()
 
@@ -88,6 +89,6 @@ export const DELETE = async (req: Request, {params}) => {
   return NextResponse.json(
     createApiResponse('Imagen eliminada', 200, deletedFotos)
   )
-}
+})
 
 

@@ -4,6 +4,7 @@ import { createApiResponse } from '@/lib/api'
 import { vehicleSchema } from '@/utils/vehicle'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
+import { withHeaderValidation } from '../utils'
 
 export const GET = async () => {
   try{
@@ -31,34 +32,34 @@ export const GET = async () => {
   }
 }
 
-export const POST = async (request: Request) => {
-  try{
-    if(!request.body){
+export const POST = withHeaderValidation(async (request: Request) => {
+  try {
+    if (!request.body) {
       return NextResponse.json(
         createApiResponse('Missing request body', 400)
       )
     }
     const body = await request.json()
     const validateBody = vehicleSchema.safeParse(body)
-    if(!validateBody.success){
+    if (!validateBody.success) {
       return NextResponse.json(
         createApiResponse(validateBody.error.errors.at(-1)?.message ?? '', 400)
       )
     }
 
-    //Verificar si el cliente existe
+    // Verificar si el cliente existe
     const existingUser = await db.select().from(Cliente).where(eq(Cliente.id, validateBody.data.cliente_id))
 
-    if(!existingUser || existingUser.length === 0){
+    if (!existingUser || existingUser.length === 0) {
       return NextResponse.json(
         createApiResponse('Client not found', 404)
       )
     }
 
-    //Verificar que no haya una placa duplicada
+    // Verificar que no haya una placa duplicada
     const existingVehicle = await db.select().from(Vehiculo).where(eq(Vehiculo.placa, validateBody.data.placa))
 
-    if(existingVehicle && existingVehicle.length > 0){
+    if (existingVehicle && existingVehicle.length > 0) {
       return NextResponse.json(
         createApiResponse('Vehicle with that plate already exists', 400)
       )
@@ -69,13 +70,10 @@ export const POST = async (request: Request) => {
     return NextResponse.json(
       createApiResponse('Vehicle created', 201, vehicle)
     )
-
-
-  }
-  catch(error){
+  } catch (error) {
     console.error('Error fetching vehicles:', error)
     return NextResponse.json(
       createApiResponse('Internal server error. Please try again later.', 500)
     )
   }
-}
+})
