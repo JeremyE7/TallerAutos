@@ -23,20 +23,20 @@ export const getClients = async () => {
     const data: Response<Cliente[]> = await response.json()
     if(data.code !== 200){
       console.error('Error fetching clients:', data.message)
+      setError(data.message)
       return []
     }
     console.info(data.message)
     return data.data
   } catch(error){
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error fetching clients:', error)
   }
 }
 
 
 export const editClient = async (id: number, client: Omit<Cliente,'id'>, clientKey: string) => {
-  try{
-    console.log(encryptText(clientKey, 'vinicarJOSEJEREMYXD'));
-    
+  try{    
     const response = await fetch(`api/client/${id}`, {
       method: 'PUT',
       headers: {

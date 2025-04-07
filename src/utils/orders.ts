@@ -1,4 +1,7 @@
 import { OrdenTrabajo, Response } from '@/app/types'
+import { settingsStore } from '@/store/settingsStore'
+
+const {setError} = settingsStore.getState()
 
 export const calcTotal = (order: OrdenTrabajo) => {
   //TOTAL = (Total M/O + Total REP) × (IVA)
@@ -18,6 +21,7 @@ export const getOrders = async () => {
     const data: Response<OrdenTrabajo[]> = await response.json()
     if (data.code !== 200) {
       console.error('Error fetching orders:', data.message)
+      setError(data.message)
       return []
     }
 
@@ -25,6 +29,7 @@ export const getOrders = async () => {
     return data.data
 
   } catch (error) {
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error fetching orders:', error)
   }
 }
@@ -41,6 +46,7 @@ export const editOrder = async (id: number, order: OrdenTrabajo) => {
 
     const data: Response<OrdenTrabajo> = await response.json()
     if (data.code !== 200) {
+      setError(data.message)
       console.error('Error updating order:', data.message)
       return
     }
@@ -49,6 +55,7 @@ export const editOrder = async (id: number, order: OrdenTrabajo) => {
     return data.data
 
   } catch (error) {
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error updating order:', error)
   }
 }
@@ -61,6 +68,7 @@ export const deleteOrder = async (id: number) => {
 
     const data: Response<OrdenTrabajo> = await response.json()
     if (data.code !== 200) {
+      setError(data.message)
       console.error('Error deleting order:', data.message)
       return
     }
@@ -70,6 +78,7 @@ export const deleteOrder = async (id: number) => {
 
   } catch (error) {
     console.error('Error deleting order:', error)
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
   }
 
 }
@@ -84,6 +93,7 @@ export const printOrder = async (id: number) => {
     })
 
     if (!response.ok) {
+      setError('Ocurrio un error al generar el PDF, por favor intente de nuevo más tarde.')
       throw new Error('Error generating PDF')
     }
 
@@ -96,6 +106,7 @@ export const printOrder = async (id: number) => {
     a.click()
     document.body.removeChild(a)
   } catch (error) {
+    setError('Ocurrio un error al generar el PDF, por favor intente de nuevo más tarde.')
     console.error('Error generating PDF:', error)
   }
 }
@@ -112,6 +123,7 @@ export const deleteOrderFoto = async (id: number, attributeToDelete: string) => 
     const data: Response<OrdenTrabajo> = await response.json()
     if (data.code !== 200) {
       console.error('Error deleting order foto:', data.message)
+      setError(data.message)
       return
     }
 
@@ -119,6 +131,7 @@ export const deleteOrderFoto = async (id: number, attributeToDelete: string) => 
     return data.data
 
   } catch (error) {
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error deleting order foto:', error)
   }
 }

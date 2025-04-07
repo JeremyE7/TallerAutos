@@ -27,11 +27,13 @@ export const getVehicles = async () => {
     const data: Response<Vehiculo[]> = await response.json()
     if(data.code !== 200){
       console.error('Error fetching vehicles:', data.message)
+      setError(data.message)
       return []
     }
     console.info(data.message)
     return data.data
   } catch(error){
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error fetching vehicles:', error)
   }
 }
