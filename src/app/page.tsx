@@ -53,7 +53,7 @@ export default function Home() {
   const { filteredOrders } = useOrders()
   const { clients } = useClients()
   const { vehicles } = useVehicle()
-  const { error, clearError } = settingsStore()
+  const { error, clearMessages } = settingsStore()
   const toastRef = useRef<Toast>(null)
 
 
@@ -98,7 +98,7 @@ export default function Home() {
               visible={modalOpen}
               onHide={() => setModalOpen(false)}
             />
-            <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' onHide={clearError} onRemove={clearError} baseZIndex={999999999999999} />
+            <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' onHide={clearMessages} onRemove={clearMessages} baseZIndex={999999999999999} />
           </>
         )
       }
