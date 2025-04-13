@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { Checkbox, CheckboxChangeEvent } from 'primereact/checkbox'
 import { AutoComplete } from 'primereact/autocomplete'
-import { FileUpload, FileUploadSelectEvent, ItemTemplateOptions } from 'primereact/fileupload'
+import { FileUpload } from 'primereact/fileupload'
 import { useClients } from '@/hooks/useClients'
 import { useVehicle } from '@/hooks/useVehicle'
 import { Cliente, EstadosOrden, MetodoPago, OrdenTrabajo, Vehiculo } from '@/app/types'
@@ -234,7 +234,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
   const emptyTemplate = (text) => {
     return (
       <div className="flex align-items-center flex-column" onClick={() => {
-        const fileInput = document.querySelector('.p-fileupload input[type="file"]')
+        const fileInput = document.querySelector('.p-fileupload input[type="file"]') as HTMLInputElement
         if (fileInput) fileInput.click() // Solo hace click si el input existe
       }}>
         <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>

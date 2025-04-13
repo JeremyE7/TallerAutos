@@ -3,11 +3,11 @@ import { NextResponse } from 'next/server'
 import { db } from '@/db'
 import { createApiResponse } from '@/lib/api'
 import { Cliente, ElementosIngreso, Fotos, OrdenTrabajo, Vehiculo } from '@/db/schema'
-// Configurar Cloudinary
+import { withHeaderValidation } from '../utils'
 
 
 // GET: Obtener todas las órdenes
-export async function GET() {
+export async function GET () {
   try {
     const allOrders = await db.query.OrdenTrabajo.findMany({
       with: {
@@ -39,7 +39,7 @@ export async function GET() {
 }
 
 // POST: Crear una nueva orden
-export async function POST(request: Request) {
+export const POST = withHeaderValidation(async (request: Request) => {
   try {
     const body = await request.json()
 
@@ -136,4 +136,4 @@ export async function POST(request: Request) {
     console.error('Error al crear la orden:', error)
     return NextResponse.json(createApiResponse('Error interno del servidor', 500))
   }
-}
+})

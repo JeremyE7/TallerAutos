@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { createApiResponse } from '@/lib/api'
 import { ElementosIngreso } from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { withHeaderValidation } from '../../utils'
 
 
 // obtener una orden por su id de param
@@ -27,7 +28,7 @@ export async function GET (req: Request, { params }) {
 }
 
 // Actualizar una orden por su id de param
-export async function PUT (req: Request, { params }) {
+export const PUT = withHeaderValidation(async (req: Request, { params }) => {
   try {
     const { id } = await params
     const body = await req.json()
@@ -36,15 +37,15 @@ export async function PUT (req: Request, { params }) {
       createApiResponse('Elementos de Ingreso actualizados', 200, orden)
     )
   } catch (error) {
-    console.error('Error fetching order:', error)
+    console.error('Error updating order:', error)
     return NextResponse.json(
       createApiResponse('Elementos de Ingreso no encontrados', 500)
     )
   }
-}
+})
 
 // Eliminar una orden por su id de param
-export async function DELETE (req: Request, { params }) {
+export const DELETE = withHeaderValidation(async (req: Request, { params }) => {
   try {
     const { id } = await params
     const orden = await db.delete(ElementosIngreso).where(eq(ElementosIngreso.id, parseInt(id)))
@@ -52,9 +53,9 @@ export async function DELETE (req: Request, { params }) {
       createApiResponse('Elementos de Ingreso ' + id + ' eliminados', 200, orden)
     )
   } catch (error) {
-    console.error('Error fetching order:', error)
+    console.error('Error deleting order:', error)
     return NextResponse.json(
       createApiResponse('Orden no encontrada', 500)
     )
   }
-}
+})

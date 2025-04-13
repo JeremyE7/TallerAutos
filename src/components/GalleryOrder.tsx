@@ -12,7 +12,7 @@ interface PhotoGalleryProps {
   alt?: string
 }
 
-export default function GalleryyOrder({ orderPhotos }: GalleryOrderProps) {
+export default function GalleryyOrder ({ orderPhotos }: GalleryOrderProps) {
 
   const [images, setImages] = useState<PhotoGalleryProps[]>([])
 

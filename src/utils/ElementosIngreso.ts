@@ -1,11 +1,15 @@
 import { ElementosIngreso, Response } from '@/app/types'
-import { formatText } from './general'
+import { encryptText, formatText } from './general'
+import { settingsStore } from '@/store/settingsStore'
 
 export interface ElementoIngresoSelectItem {
     name: string
     code: string
     label: string
 }
+
+const {setError} = settingsStore.getState()
+
 
 export const parseElementosIngreso = (elementosIngreso: ElementosIngreso | null): ElementoIngresoSelectItem[] => {
   if(!elementosIngreso) return []
@@ -22,12 +26,13 @@ export const parseElementosIngreso = (elementosIngreso: ElementosIngreso | null)
     .filter((item): item is ElementoIngresoSelectItem => item !== null)
 }
 
-export const editElementosIngreso = async (id: number, elementosIngreso: ElementosIngreso) => {
+export const editElementosIngreso = async (id: number, elementosIngreso: ElementosIngreso, clientKey: string) => {
   try{
     const response = await fetch(`api/elementos_ingreso/${id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify(elementosIngreso)
     })
@@ -35,6 +40,7 @@ export const editElementosIngreso = async (id: number, elementosIngreso: Element
     const data: Response<ElementosIngreso> = await response.json()
     if(data.code !== 200){
       console.error('Error updating elementos de ingreso:', data.message)
+      setError(data.message)
       return
     }
 
@@ -42,6 +48,7 @@ export const editElementosIngreso = async (id: number, elementosIngreso: Element
     return data.data
 
   }catch(error){
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error updating elementos de ingreso:', error)
   }
 }

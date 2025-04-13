@@ -4,10 +4,10 @@ import { Button } from 'primereact/button'
 import { FileUpload, FileUploadHandlerEvent, FileUploadHeaderTemplateOptions, FileUploadSelectEvent, ItemTemplateOptions } from 'primereact/fileupload'
 import { ProgressBar } from 'primereact/progressbar'
 import { Tag } from 'primereact/tag'
-import { Toast } from 'primereact/toast'
 import { Tooltip } from 'primereact/tooltip'
 import { useEffect, useRef, useState } from 'react'
 import { ImageSelector } from './ImagesSelector'
+import { settingsStore } from '@/store/settingsStore'
 
 interface UploaderImagesProps {
   fotos: Foto,
@@ -15,12 +15,12 @@ interface UploaderImagesProps {
 }
 
 export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderToEdit }) => {
-  const toastRef = useRef<Toast>(null)
   const [totalSize, setTotalSize] = useState(0)
   const fileUploadRef = useRef<FileUpload>(null)
   const { saveFotos } = useOrders()
   const [isLoading, setIsLoading] = useState(false)
   const [numberOfImages, setNumberOfImages] = useState(0)
+  const {setError, setSuccess} = settingsStore()
 
   useEffect(() => {
     //Recuperar del objeto fotos el numero de atributos que no estan vacios
@@ -47,11 +47,11 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
 
   const onTemplateUpload = (event: FileUploadHandlerEvent) => {
     if (totalSize > 6000000 - (numberOfImages * 1000000)) {
-      toastRef.current?.show({ severity: 'warn', summary: 'Error', detail: ('El tamaño máximo es de ' + (6000000 - (numberOfImages * 1000000)) + ' MB'), life: 1000 })
+      setError('El tamaño máximo es de ' + (6000000 - (numberOfImages * 1000000)) + ' MB')
       return
     }
     if (event.files.length > (6 - numberOfImages)) {
-      toastRef.current?.show({ severity: 'warn', summary: 'Error', detail: ('El máximo de imagenes que puedes subir es de ' + (6 - numberOfImages)), life: 1000 })
+      setError('El máximo de imagenes que puedes subir es de ' + (6 - numberOfImages))
       return
     }
 
@@ -78,11 +78,11 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
       if (setOrderToEdit) {
         setOrderToEdit({ fotos: updatedFotos })
       }
-      toastRef.current?.show({ severity: 'info', summary: 'Success', detail: 'Fotos Editadas con exito', life: 3000 })
+      setSuccess('Fotos Editadas con exito')
       setIsLoading(false)
     }).catch((error) => {
       console.error('Error uploading images:', error)
-      toastRef.current?.show({ severity: 'error', summary: 'Error', detail: 'Error al subir las imagenes', life: 1000 })
+      setError('Error al subir las imagenes')
       setIsLoading(false)
     })
   }
@@ -154,7 +154,6 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
 
   return (
     <div className='px-10 flex flex-col md:flex-row gap-5 justify-center '>
-      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' />
       <Tooltip target=".custom-choose-btn" content="Escoger imagenes" position="bottom" />
       <Tooltip target=".custom-upload-btn" content="Subir" position="bottom" />
       <Tooltip target=".custom-cancel-btn" content="Limpiar" position="bottom" />
@@ -162,7 +161,7 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
         uploadHandler={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
         headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
         chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} contentClassName='h-70 overflow-y-scroll' />
-      <ImageSelector toastRef={toastRef} setOrderToEdit={setOrderToEdit} fotos={fotos} />
+      <ImageSelector setOrderToEdit={setOrderToEdit} fotos={fotos} />
     </div>
   )
 }

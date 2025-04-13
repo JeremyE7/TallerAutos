@@ -1,4 +1,8 @@
 import { OrdenTrabajo, Response } from '@/app/types'
+import { settingsStore } from '@/store/settingsStore'
+import { encryptText } from './general'
+
+const {setError} = settingsStore.getState()
 
 export const saveOrder = async (order: OrdenTrabajo) => {
   try {
@@ -42,6 +46,7 @@ export const getOrders = async () => {
     const data: Response<OrdenTrabajo[]> = await response.json()
     if (data.code !== 200) {
       console.error('Error fetching orders:', data.message)
+      setError(data.message)
       return []
     }
 
@@ -49,22 +54,25 @@ export const getOrders = async () => {
     return data.data
 
   } catch (error) {
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error fetching orders:', error)
   }
 }
 
-export const editOrder = async (id: number, order: OrdenTrabajo) => {
+export const editOrder = async (id: number, order: OrdenTrabajo, clientKey: string) => {
   try {
     const response = await fetch(`api/orden/${id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify(order)
     })
 
     const data: Response<OrdenTrabajo> = await response.json()
     if (data.code !== 200) {
+      setError(data.message)
       console.error('Error updating order:', data.message)
       return
     }
@@ -73,18 +81,24 @@ export const editOrder = async (id: number, order: OrdenTrabajo) => {
     return data.data
 
   } catch (error) {
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error updating order:', error)
   }
 }
 
-export const deleteOrder = async (id: number) => {
+export const deleteOrder = async (id: number, clientKey: string) => {
   try {
     const response = await fetch(`api/orden/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
+      }
     })
 
     const data: Response<OrdenTrabajo> = await response.json()
     if (data.code !== 200) {
+      setError(data.message)
       console.error('Error deleting order:', data.message)
       return
     }
@@ -94,20 +108,23 @@ export const deleteOrder = async (id: number) => {
 
   } catch (error) {
     console.error('Error deleting order:', error)
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
   }
 
 }
 
-export const printOrder = async (id: number) => {
+export const printOrder = async (id: number, clientKey: string) => {
   try {
     const response = await fetch(`api/orden/document/${id}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/pdf'
+        'Content-Type': 'application/pdf',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       }
     })
 
     if (!response.ok) {
+      setError('Ocurrio un error al generar el PDF, por favor intente de nuevo más tarde.')
       throw new Error('Error generating PDF')
     }
 
@@ -120,15 +137,17 @@ export const printOrder = async (id: number) => {
     a.click()
     document.body.removeChild(a)
   } catch (error) {
+    setError('Ocurrio un error al generar el PDF, por favor intente de nuevo más tarde.')
     console.error('Error generating PDF:', error)
   }
 }
-export const deleteOrderFoto = async (id: number, attributeToDelete: string) => {
+export const deleteOrderFoto = async (id: number, attributeToDelete: string, clientKey: string) => {
   try {
     const response = await fetch(`api/orden/${id}/fotos`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify({ attributeToDelete })
     })
@@ -136,6 +155,7 @@ export const deleteOrderFoto = async (id: number, attributeToDelete: string) => 
     const data: Response<OrdenTrabajo> = await response.json()
     if (data.code !== 200) {
       console.error('Error deleting order foto:', data.message)
+      setError(data.message)
       return
     }
 
@@ -143,6 +163,7 @@ export const deleteOrderFoto = async (id: number, attributeToDelete: string) => 
     return data.data
 
   } catch (error) {
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error deleting order foto:', error)
   }
 }

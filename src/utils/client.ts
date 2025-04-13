@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isValidCI } from './general'
+import { encryptText, isValidCI } from './general'
 import { Cliente, Response } from '@/app/types'
 import { settingsStore } from '@/store/settingsStore'
 
@@ -23,22 +23,25 @@ export const getClients = async () => {
     const data: Response<Cliente[]> = await response.json()
     if(data.code !== 200){
       console.error('Error fetching clients:', data.message)
+      setError(data.message)
       return []
     }
     console.info(data.message)
     return data.data
   } catch(error){
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error fetching clients:', error)
   }
 }
 
 
-export const editClient = async (id: number, client: Omit<Cliente,'id'>) => {
+export const editClient = async (id: number, client: Omit<Cliente,'id'>, clientKey: string) => {
   try{
     const response = await fetch(`api/client/${id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify(client)
     })

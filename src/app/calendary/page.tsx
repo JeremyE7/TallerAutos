@@ -7,11 +7,9 @@ import { useEffect, useState } from 'react'
 import { OrdenTrabajo } from '../types'
 import { Tag } from 'primereact/tag'
 import { Button } from 'primereact/button'
-import { OrderView } from '@/components/OrderView/OrderView'
-import { Dialog } from 'primereact/dialog'
 import { DialogOrder } from '@/components/OrderView/DialogOrder'
 
-export default function Calendary() {
+export default function Calendary () {
 
   const [date, setDate] = useState<Nullable<Date>>()
   const [isLoading, setIsLoading] = useState(true)
@@ -99,7 +97,7 @@ export default function Calendary() {
                 <h2 className='text-yellow-400 mb-4 flex  justify-center items-center gap-5'>
                   Fechas de Entrega
                   {dueDates !== ordersToShow && <Button icon={'pi pi-filter-slash'} severity='warning' onClick={() => {
-                    setOrdersToShow(dueDates) 
+                    setOrdersToShow(dueDates)
                     setDate(null)
                   }}/>}
                 </h2>

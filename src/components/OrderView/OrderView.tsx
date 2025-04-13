@@ -9,9 +9,8 @@ import { FormaPago } from '../FormaPago'
 import { TextAreaShow } from '../TextAreaShow'
 import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Dialog } from 'primereact/dialog'
-import { Toast } from 'primereact/toast'
 import { EditElementosIngreso } from '../EditModals/EditElementosIngreso'
 import { useOrders } from '@/hooks/useOrders'
 import { EditClient } from '../EditModals/EditClient'
@@ -21,6 +20,7 @@ import { useVehicle } from '@/hooks/useVehicle'
 import { Calendar } from 'primereact/calendar'
 import { calcTotal } from '@/utils/orders'
 import { EditFotos } from '../EditModals/EditFotos'
+import { settingsStore } from '@/store/settingsStore'
 
 interface OrderViewProps {
   order: OrdenTrabajo | null,
@@ -37,8 +37,9 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
   const [orderExtraValuesToEdit, setOrderExtraValuesToEdit] = useState<ModalProps | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const { saveEditedClient } = useClients()
-  const toastRef = useRef<Toast>(null)
   let toastMessage = ''
+
+  const {setSuccess} = settingsStore()
 
   const { saveElementosIngreso } = useOrders()
   const { saveEditedVehicle } = useVehicle()
@@ -201,7 +202,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
     }
 
     if (succesMessage) {
-      toastRef.current?.show({ severity: 'success', summary: 'Acción completada', detail: toastMessage, life: 1000 })
+      setSuccess(toastMessage)
       setOrderExtraValuesToEdit(null)
     } else {
       if (order) {
@@ -210,7 +211,6 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
     }
 
     setIsLoading(false)
-    setOrderExtraValuesToEdit(null)
     setEdit(false)
   }
 
@@ -323,7 +323,6 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
           </div>
         </section>
       </article>
-      <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' baseZIndex={999999999999999} />
     </>
 
   )

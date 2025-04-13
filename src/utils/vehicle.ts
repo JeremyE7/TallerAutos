@@ -1,6 +1,7 @@
 import { Response, Vehiculo } from '@/app/types'
 import { settingsStore } from '@/store/settingsStore'
 import {z} from 'zod'
+import { encryptText } from './general'
 
 
 const {setError} = settingsStore.getState()
@@ -27,21 +28,24 @@ export const getVehicles = async () => {
     const data: Response<Vehiculo[]> = await response.json()
     if(data.code !== 200){
       console.error('Error fetching vehicles:', data.message)
+      setError(data.message)
       return []
     }
     console.info(data.message)
     return data.data
   } catch(error){
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error fetching vehicles:', error)
   }
 }
 
-export const editVehicle = async (id: number, vehicle: Omit<Vehiculo,'id'| 'cliente'>) => {
+export const editVehicle = async (id: number, vehicle: Omit<Vehiculo,'id'| 'cliente'>, clientKey: string) => {
   try{
     const response = await fetch(`api/vehiculo/${id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
       body: JSON.stringify(vehicle)
     })
