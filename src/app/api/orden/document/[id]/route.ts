@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm'
 import path from 'path'
 import fs from 'fs'
 import { withHeaderValidation } from '../../../utils'
-import QRCode from "qrcode";
+import QRCode from 'qrcode'
 export const GET = withHeaderValidation(
   async (req: Request, { params }: { params: { id: string } }) => {
     try {
@@ -28,34 +28,34 @@ export const GET = withHeaderValidation(
       const cliente = await db.select().from(Cliente).where(eq(Cliente.id, vehiculo.cliente_id)).get()
 
       // 2. Renderizar plantilla
-      const imagePath = path.join(process.cwd(), 'src', 'lib', 'templates', 'encabezado.png');
-      const imageBase64 = fs.readFileSync(imagePath, 'base64');
+      const imagePath = path.join(process.cwd(), 'src', 'lib', 'templates', 'encabezado.png')
+      const imageBase64 = fs.readFileSync(imagePath, 'base64')
 
       // QR
 
 
-      const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-      const qrData = `${baseUrl}/?id=${orden.id}`;
+      const baseUrl = process.env.BASE_URL || 'http://localhost:3000'
+      const qrData = `${baseUrl}/?id=${orden.id}`
 
-      let QRbase64 = await new Promise((resolve, reject) => {
+      const QRbase64 = await new Promise((resolve, reject) => {
         QRCode.toDataURL(qrData, function (err, code) {
           if (err) {
-            reject(reject);
-            return;
+            reject(reject)
+            return
           }
-          resolve(code);
-        });
-      });
+          resolve(code)
+        })
+      })
 
-      console.log(QRbase64);
+      console.log(QRbase64)
       const html = renderTemplate('orden-', {
         orden,
         vehiculo,
         elementosIngreso,
         cliente,
         headerImage: `data:image/png;base64,${imageBase64}`,
-        qrImage: QRbase64,
-      });
+        qrImage: QRbase64
+      })
 
       // 3. Generar PDF
       const pdfBuffer = await generatePDFFromHTML(html)
