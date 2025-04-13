@@ -1,21 +1,19 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
-import { Checkbox, CheckboxChangeEvent } from 'primereact/checkbox'
+import { Checkbox } from 'primereact/checkbox'
 import { AutoComplete } from 'primereact/autocomplete'
 import { FileUpload } from 'primereact/fileupload'
 import { useClients } from '@/hooks/useClients'
 import { useVehicle } from '@/hooks/useVehicle'
 import { Cliente, EstadosOrden, MetodoPago, OrdenTrabajo, Vehiculo } from '@/app/types'
-import { addLocale } from 'primereact/api';
+import { addLocale } from 'primereact/api'
 import { Button } from 'primereact/button'
-import { FormaPago } from './FormaPago'
-export default function OrdenTrabajoModal({ visible, onHide }) {
+export default function OrdenTrabajoModal ({ visible, onHide }) {
   const { clients } = useClients()
   const { vehicles } = useVehicle()
-  const fileUploadRef = useRef(null) // Referencia al componente FileUpload
   const [selectedClient, setSelectedClient] = useState<Cliente | null>(null) // Cliente seleccionado
   const [filteredClients, setFilteredClients] = useState<Cliente[]>([]) // Lista filtrada
   const [cedulaInput, setCedulaInput] = useState('') // Valor del input de cédula
@@ -23,28 +21,28 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
   const [filteredVehicles, setFilteredVehicles] = useState<Vehiculo[]>([]) // Lista filtrada de vehículos
   const [placaInput, setPlacaInput] = useState('') // Valor del input de placa
   // Filtrar clientes según la cédula ingresada
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: any } }) => {
-    if ("target" in e) { // Verifica si el evento tiene target (inputs y checkboxes)
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: unknown } }) => {
+    if ('target' in e) { // Verifica si el evento tiene target (inputs y checkboxes)
       console.log('Input change:', e)
-      const { name, value, type, checked } = e.target as HTMLInputElement;
+      const { name, value, type, checked } = e.target as HTMLInputElement
 
       setOrder(prev => ({
         ...prev,
         vehiculo: {
           ...prev.vehiculo,
-          [name]: type === "checkbox" ? checked : value,
+          [name]: type === 'checkbox' ? checked : value,
           cliente: {
             ...prev.vehiculo.cliente,
-            [name]: type === "checkbox" ? checked : value
-          },
+            [name]: type === 'checkbox' ? checked : value
+          }
         },
         elementosIngreso: {
           ...prev.elementosIngreso,
-          [name]: type === "checkbox" ? checked : value
+          [name]: type === 'checkbox' ? checked : value
         }
-      }));
+      }))
     }
-  };
+  }
 
 
 
@@ -57,7 +55,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
     monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
     today: 'Hoy',
     clear: 'Limpiar'
-  });
+  })
   const [order, setOrder] = useState<OrdenTrabajo>({
     id: 0,
     fechaIngreso: new Date(),
@@ -120,7 +118,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
       interior: ''
     },
     estado: EstadosOrden.PENDIENTE
-  });
+  })
 
   const dateChangeHandler = (e) => {
     console.log('Fecha de ingreso:', e)
@@ -176,7 +174,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
     const results = vehicles.filter(vehicle =>
       vehicle.placa.toLowerCase().includes(query)
     )
-    setFilteredVehicles(results);
+    setFilteredVehicles(results)
   }
 
   const handleVehicleSelect = (e) => {
@@ -228,7 +226,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
       console.info('Orden guardada con éxito:', savedOrder);
       onHide();
     }*/
-  };
+  }
 
 
   const emptyTemplate = (text) => {

@@ -11,14 +11,11 @@ import { Button } from 'primereact/button'
 import OrdenTrabajoModal from '@/components/NewOrder'
 import { useClients } from '@/hooks/useClients'
 import { useVehicle } from '@/hooks/useVehicle'
-import { useRouter } from 'next/compat/router'
-import { OrderView } from '@/components/OrderView/OrderView'
 import { DialogOrder } from '@/components/OrderView/DialogOrder'
 import { settingsStore } from '@/store/settingsStore'
 import { Toast } from 'primereact/toast'
-export default function Home() {
-  const router = useRouter();
-  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "")
+export default function Home () {
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
   const id = searchParams.get('id') // Obtener el id de la URL
   const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
@@ -43,11 +40,6 @@ export default function Home() {
 
 
 
-  const cerrarModal = () => {
-    setModalOpen(false)
-    setOrderToShowInModal(null)
-    router?.push('/') // o a la ruta base, sin ?id
-  }
   const [newOrderModalVisible, setNewOrderModalVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const { filteredOrders } = useOrders()

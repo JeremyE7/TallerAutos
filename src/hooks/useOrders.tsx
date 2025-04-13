@@ -3,7 +3,7 @@
 import { Foto, OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
 import { editElementosIngreso } from '@/utils/ElementosIngreso'
-import { saveOrder, deleteOrder, deleteOrderFoto, editOrder, getOrders, printOrder as printOrderFunction } from '@/utils/orders'
+import { deleteOrder, deleteOrderFoto, editOrder, getOrders, printOrder as printOrderFunction } from '@/utils/orders'
 import { useEffect } from 'react'
 import { editFotos } from '@/utils/fotos'
 import { settingsStore } from '@/store/settingsStore'
