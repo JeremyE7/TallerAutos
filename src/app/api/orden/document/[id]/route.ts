@@ -6,6 +6,8 @@ import { ElementosIngreso, OrdenTrabajo, Vehiculo, Cliente } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import path from "path";
 import fs from "fs";
+import QRCode from "qrcode";
+
 export async function GET(req: Request, { params }: { params: { id: string } }) {
     try {
         const { id } = await params;
@@ -27,12 +29,31 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         // 2. Renderizar plantilla
         const imagePath = path.join(process.cwd(), 'src', 'lib', 'templates', 'encabezado.png');
         const imageBase64 = fs.readFileSync(imagePath, 'base64');
+
+        // QR
+
+
+        const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+        const qrData = `${baseUrl}/?id=${orden.id}`;
+
+        let QRbase64 = await new Promise((resolve, reject) => {
+            QRCode.toDataURL(qrData, function (err, code) {
+                if (err) {
+                    reject(reject);
+                    return;
+                }
+                resolve(code);
+            });
+        });
+
+        console.log(QRbase64);
         const html = renderTemplate('orden-', {
             orden,
             vehiculo,
             elementosIngreso,
             cliente,
-            headerImage: `data:image/png;base64,${imageBase64}`
+            headerImage: `data:image/png;base64,${imageBase64}`,
+            qrImage: QRbase64,
         });
 
         // 3. Generar PDF

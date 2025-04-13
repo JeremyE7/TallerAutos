@@ -14,16 +14,49 @@ import { useClients } from '@/hooks/useClients'
 import { useVehicle } from '@/hooks/useVehicle'
 import { settingsStore } from '@/store/settingsStore'
 import { Toast } from 'primereact/toast'
+import { useRouter } from 'next/compat/router'
+import { OrderView } from '@/components/OrderView/OrderView'
+import { DialogOrder } from '@/components/OrderView/DialogOrder'
+export default function Home() {
+  const router = useRouter();
+  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "")
+  const id = searchParams.get('id') // Obtener el id de la URL
+  const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editedOrder, setEditedOrder] = useState<OrdenTrabajo | null>(null)
 
-export default function Home () {
+  const { orders } = useOrders()
+  console.log('ID desde la URL:', id) // Verificar el valor del id
+
+  useEffect(() => {
+    if (!orders || !id) return
+    const order = orders.find((order) => order.id === parseInt(id!)) // Buscar la orden por id en el array de orders
+    if (order) {
+      setOrderToShowInModal(order) // Si existe, asignarla al estado
+      setEditedOrder(order)
+      setModalOpen(true) // Abrir el modal
+    }
+    else {
+      setModalOpen(false) // Si no existe, cerrar el modal
+      toastRef.current?.show({ severity: 'error', summary: 'Error', detail: 'Esta orden no existe o fue eliminada', life: 3000 })
+    }
+  }, [orders, id]) // Dependencias del useEffect
+
+
+
+  const cerrarModal = () => {
+    setModalOpen(false)
+    setOrderToShowInModal(null)
+    router?.push('/') // o a la ruta base, sin ?id
+  }
   const [newOrderModalVisible, setNewOrderModalVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const { filteredOrders } = useOrders()
-  const {clients} = useClients()
+  const { clients } = useClients()
   const { vehicles } = useVehicle()
-  const {error, clearError} = settingsStore()
+  const { error, clearError } = settingsStore()
   const toastRef = useRef<Toast>(null)
-  
+
 
   useEffect(() => {
     if (filteredOrders && filteredOrders.length > 0 && clients.length > 0 && vehicles.length > 0) {
@@ -40,10 +73,10 @@ export default function Home () {
   }
 
   useEffect(() => {
-    if(error){
+    if (error) {
       toastRef.current?.show({ severity: 'error', summary: 'Error', detail: error, life: 3000 })
     }
-  },[error])
+  }, [error])
 
 
   return (
@@ -53,13 +86,20 @@ export default function Home () {
           <>
             <div className='flex row justify-between items-center w-full sticky top-0 z-10 pt-4 pb-2 px-10 md:px-50!' style={{ background: 'var(--surface-0	)' }}>
               <SearchOrders />
-              <Button label='' icon='pi pi-plus' className='p-button-raised p-button-primary shadow' onClick={showNewOrderModal}/>
+              <Button label='' icon='pi pi-plus' className='p-button-raised p-button-primary shadow' onClick={showNewOrderModal} />
             </div>
             {filteredOrders.length === 0 ? <h1>No se encontraron resultados</h1> :
               <DataView value={filteredOrders} listTemplate={(items: OrdenTrabajo[]) => <ListOrders items={items} />} className='px-0 pb-5 gap-2 w-10' paginator rows={5} paginatorClassName='mt-10 rounded-lg!' />
             }
             <OrdenTrabajoModal visible={newOrderModalVisible} onHide={hideNewOrderModal} />
-            <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' onHide={clearError} onRemove={clearError}  baseZIndex={999999999999999}/>
+            <DialogOrder
+              editedOrder={editedOrder}
+              setEditedOrder={setEditedOrder}
+              orderToShowInModal={orderToShowInModal}
+              visible={modalOpen}
+              onHide={() => setModalOpen(false)}
+            />
+            <Toast ref={toastRef} position='bottom-right' className='w-10 md:w-auto' onHide={clearError} onRemove={clearError} baseZIndex={999999999999999} />
           </>
         )
       }

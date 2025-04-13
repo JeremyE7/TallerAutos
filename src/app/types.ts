@@ -14,6 +14,7 @@ export interface Option {
 export enum MetodoPago {
   EFECTIVO = 'Efectivo',
   TARJETA_CREDITO = 'Tarjeta de crédito',
+  TRANSFERENCIA = 'Transferencia',
 }
 
 export enum EstadosOrden {

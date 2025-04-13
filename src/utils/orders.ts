@@ -1,5 +1,29 @@
 import { OrdenTrabajo, Response } from '@/app/types'
 
+export const saveOrder = async (order: OrdenTrabajo) => {
+  try {
+    const response = await fetch('api/orden', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(order)
+    })
+
+    const data: Response<OrdenTrabajo> = await response.json()
+    if (data.code !== 200) {
+      console.error('Error saving order:', data.message)
+      return
+    }
+
+    console.info(data.message)
+    return data.data
+
+  } catch (error) {
+    console.error('Error saving order:', error)
+  }
+}
+
 export const calcTotal = (order: OrdenTrabajo) => {
   //TOTAL = (Total M/O + Total REP) × (IVA)
   if (order) {

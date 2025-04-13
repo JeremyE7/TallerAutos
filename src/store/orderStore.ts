@@ -30,9 +30,9 @@ export const orderStore = create<OrderStore>((set) => ({
 
   updateOrder: (id, updatedOrder) =>
     set((state) => ({
-      orders: state.orders.map((order) =>{
+      orders: state.orders.map((order) => {
         console.log('order.id:', order.id, id)
-        return  order.id === id ? { ...order, ...updatedOrder } : order
+        return order.id === id ? { ...order, ...updatedOrder } : order
       }
       )
     })),

@@ -3,7 +3,7 @@
 import { Foto, OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
 import { editElementosIngreso } from '@/utils/ElementosIngreso'
-import { deleteOrder, deleteOrderFoto, editOrder, getOrders, printOrder as printOrderFunction } from '@/utils/orders'
+import { saveOrder, deleteOrder, deleteOrderFoto, editOrder, getOrders, printOrder as printOrderFunction } from '@/utils/orders'
 import { useEffect } from 'react'
 import { editFotos } from '@/utils/fotos'
 
@@ -20,8 +20,24 @@ export const useOrders = () => {
     return printOrderFunction(id);
   }
 
+  const getOrderById = async (id: number) => {
+    let order = orders.find((order) => order.id === id)
+
+    // Si no se encuentra en memoria, fuerza la recarga
+    if (!order) {
+      console.log('Orden no encontrada en memoria, buscando en backend...')
+      await getAllOrders()
+      order = orderStore.getState().orders.find((o) => o.id === id)
+    }
+
+    console.log('order by id:', order)
+    return order
+  }
+
+
   const getAllOrders = async () => {
     const data = await getOrders()
+    console.log('data xdasdas:', data)
     if (!data) return
     setOrders(data)
   }
@@ -75,6 +91,11 @@ export const useOrders = () => {
     return deletedFoto
   }
 
+  const saveOrder = async (order: OrdenTrabajo) => {
+    console.log('Saving order:', order)
+    return await saveOrder(order)
+  }
+
   return {
     orders,
     setOrders,
@@ -88,6 +109,8 @@ export const useOrders = () => {
     getAllOrders,
     saveFotos,
     deleteFoto,
+    saveOrder,
+    getOrderById
   }
 
 }

@@ -6,6 +6,26 @@ import { fotosUpdateSchema } from '@/utils/fotos'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
+export const POST = async (req: Request, {params}) => {
+  const { id } = await params
+  const body = await req.json()
+  console.log('ID:', id, 'Body:', body);
+  const validatedBody = fotosUpdateSchema.safeParse(body)
+  if(!validatedBody.success){
+    return NextResponse.json(
+      createApiResponse(validatedBody.error.errors.at(-1)?.message ?? '', 400)
+    )
+  }
+  const promisesUploadImages = Object.entries(validatedBody.data).map(async ([key, value]) => {
+    if(value){
+      const uploadResponse = await uploadImage(id, key, value)
+      if(!uploadResponse) return null
+      return { [key]: uploadResponse.secure_url }
+    }
+    return null
+  })
+}
+
 export const PUT = async (req: Request, {params}) => {
   try{
     const body = await req.json()

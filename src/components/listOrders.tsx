@@ -1,4 +1,4 @@
-import { EstadosOrden, OrdenTrabajo } from '@/app/types'
+import { OrdenTrabajo } from '@/app/types'
 import { ListItemOrder } from './lisItemOrder'
 import { ProgressSpinner } from 'primereact/progressspinner';
 
@@ -7,13 +7,8 @@ import { confirmDialog } from 'primereact/confirmdialog' // For confirmDialog me
 import { useEffect, useRef, useState } from 'react'
 import { Toast } from 'primereact/toast'
 import { Dialog } from 'primereact/dialog'
-import { OrderView } from './OrderView/OrderView'
 import { Button } from 'primereact/button'
-import { ChipOrderState } from './ChipOrderState'
-import { Chip } from 'primereact/chip'
 import { useOrders } from '@/hooks/useOrders'
-import { HeaderOrderModal } from './OrderView/HeaderModal';
-import { FooterModal } from './OrderView/FooterModal';
 import { DialogOrder } from './OrderView/DialogOrder';
 
 interface ListOrdersProps {
