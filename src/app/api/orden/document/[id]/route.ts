@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm'
 import path from 'path'
 import fs from 'fs'
 import { withHeaderValidation } from '../../../utils'
-
+import QRCode from "qrcode";
 export const GET = withHeaderValidation(
   async (req: Request, { params }: { params: { id: string } }) => {
     try {

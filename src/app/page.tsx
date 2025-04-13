@@ -5,7 +5,7 @@ import { DataView } from 'primereact/dataview'
 import { OrdenTrabajo } from './types'
 import { ListOrders } from '@/components/listOrders'
 import { Loader } from '@/components/Loader/Loader'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { SearchOrders } from '@/components/SearchOrders'
 import { Button } from 'primereact/button'
 import OrdenTrabajoModal from '@/components/NewOrder'
@@ -14,6 +14,8 @@ import { useVehicle } from '@/hooks/useVehicle'
 import { useRouter } from 'next/compat/router'
 import { OrderView } from '@/components/OrderView/OrderView'
 import { DialogOrder } from '@/components/OrderView/DialogOrder'
+import { settingsStore } from '@/store/settingsStore'
+import { Toast } from 'primereact/toast'
 export default function Home() {
   const router = useRouter();
   const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "")

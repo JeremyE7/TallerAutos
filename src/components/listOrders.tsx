@@ -1,5 +1,4 @@
 import { OrdenTrabajo } from '@/app/types'
-import { OrdenTrabajo } from '@/app/types'
 import { ListItemOrder } from './lisItemOrder'
 import { ProgressSpinner } from 'primereact/progressspinner'
 
