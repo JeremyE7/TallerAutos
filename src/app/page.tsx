@@ -22,10 +22,10 @@ export default function Home () {
   const [editedOrder, setEditedOrder] = useState<OrdenTrabajo | null>(null)
 
   const { orders } = useOrders()
-  console.log('ID desde la URL:', id) // Verificar el valor del id
 
   useEffect(() => {
     if (!orders || !id) return
+    console.log('ID desde la URL:', id) // Verificar el valor del id
     const order = orders.find((order) => order.id === parseInt(id!)) // Buscar la orden por id en el array de orders
     if (order) {
       setOrderToShowInModal(order) // Si existe, asignarla al estado

@@ -39,7 +39,7 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
   const { saveEditedClient } = useClients()
   let toastMessage = ''
 
-  const {setSuccess} = settingsStore()
+  const { setSuccess } = settingsStore()
 
   const { saveElementosIngreso } = useOrders()
   const { saveEditedVehicle } = useVehicle()
@@ -311,9 +311,8 @@ export const OrderView: React.FC<OrderViewProps> = ({ order, edit, editedOrder, 
             <FormaPago order={editedOrder} editable={edit} onChange={(value: string) => handleChangeInput(value, 'forma_pago')} />
             <div className='flex w-full justify-evenly flex-col md:flex-row'>
               <div className='label-show-container text-center m-0'>
-                <LabelShow label='Total M/O' value={editedOrder?.total_mo} editable={edit} onChange={(value: string) => handleChangeInput(value, 'total_mo')} type='money' />
-                <LabelShow label='Total REP' value={editedOrder?.total_rep} editable={edit} onChange={(value: string) => handleChangeInput(value, 'total_rep')} type='money' />
-                <LabelShow label='IVA' value={editedOrder?.iva} editable={edit} onChange={(value: string) => handleChangeInput(value, 'iva')} type='money' />
+                <LabelShow label='Abono' value={editedOrder?.total_mo} editable={edit} onChange={(value: string) => handleChangeInput(value, 'total_mo')} type='money' />
+                <LabelShow label='Saldo' value={editedOrder?.total_rep} editable={edit} onChange={(value: string) => handleChangeInput(value, 'total_rep')} type='money' />
                 <LabelShow label='TOTAL' value={editedOrder?.total} />
               </div>
               <div className='text-area-show-container text-center mt-10 items-start md:mt-0'>

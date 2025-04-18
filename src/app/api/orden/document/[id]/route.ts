@@ -54,7 +54,8 @@ export const GET = withHeaderValidation(
         elementosIngreso,
         cliente,
         headerImage: `data:image/png;base64,${imageBase64}`,
-        qrImage: QRbase64
+        qrImage: QRbase64,
+        orderLink: qrData
       })
 
       // 3. Generar PDF

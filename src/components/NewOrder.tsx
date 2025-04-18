@@ -5,25 +5,40 @@ import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown'
 import { Checkbox } from 'primereact/checkbox'
 import { AutoComplete } from 'primereact/autocomplete'
-import { FileUpload } from 'primereact/fileupload'
 import { useClients } from '@/hooks/useClients'
 import { useVehicle } from '@/hooks/useVehicle'
-import { Cliente, EstadosOrden, MetodoPago, OrdenTrabajo, Vehiculo } from '@/app/types'
+import { Cliente, EstadosOrden, Foto, MetodoPago, OrdenTrabajo, Vehiculo } from '@/app/types'
 import { addLocale } from 'primereact/api'
 import { Button } from 'primereact/button'
-export default function OrdenTrabajoModal ({ visible, onHide }) {
+import { useOrders } from '@/hooks/useOrders'
+import { InputTextarea } from 'primereact/inputtextarea'
+import { UploaderImagesCreate } from './UploaderImagesCreate'
+export default function OrdenTrabajoModal({ visible, onHide }) {
+  const { saveFotos, saveEditedOrder } = useOrders()
   const { clients } = useClients()
   const { vehicles } = useVehicle()
+  const { saveOrder } = useOrders() // Move useOrders hook here
   const [selectedClient, setSelectedClient] = useState<Cliente | null>(null) // Cliente seleccionado
   const [filteredClients, setFilteredClients] = useState<Cliente[]>([]) // Lista filtrada
   const [cedulaInput, setCedulaInput] = useState('') // Valor del input de cédula
   const [selectedVehicle, setSelectedVehicle] = useState<Vehiculo | null>(null) // Vehículo seleccionado
   const [filteredVehicles, setFilteredVehicles] = useState<Vehiculo[]>([]) // Lista filtrada de vehículos
   const [placaInput, setPlacaInput] = useState('') // Valor del input de placa
+  const [tempFotos, setTempFotos] = useState<Omit<Foto, 'id'>>({
+    frontal: undefined,
+    trasera: undefined,
+    derecha: undefined,
+    izquierda: undefined,
+    superior: undefined,
+    interior: undefined
+  })
+
+  const handleUpload = async (newFotos: Omit<Foto, 'id'>) => {
+    setTempFotos(prev => ({ ...prev, ...newFotos }))
+  }
   // Filtrar clientes según la cédula ingresada
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: unknown } }) => {
     if ('target' in e) { // Verifica si el evento tiene target (inputs y checkboxes)
-      console.log('Input change:', e)
       const { name, value, type, checked } = e.target as HTMLInputElement
 
       setOrder(prev => ({
@@ -220,28 +235,37 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
 
 
   const handleSave = async () => {
-    console.log('Guardando orden de trabajo:', order)
-    /*const savedOrder = await saveOrder(order);
-    if (savedOrder) {
-      console.info('Orden guardada con éxito:', savedOrder);
-      onHide();
-    }*/
+    try {
+      // 1. Crear la orden primero (con fotos vacías)
+      const newOrder = await saveOrder(order)
+
+      if (!newOrder || !newOrder.id || !newOrder.foto?.id) {
+        throw new Error('No se pudo crear la orden')
+      }
+
+      // 2. Si hay fotos temporales, subirlas ahora que tenemos ID
+      if (tempFotos) {
+        console.log('Lastemp fotos son ', tempFotos)
+        await saveFotos(newOrder.foto?.id, tempFotos)
+
+        // Opcional: Actualizar el estado de la orden con las fotos subidas
+        const updatedOrder = await saveEditedOrder(newOrder)
+        if (updatedOrder) {
+          setOrder(updatedOrder)
+        } else {
+          console.error('Updated order is undefined')
+        }
+      }
+
+      console.info('Orden guardada con éxito:', newOrder)
+      onHide()
+    } catch (error) {
+      console.error('Error al guardar la orden:', error)
+      // Aquí podrías implementar lógica para eliminar la orden creada si falla la subida de fotos
+    }
   }
 
 
-  const emptyTemplate = (text) => {
-    return (
-      <div className="flex align-items-center flex-column" onClick={() => {
-        const fileInput = document.querySelector('.p-fileupload input[type="file"]') as HTMLInputElement
-        if (fileInput) fileInput.click() // Solo hace click si el input existe
-      }}>
-        <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
-        <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-          Imagen {text}
-        </span>
-      </div>
-    )
-  }
   return (
     <Dialog header="Nueva Orden de Trabajo" visible={visible} style={{ width: '90vw' }} onHide={onHide} modal>
       <fieldset className="border rounded-lg p-3 mb-4 border-gray-400 text-left" >
@@ -401,33 +425,33 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           </span>
 
         </div>
-        <div className="!grid grid-cols-4 gap-4 mt-4 w-full items-center ">
+        <div className="!grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4 w-full items-center">
           {categories.map((category) => (
             <div key={category.key} className="flex items-center">
               <Checkbox
                 inputId={category.key}
-                name={category.key}  // Debe coincidir con la clave de elementosIngreso
-                checked={!!order.elementosIngreso[category.key]} // Convierte `undefined` a `false`
+                name={category.key}
+                checked={!!order.elementosIngreso[category.key]}
                 onChange={handleInputChange}
                 className="mr-2"
               />
-              <label htmlFor={category.key} className="whitespace-nowrap">{category.name}</label>
+              <label htmlFor={category.key} className="whitespace-nowrap">
+                {category.name}
+              </label>
             </div>
           ))}
         </div>
 
 
+
       </fieldset>
       <fieldset className='border rounded-lg p-3 mb-4 border-gray-400 text-left'>
         <legend className='font-bold px-2'>Fotos del vehículo</legend>
-        <div className='!grid grid-cols-3 gap-4 mt-1'>
-          <FileUpload accept='image/*' headerTemplate={() => null} emptyTemplate={emptyTemplate('Frontal')} chooseLabel='Frontal' />
-          <FileUpload accept='image/*' headerTemplate={() => null} emptyTemplate={emptyTemplate('Trasera')} chooseLabel='Trasera' />
-          <FileUpload accept='image/*' headerTemplate={() => null} emptyTemplate={emptyTemplate('Lateral Izq')} chooseLabel='LateralIzq' />
-          <FileUpload accept='image/*' headerTemplate={() => null} emptyTemplate={emptyTemplate('Lateral Der')} chooseLabel='LateralDer' />
-          <FileUpload accept='image/*' headerTemplate={() => null} emptyTemplate={emptyTemplate('Superior')} chooseLabel='Motor' />
-          <FileUpload accept='image/*' headerTemplate={() => null} emptyTemplate={emptyTemplate('Interior')} chooseLabel='Interior' />
-        </div>
+        {/* Otros campos del formulario */}
+        <UploaderImagesCreate
+          onUpload={handleUpload}
+          initialFotos={tempFotos}
+        />
       </fieldset>
       <fieldset className='border rounded-lg p-3 mb-4 border-gray-400 text-left'>
         <legend className="font-bold px-2">Datos de Orden de Trabajo</legend>
@@ -447,28 +471,29 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           </span>
 
           <span className='p-float-label col-span-2'>
-            <InputText className='w-full' />
+            <InputTextarea className='w-full h-fit' name='operaciones_solicitadas' onChange={handleInputChange} />
             <label htmlFor="client">Operaciones Solicitadas</label>
           </span>
+          <label htmlFor="client" className='col-span-2'><b>PAGO</b></label>
 
           <Dropdown
+            placeholder="Selecciona el método de pago"
             className='w-full'
-            placeholder='Método de pago'
             options={Object.values(MetodoPago).map(value => ({ label: value, value }))}
             onChange={(e) => setOrder({ ...order, forma_pago: e.value })}
             name='forma_pago'
-            value={order.forma_pago}
+            value={order.forma_pago} // Asegúrate de que el valor esté en el estado de la orden
           />
 
 
 
           <span className='p-float-label'>
-            <InputText className='w-full' onChange={handleInputChange} name='abono' />
+            <InputText className='w-full' onChange={handleInputChange} name='total_mo' />
             <label htmlFor="client">Abono</label>
           </span>
 
           <span className='p-float-label'>
-            <InputText className='w-full' onChange={handleInputChange} name='saldo' />
+            <InputText className='w-full' onChange={handleInputChange} name='total_rep' />
             <label htmlFor="client">Saldo</label>
           </span>
 

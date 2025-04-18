@@ -3,9 +3,9 @@
 import { Foto, OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
 import { editElementosIngreso } from '@/utils/ElementosIngreso'
-import { deleteOrder, deleteOrderFoto, editOrder, getOrders, printOrder as printOrderFunction } from '@/utils/orders'
+import { deleteOrder, deleteOrderFoto, editOrder, getOrders, printOrder as printOrderFunction, saveOrder as saveOrderFunction } from '@/utils/orders'
 import { useEffect } from 'react'
-import { editFotos } from '@/utils/fotos'
+import { createFotos, editFotos } from '@/utils/fotos'
 import { settingsStore } from '@/store/settingsStore'
 
 export const useOrders = () => {
@@ -68,6 +68,16 @@ export const useOrders = () => {
     return editedElementosIngreso
   }
 
+  const createOrderFotos = async (id: number, fotos: Omit<Foto, 'id'>) => {
+    if (!fotos) return
+    const createdFotos = await createFotos(id, fotos, clientKey)
+    if (!createdFotos) return
+    updateFotosOrder(id, createdFotos)
+    resetFilteredOrders()
+    return createdFotos
+  }
+
+  // Esto es para editar xD
   const saveFotos = async (id: number, fotos: Omit<Foto, 'id'>) => {
     if (fotos === undefined) return
     const editedFotos = await editFotos(id, fotos, clientKey)
@@ -87,7 +97,7 @@ export const useOrders = () => {
 
   const saveOrder = async (order: OrdenTrabajo) => {
     console.log('Saving order:', order)
-    return await saveOrder(order)
+    return await saveOrderFunction(order, clientKey)
   }
 
   return {
@@ -104,7 +114,8 @@ export const useOrders = () => {
     saveFotos,
     deleteFoto,
     saveOrder,
-    getOrderById
+    getOrderById,
+    createOrderFotos
   }
 
 }

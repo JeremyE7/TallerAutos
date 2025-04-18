@@ -11,7 +11,7 @@ import { settingsStore } from '@/store/settingsStore'
 
 interface UploaderImagesProps {
   fotos: Foto,
-  setOrderToEdit?: (modal: ModalProps) => void
+  setOrderToEdit?: (modal: ModalProps) => void;
 }
 
 export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderToEdit }) => {
@@ -20,15 +20,14 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
   const { saveFotos } = useOrders()
   const [isLoading, setIsLoading] = useState(false)
   const [numberOfImages, setNumberOfImages] = useState(0)
-  const {setError, setSuccess} = settingsStore()
+  const { setError, setSuccess } = settingsStore()
 
   useEffect(() => {
     //Recuperar del objeto fotos el numero de atributos que no estan vacios
     const keysOfFoto = Object.keys(fotos).filter((key) => key !== 'id')
     const numberOfImages = keysOfFoto.reduce((count, key) => {
       return fotos[key as keyof Foto] ? count + 1 : count
-    }
-    , 0)
+    }, 0)
     console.log('🚀 ~ numberOfImages ~ numberOfImages:', numberOfImages)
     setNumberOfImages(numberOfImages)
   }, [fotos])

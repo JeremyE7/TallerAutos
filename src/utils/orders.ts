@@ -2,21 +2,53 @@ import { OrdenTrabajo, Response } from '@/app/types'
 import { settingsStore } from '@/store/settingsStore'
 import { encryptText } from './general'
 
-const {setError} = settingsStore.getState()
-
-export const saveOrder = async (order: OrdenTrabajo) => {
+const { setError } = settingsStore.getState()
+export const transformOrderForBackend = (frontendOrder: OrdenTrabajo) => {
+  return {
+    cliente: {
+      ...frontendOrder.vehiculo.cliente
+    },
+    vehiculo: {
+      ...frontendOrder.vehiculo,
+      cliente: undefined // Eliminamos el cliente anidado
+    },
+    elementosIngreso: frontendOrder.elementosIngreso,
+    fechaIngreso: frontendOrder.fechaIngreso,
+    fechaSalida: frontendOrder.fechaSalida,
+    operaciones_solicitadas: frontendOrder.operaciones_solicitadas,
+    total_mo: frontendOrder.total_mo,
+    total_rep: frontendOrder.total_rep,
+    iva: frontendOrder.iva,
+    total: frontendOrder.total,
+    comentarios: frontendOrder.comentarios,
+    forma_pago: frontendOrder.forma_pago,
+    estado: frontendOrder.estado,
+    fotos: {
+      frontal: frontendOrder.foto?.frontal ?? '',
+      trasera: frontendOrder.foto?.trasera ?? '',
+      derecha: frontendOrder.foto?.derecha ?? '',
+      izquierda: frontendOrder.foto?.izquierda ?? '',
+      superior: frontendOrder.foto?.superior ?? '',
+      interior: frontendOrder.foto?.interior ?? ''
+    }
+  }
+}
+export const saveOrder = async (order: OrdenTrabajo, clientKey: string) => {
+  const orderToSave = transformOrderForBackend(order)
+  console.log('order to save:', orderToSave)
   try {
     const response = await fetch('api/orden', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
       },
-      body: JSON.stringify(order)
+      body: JSON.stringify(orderToSave)
     })
 
     const data: Response<OrdenTrabajo> = await response.json()
     if (data.code !== 200) {
-      console.error('Error saving order:', data.message)
+      console.error('Error saving order:', data)
       return
     }
 
