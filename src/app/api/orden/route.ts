@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm'
 
 
 // GET: Obtener todas las órdenes
-export async function GET() {
+export async function GET () {
   try {
     const allOrders = await db.query.OrdenTrabajo.findMany({
       with: {
@@ -165,7 +165,7 @@ export const POST = (async (request: Request) => {
     // 2. SUBIR FOTOS A CLOUDINARY SI EXISTEN
 
     return NextResponse.json(
-      createApiResponse('Orden creada exitosamente', 201, {
+      createApiResponse('Orden creada exitosamente', 200, {
         ...result.orden,
         fotos: body.fotos || {}
       })

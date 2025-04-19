@@ -2,7 +2,7 @@ import { OrdenTrabajo, Response } from '@/app/types'
 import { settingsStore } from '@/store/settingsStore'
 import { encryptText } from './general'
 
-const { setError } = settingsStore.getState()
+const { setError, setSuccess } = settingsStore.getState()
 export const transformOrderForBackend = (frontendOrder: OrdenTrabajo) => {
   return {
     cliente: {
@@ -49,13 +49,16 @@ export const saveOrder = async (order: OrdenTrabajo, clientKey: string) => {
     const data: Response<OrdenTrabajo> = await response.json()
     if (data.code !== 200) {
       console.error('Error saving order:', data)
+      setError(data.message)
       return
     }
 
     console.info(data.message)
+    setSuccess(data.message)
     return data.data
 
   } catch (error) {
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error saving order:', error)
   }
 }

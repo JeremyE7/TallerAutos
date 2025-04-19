@@ -13,7 +13,7 @@ import { Button } from 'primereact/button'
 import { useOrders } from '@/hooks/useOrders'
 import { InputTextarea } from 'primereact/inputtextarea'
 import { UploaderImagesCreate } from './UploaderImagesCreate'
-export default function OrdenTrabajoModal({ visible, onHide }) {
+export default function OrdenTrabajoModal ({ visible, onHide }) {
   const { saveFotos, saveEditedOrder } = useOrders()
   const { clients } = useClients()
   const { vehicles } = useVehicle()
@@ -34,6 +34,8 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
   })
 
   const handleUpload = async (newFotos: Omit<Foto, 'id'>) => {
+    console.log('handleUpload', newFotos)
+
     setTempFotos(prev => ({ ...prev, ...newFotos }))
   }
   // Filtrar clientes según la cédula ingresada

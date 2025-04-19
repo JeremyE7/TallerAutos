@@ -57,7 +57,10 @@ export const UploaderImagesCreate: React.FC<UploaderImagesCreateProps> = ({
 
     const fotosToAdd: Omit<Foto, 'id'> = {}
     const availablePositions = Object.entries(uploadedFotos)
-      .filter(([_, value]) => !value)
+      .filter(([key, value]) => {
+        console.log(key)
+        return !value
+      })
       .map(([key]) => key)
 
     try {
