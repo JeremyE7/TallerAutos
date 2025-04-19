@@ -13,7 +13,7 @@ import { Button } from 'primereact/button'
 import { useOrders } from '@/hooks/useOrders'
 import { InputTextarea } from 'primereact/inputtextarea'
 import { UploaderImagesCreate } from './UploaderImagesCreate'
-export default function OrdenTrabajoModal ({ visible, onHide }) {
+export default function OrdenTrabajoModal({ visible, onHide }) {
   const { saveFotos, saveEditedOrder } = useOrders()
   const { clients } = useClients()
   const { vehicles } = useVehicle()
@@ -187,12 +187,20 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
 
   // Manejar selección de vehículo
   const searchVehicles = (event) => {
+    if (!selectedClient) {
+      setFilteredVehicles([]) // Si no hay cliente seleccionado, no sugerir nada
+      return
+    }
+
     const query = event.query.toLowerCase()
     const results = vehicles.filter(vehicle =>
-      vehicle.placa.toLowerCase().includes(query)
+      vehicle.placa.toLowerCase().includes(query) &&
+      vehicle.cliente.id === selectedClient.id // Asumiendo que usas `clienteId` para enlazar
     )
+
     setFilteredVehicles(results)
   }
+
 
   const handleVehicleSelect = (e) => {
     const vehicle = e.value // Objeto completo del vehículo
