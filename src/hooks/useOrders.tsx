@@ -1,16 +1,15 @@
 'use client'
 
-import { EstadosOrden, Foto, OrdenTrabajo } from '@/app/types'
+import { Foto, OrdenTrabajo } from '@/app/types'
 import { orderStore } from '@/store/orderStore'
-import { createElementosIngreso, editElementosIngreso } from '@/utils/ElementosIngreso'
+import { editElementosIngreso } from '@/utils/ElementosIngreso'
 import { deleteOrder, deleteOrderFoto, editOrder, getOrders, printOrder as printOrderFunction, createOrder } from '@/utils/orders'
 import { useEffect } from 'react'
-import { createFotos, editFotos, newFotos } from '@/utils/fotos'
+import { createFotos, editFotos } from '@/utils/fotos'
 import { settingsStore } from '@/store/settingsStore'
-import { createVehicle, vehicleSchema } from '@/utils/vehicle'
 
 export const useOrders = () => {
-  const { setOrders, orders, filteredOrders, setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder, updateFotosOrder } = orderStore()
+  const { setOrders, orders, filteredOrders, setFilteredOrders, updateOrder, resetFilteredOrders, removeOrder, updateFotosOrder, addOrder } = orderStore()
   const { clientKey } = settingsStore()
 
   useEffect(() => {
@@ -97,44 +96,17 @@ export const useOrders = () => {
     return deletedFoto
   }
 
-  const saveOrder = async (order: OrdenTrabajo) => {
+  const saveNewOrder = async (order: OrdenTrabajo, fotos: Omit<Foto, 'id'>) => {
     try {
-      console.log('Saving order linea 102 de useordersF:', order)
-      //return await saveOrderFunction(order, clientKey)
-      const isVehicleValid = vehicleSchema.safeParse({
-        ...order.vehiculo
-      })
-      const [vehiculo, elementos, fotos] = await Promise.all([
-        isVehicleValid.success ? createVehicle(isVehicleValid.data, clientKey) : Promise.resolve(null),
-        createElementosIngreso(order.elementosIngreso, clientKey),
-        order.foto ? newFotos(order.foto, clientKey) : Promise.resolve(null)
-      ])
-
-      if (!vehiculo || !elementos || !fotos) {
-        console.error('Error creating order:', vehiculo, elementos, fotos)
-      }
-      console.log('guardando orden:')
-
-      const orden = {
-        fechaIngreso: order.fechaIngreso,
-        fechaSalida: order.fechaSalida,
-        operaciones_solicitadas: order.operaciones_solicitadas,
-        total_mo: order.total_mo,
-        total_rep: order.total_rep,
-        iva: order.iva,
-        total: order.total,
-        comentarios: order.comentarios,
-        forma_pago: order.forma_pago,
-        estado: order.estado ?? EstadosOrden.PENDIENTE,
-
-        vehiculo_id: vehiculo[0].id, // o solo vehiculoId si ya es el número
-        elementos_ingreso_id: elementos[0].id,
-        fotos_id: fotos.id
-      }
-      // Validación opcional
-      //const ordenValida = orderSchema.parse(orden)
-
-      return await createOrder(orden, clientKey)
+      let newOrder = await createOrder(order, clientKey)
+      if (!newOrder || !newOrder.foto) return
+      const newFotos = await saveFotos(newOrder.foto.id, fotos)
+      if (!newFotos) return
+      newOrder = { ...newOrder, foto: newFotos }
+      console.log('new order:', newOrder)
+      addOrder(newOrder)
+      resetFilteredOrders()
+      return newOrder
     } catch (error) {
       console.error('Error saving order:', error)
     }
@@ -154,7 +126,7 @@ export const useOrders = () => {
     getAllOrders,
     saveFotos,
     deleteFoto,
-    saveOrder,
+    saveNewOrder,
     getOrderById,
     createOrderFotos
   }
