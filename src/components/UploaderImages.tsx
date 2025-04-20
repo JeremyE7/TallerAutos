@@ -4,7 +4,6 @@ import { Button } from 'primereact/button'
 import { FileUpload, FileUploadHandlerEvent, FileUploadHeaderTemplateOptions, FileUploadSelectEvent, ItemTemplateOptions } from 'primereact/fileupload'
 import { ProgressBar } from 'primereact/progressbar'
 import { Tag } from 'primereact/tag'
-import { Tooltip } from 'primereact/tooltip'
 import { useEffect, useRef, useState } from 'react'
 import { ImageSelector } from './ImagesSelector'
 import { settingsStore } from '@/store/settingsStore'
@@ -153,9 +152,6 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
 
   return (
     <div className='px-10 flex flex-col md:flex-row gap-5 justify-center '>
-      <Tooltip target=".custom-choose-btn" content="Escoger imagenes" position="bottom" />
-      <Tooltip target=".custom-upload-btn" content="Subir" position="bottom" />
-      <Tooltip target=".custom-cancel-btn" content="Limpiar" position="bottom" />
       <FileUpload ref={fileUploadRef} multiple accept="image/*" maxFileSize={1000000} customUpload
         uploadHandler={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
         headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
