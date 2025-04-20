@@ -1,31 +1,64 @@
-import { MetodoPago, OrdenTrabajo, Response, EstadosOrden, OrdenTrabajoCreate } from '@/app/types'
+import { MetodoPago, OrdenTrabajo, Response, EstadosOrden } from '@/app/types'
 import { settingsStore } from '@/store/settingsStore'
 import { encryptText } from './general'
 import { z } from 'zod'
+import { vehicleSchema } from './vehicle'
+import { elementosIngresoSchema } from './ElementosIngreso'
+import { fotosSchema } from './fotos'
 
-const { setError } = settingsStore.getState()
+const { setError, setSuccess } = settingsStore.getState()
 export const orderSchema = z.object({
-  fechaIngreso: z.string().datetime({ message: 'Fecha de ingreso inválida' }),
-  fechaSalida: z.string().datetime({ message: 'Fecha de salida inválida' }),
-  operaciones_solicitadas: z.string().optional(),
-  total_mo: z.number().nonnegative().optional(),
-  total_rep: z.number().nonnegative().optional(),
-  iva: z.number().nonnegative().optional(),
-  total: z.number().nonnegative().optional(),
-  comentarios: z.string().optional(),
-
-  vehiculo_id: z.number().int().min(1, 'ID de vehículo inválido'),
-  elementos_ingreso_id: z.number().int().min(1, 'ID de elementos inválido'),
-  fotos_id: z.number().int().min(1, 'ID de foto inválido'),
-
-  forma_pago: z.nativeEnum(MetodoPago),
-  estado: z.nativeEnum(EstadosOrden).default(EstadosOrden.PENDIENTE)
+  id: z.number().optional(),
+  fechaIngreso: z.string({
+    required_error: 'La fecha de ingreso es obligatoria.',
+    invalid_type_error: 'La fecha de ingreso debe ser un texto.'
+  }).datetime({ message: 'La fecha de ingreso debe ser una fecha y hora válida.' }),
+  fechaSalida: z.string({
+    required_error: 'La fecha de salida es obligatoria.',
+    invalid_type_error: 'La fecha de salida debe ser un texto.'
+  }).datetime({ message: 'La fecha de salida debe ser una fecha y hora válida.' }),
+  operaciones_solicitadas: z.string({
+    invalid_type_error: 'Las operaciones solicitadas deben ser un texto.'
+  }).optional(),
+  total_mo: z.number({
+    invalid_type_error: 'El total de mano de obra debe ser un número.'
+  }).nonnegative({ message: 'El total de mano de obra no puede ser negativo.' }).optional(),
+  total_rep: z.number({
+    invalid_type_error: 'El total de repuestos debe ser un número.'
+  }).nonnegative({ message: 'El total de repuestos no puede ser negativo.' }).optional(),
+  iva: z.number({
+    invalid_type_error: 'El IVA debe ser un número.'
+  }).nonnegative({ message: 'El IVA no puede ser negativo.' }).optional(),
+  total: z.number({
+    invalid_type_error: 'El total debe ser un número.'
+  }).nonnegative({ message: 'El total no puede ser negativo.' }).optional(),
+  comentarios: z.string({
+    invalid_type_error: 'Los comentarios deben ser un texto.'
+  }).optional(),
+  forma_pago: z.nativeEnum(MetodoPago, {
+    required_error: 'La forma de pago es obligatoria.',
+    invalid_type_error: 'La forma de pago seleccionada no es válida.'
+  }),
+  estado: z.nativeEnum(EstadosOrden, {
+    required_error: 'El estado de la orden es obligatorio.',
+    invalid_type_error: 'El estado de la orden no es válido.'
+  }).default(EstadosOrden.PENDIENTE)
 })
 
-export const orderUpdateSchema = orderSchema.partial().strict()
+export const createOrderSchema = orderSchema.extend({
+  vehiculo: vehicleSchema.extend({
+    id: z.number().optional()
+  }),
+  elementosIngreso: elementosIngresoSchema.extend({
+    id: z.number().optional()
+  }),
+  foto: fotosSchema.extend({
+    id: z.number().optional()
+  }).optional()
+}).strict()
 
-export const createOrder = async (orderData, clientKey: string) => {
-  console.log('haber si entra aqui:', orderData)
+
+export const createOrder = async (orderData: OrdenTrabajo, clientKey: string) => {
   try {
     const response = await fetch('/api/orden', {
       method: 'POST',
@@ -35,19 +68,19 @@ export const createOrder = async (orderData, clientKey: string) => {
       },
       body: JSON.stringify(orderData)
     })
-    console.log('Response del end:', response)
-    const data: Response<OrdenTrabajoCreate> = await response.json()
+    const data: Response<OrdenTrabajo> = await response.json()
 
     if (data.code !== 200) {
       console.error('Error creating order:', data)
-      return { error: data.message }
+      setError(data.message)
     }
 
     console.info(data.message)
-    return { data: data.data }
+    setSuccess(data.message)
+    return  data.data
   } catch (error) {
     console.error('Error creating order:', error)
-    return { error: 'Error interno del servidor. Intente más tarde.' }
+    setError('Error interno del servidor. Intente más tarde.')
   }
 }
 /*
