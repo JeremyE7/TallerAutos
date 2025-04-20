@@ -106,3 +106,20 @@ export interface ModalProps {
   elementosIngreso?: ElementosIngreso,
   fotos?: Foto,
 }
+
+export interface OrdenTrabajoCreate {
+  fechaIngreso: Date
+  fechaSalida: Date
+  operaciones_solicitadas?: string
+  total_mo?: number
+  total_rep?: number
+  iva?: number
+  total?: number
+  comentarios?: string
+  forma_pago: MetodoPago
+  estado: EstadosOrden
+
+  vehiculo_id: number
+  elementos_ingreso_id: number
+  fotos_id: number
+}

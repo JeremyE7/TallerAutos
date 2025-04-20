@@ -16,6 +16,33 @@ export const fotosSchema = z.object({
 
 export const fotosUpdateSchema = fotosSchema.partial().strict()
 
+export const newFotos = async (fotos: Foto, clientKey: string) => {
+  try {
+    const response = await fetch('api/fotos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
+      },
+      body: JSON.stringify(fotos)
+    })
+
+    const data: Response<Foto> = await response.json()
+    if (data.code !== 200) {
+      setError(data.message)
+      console.error('Error creating fotos:', data.message)
+      return
+    }
+
+    console.info(data.message)
+    return data.data
+
+  } catch (error) {
+    setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
+    console.error('Error creating fotos:', error)
+  }
+}
+
 export const createFotos = async (id: number, fotos: Omit<Foto, 'id'>, clientKey: string) => {
   try {
     const response = await fetch(`api/orden/${id}/fotos`, {

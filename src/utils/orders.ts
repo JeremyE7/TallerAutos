@@ -1,38 +1,56 @@
-import { OrdenTrabajo, Response } from '@/app/types'
+import { MetodoPago, OrdenTrabajo, Response, EstadosOrden, OrdenTrabajoCreate } from '@/app/types'
 import { settingsStore } from '@/store/settingsStore'
 import { encryptText } from './general'
+import { z } from 'zod'
 
-const { setError, setSuccess } = settingsStore.getState()
-export const transformOrderForBackend = (frontendOrder: OrdenTrabajo) => {
-  return {
-    cliente: {
-      ...frontendOrder.vehiculo.cliente
-    },
-    vehiculo: {
-      ...frontendOrder.vehiculo,
-      cliente: undefined // Eliminamos el cliente anidado
-    },
-    elementosIngreso: frontendOrder.elementosIngreso,
-    fechaIngreso: frontendOrder.fechaIngreso,
-    fechaSalida: frontendOrder.fechaSalida,
-    operaciones_solicitadas: frontendOrder.operaciones_solicitadas,
-    total_mo: frontendOrder.total_mo,
-    total_rep: frontendOrder.total_rep,
-    iva: frontendOrder.iva,
-    total: frontendOrder.total,
-    comentarios: frontendOrder.comentarios,
-    forma_pago: frontendOrder.forma_pago,
-    estado: frontendOrder.estado,
-    fotos: {
-      frontal: frontendOrder.foto?.frontal ?? '',
-      trasera: frontendOrder.foto?.trasera ?? '',
-      derecha: frontendOrder.foto?.derecha ?? '',
-      izquierda: frontendOrder.foto?.izquierda ?? '',
-      superior: frontendOrder.foto?.superior ?? '',
-      interior: frontendOrder.foto?.interior ?? ''
+const { setError } = settingsStore.getState()
+export const orderSchema = z.object({
+  fechaIngreso: z.string().datetime({ message: 'Fecha de ingreso inválida' }),
+  fechaSalida: z.string().datetime({ message: 'Fecha de salida inválida' }),
+  operaciones_solicitadas: z.string().optional(),
+  total_mo: z.number().nonnegative().optional(),
+  total_rep: z.number().nonnegative().optional(),
+  iva: z.number().nonnegative().optional(),
+  total: z.number().nonnegative().optional(),
+  comentarios: z.string().optional(),
+
+  vehiculo_id: z.number().int().min(1, 'ID de vehículo inválido'),
+  elementos_ingreso_id: z.number().int().min(1, 'ID de elementos inválido'),
+  fotos_id: z.number().int().min(1, 'ID de foto inválido'),
+
+  forma_pago: z.nativeEnum(MetodoPago),
+  estado: z.nativeEnum(EstadosOrden).default(EstadosOrden.PENDIENTE)
+})
+
+export const orderUpdateSchema = orderSchema.partial().strict()
+
+export const createOrder = async (orderData, clientKey: string) => {
+  console.log('haber si entra aqui:', orderData)
+  try {
+    const response = await fetch('/api/orden', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'client-key': encryptText(clientKey, 'vinicarJOSEJEREMYXD')
+      },
+      body: JSON.stringify(orderData)
+    })
+    console.log('Response del end:', response)
+    const data: Response<OrdenTrabajoCreate> = await response.json()
+
+    if (data.code !== 200) {
+      console.error('Error creating order:', data)
+      return { error: data.message }
     }
+
+    console.info(data.message)
+    return { data: data.data }
+  } catch (error) {
+    console.error('Error creating order:', error)
+    return { error: 'Error interno del servidor. Intente más tarde.' }
   }
 }
+/*
 export const saveOrder = async (order: OrdenTrabajo, clientKey: string) => {
   const orderToSave = transformOrderForBackend(order)
   console.log('order to save:', orderToSave)
@@ -61,7 +79,7 @@ export const saveOrder = async (order: OrdenTrabajo, clientKey: string) => {
     setError('Error interno del servidor. Por favor intente de nuevo más tarde.')
     console.error('Error saving order:', error)
   }
-}
+}*/
 
 export const calcTotal = (order: OrdenTrabajo) => {
   //TOTAL = (Total M/O + Total REP) × (IVA)

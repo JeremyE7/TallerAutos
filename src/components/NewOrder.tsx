@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import { Calendar } from 'primereact/calendar'
@@ -13,267 +13,257 @@ import { Button } from 'primereact/button'
 import { useOrders } from '@/hooks/useOrders'
 import { InputTextarea } from 'primereact/inputtextarea'
 import { UploaderImagesCreate } from './UploaderImagesCreate'
+
+// Configuración de localización (mejor fuera del componente)
+addLocale('es', {
+  firstDayOfWeek: 1,
+  dayNames: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
+  dayNamesShort: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
+  dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+  monthNames: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+  monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+  today: 'Hoy',
+  clear: 'Limpiar'
+})
+
+// Estado inicial (mejor fuera del componente)
+const initialOrderState: OrdenTrabajo = {
+  id: 0,
+  fechaIngreso: new Date(),
+  fechaSalida: new Date(),
+  operaciones_solicitadas: '',
+  total_mo: 0,
+  total_rep: 0,
+  iva: 0,
+  total: 0,
+  comentarios: '',
+  vehiculo: {
+    id: 0,
+    marca: '',
+    modelo: '',
+    anio: 0,
+    chasis: '',
+    motor: '',
+    color: '',
+    placa: '',
+    kilometraje: 0,
+    cliente: {
+      id: 0,
+      nombre: '',
+      cedula: '',
+      direccion: '',
+      email: '',
+      telefono: ''
+    }
+  },
+  elementosIngreso: {
+    id: 0,
+    limpiaparabrisas: false,
+    espejos: false,
+    luces: false,
+    placas: false,
+    emblemas: false,
+    radio: false,
+    control_alarma: false,
+    tapetes: false,
+    aire_acondicionado: false,
+    matricula: false,
+    herramientas: false,
+    tuerca_seguridad: false,
+    gata: false,
+    llave_ruedas: false,
+    extintor: false,
+    encendedor: false,
+    antena: false,
+    llanta_emergencia: false,
+    combustible: 1
+  },
+  forma_pago: MetodoPago.EFECTIVO,
+  foto: {
+    id: 0,
+    frontal: '',
+    trasera: '',
+    derecha: '',
+    izquierda: '',
+    superior: '',
+    interior: ''
+  },
+  estado: EstadosOrden.PENDIENTE
+}
+
+const initialFotoState: Omit<Foto, 'id'> = {
+  frontal: undefined,
+  trasera: undefined,
+  derecha: undefined,
+  izquierda: undefined,
+  superior: undefined,
+  interior: undefined
+}
+
+const categories = [
+  { key: 'limpiaparabrisas', name: 'Limpiaparabrisas' },
+  { key: 'espejos', name: 'Espejos' },
+  { key: 'luces', name: 'Luces' },
+  { key: 'placas', name: 'Placas' },
+  { key: 'emblemas', name: 'Emblemas' },
+  { key: 'radio', name: 'Radio' },
+  { key: 'control_alarma', name: 'Control de Alarma' },
+  { key: 'tapetes', name: 'Tapetes' },
+  { key: 'aire_acondicionado', name: 'Aire Acondicionado' },
+  { key: 'matricula', name: 'Matrícula' },
+  { key: 'herramientas', name: 'Herramientas' },
+  { key: 'tuerca_seguridad', name: 'Tuerca de Seguridad' },
+  { key: 'gata', name: 'Gata' },
+  { key: 'llave_ruedas', name: 'Llave de Ruedas' },
+  { key: 'extintor', name: 'Extintor' },
+  { key: 'encendedor', name: 'Encendedor' },
+  { key: 'antena', name: 'Antena' },
+  { key: 'llanta_emergencia', name: 'Llanta de Emergencia' }
+]
+
 export default function OrdenTrabajoModal({ visible, onHide }) {
-  const { saveFotos, saveEditedOrder } = useOrders()
+  // Hooks
+  const { saveFotos, saveEditedOrder, saveOrder } = useOrders()
   const { clients } = useClients()
   const { vehicles } = useVehicle()
-  const { saveOrder } = useOrders() // Move useOrders hook here
-  const [selectedClient, setSelectedClient] = useState<Cliente | null>(null) // Cliente seleccionado
-  const [filteredClients, setFilteredClients] = useState<Cliente[]>([]) // Lista filtrada
-  const [cedulaInput, setCedulaInput] = useState('') // Valor del input de cédula
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehiculo | null>(null) // Vehículo seleccionado
-  const [filteredVehicles, setFilteredVehicles] = useState<Vehiculo[]>([]) // Lista filtrada de vehículos
-  const [placaInput, setPlacaInput] = useState('') // Valor del input de placa
-  const [tempFotos, setTempFotos] = useState<Omit<Foto, 'id'>>({
-    frontal: undefined,
-    trasera: undefined,
-    derecha: undefined,
-    izquierda: undefined,
-    superior: undefined,
-    interior: undefined
-  })
 
-  const handleUpload = async (newFotos: Omit<Foto, 'id'>) => {
-    console.log('handleUpload', newFotos)
+  // Estados
+  const [selectedClient, setSelectedClient] = useState<Cliente | null>(null)
+  const [filteredClients, setFilteredClients] = useState<Cliente[]>([])
+  const [cedulaInput, setCedulaInput] = useState('')
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehiculo | null>(null)
+  const [filteredVehicles, setFilteredVehicles] = useState<Vehiculo[]>([])
+  const [placaInput, setPlacaInput] = useState('')
+  const [tempFotos, setTempFotos] = useState<Omit<Foto, 'id'>>(initialFotoState)
+  const [order, setOrder] = useState<OrdenTrabajo>(initialOrderState)
 
+  // Handlers optimizados con useCallback
+  const handleUpload = useCallback(async (newFotos: Omit<Foto, 'id'>) => {
     setTempFotos(prev => ({ ...prev, ...newFotos }))
-  }
-  // Filtrar clientes según la cédula ingresada
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: unknown } }) => {
-    if ('target' in e) { // Verifica si el evento tiene target (inputs y checkboxes)
+    console.log('Fotos subidas:', tempFotos)
+  }, [])
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: unknown } }) => {
+    if ('target' in e) {
       const { name, value, type, checked } = e.target as HTMLInputElement
 
-      setOrder(prev => ({
-        ...prev,
-        vehiculo: {
-          ...prev.vehiculo,
-          [name]: type === 'checkbox' ? checked : value,
-          cliente: {
-            ...prev.vehiculo.cliente,
+      setOrder(prev => {
+        // Create a copy of the previous state
+        const newState = { ...prev }
+
+        // Handle fields that belong to vehiculo.cliente
+        if (['nombre', 'direccion', 'email', 'telefono', 'cedula'].includes(name)) {
+          newState.vehiculo = {
+            ...prev.vehiculo,
+            cliente: {
+              ...prev.vehiculo.cliente,
+              [name]: value
+            }
+          }
+        }
+        // Handle fields that belong to vehiculo
+        else if (['placa', 'marca', 'modelo', 'anio', 'chasis', 'motor', 'color', 'kilometraje', 'combustible'].includes(name)) {
+          newState.vehiculo = {
+            ...prev.vehiculo,
+            [name]: value
+          }
+        }
+        // Handle checkbox fields that belong to elementosIngreso
+        else if (categories.some(cat => cat.key === name)) {
+          newState.elementosIngreso = {
+            ...prev.elementosIngreso,
             [name]: type === 'checkbox' ? checked : value
           }
-        },
-        elementosIngreso: {
-          ...prev.elementosIngreso,
-          [name]: type === 'checkbox' ? checked : value
         }
-      }))
+        // Handle other top-level fields
+        else {
+          newState[name] = value
+        }
+
+        return newState
+      })
     }
-  }
+  }, [categories])
 
+  const dateChangeHandler = useCallback((e) => {
+    const field = e.target.name
+    const newDate = e.value
 
+    setOrder(prev => ({
+      ...prev,
+      [field === 'ingreso' ? 'fechaIngreso' : 'fechaSalida']: newDate
+    }))
+  }, [])
 
-  addLocale('es', {
-    firstDayOfWeek: 1,
-    dayNames: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
-    dayNamesShort: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
-    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-    monthNames: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
-    monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
-    today: 'Hoy',
-    clear: 'Limpiar'
-  })
-  const [order, setOrder] = useState<OrdenTrabajo>({
-    id: 0,
-    fechaIngreso: new Date(),
-    fechaSalida: new Date(),
-    operaciones_solicitadas: '',
-    total_mo: 0,
-    total_rep: 0,
-    iva: 0,
-    total: 0,
-    comentarios: '',
-    vehiculo: {
-      id: 0,
-      marca: '',
-      modelo: '',
-      anio: 0,
-      chasis: '',
-      motor: '',
-      color: '',
-      placa: '',
-      kilometraje: 0,
-      cliente: {
-        id: 0,
-        nombre: '',
-        cedula: '',
-        direccion: '',
-        email: '',
-        telefono: ''
-      }
-    },
-    elementosIngreso: {
-      id: 0,
-      limpiaparabrisas: false,
-      espejos: false,
-      luces: false,
-      placas: false,
-      emblemas: false,
-      radio: false,
-      control_alarma: false,
-      tapetes: false,
-      aire_acondicionado: false,
-      matricula: false,
-      herramientas: false,
-      tuerca_seguridad: false,
-      gata: false,
-      llave_ruedas: false,
-      extintor: false,
-      encendedor: false,
-      antena: false,
-      llanta_emergencia: false,
-      combustible: 1
-    },
-    forma_pago: MetodoPago.EFECTIVO, // Inicializa con un valor predeterminado
-    foto: {
-      id: 0,
-      frontal: '',
-      trasera: '',
-      derecha: '',
-      izquierda: '',
-      superior: '',
-      interior: ''
-    },
-    estado: EstadosOrden.PENDIENTE
-  })
-
-  const dateChangeHandler = (e) => {
-    console.log('Fecha de ingreso:', e)
-    if (e.target.name === 'ingreso') {
-      setOrder((prevOrder) => ({
-        ...prevOrder,
-        fechaIngreso: e.value // Actualizamos la fecha de ingreso
-      }))
-    } else if (e.target.name === 'salida') {
-      setOrder((prevOrder) => ({
-        ...prevOrder,
-        fechaSalida: e.value // Actualizamos la fecha de salida
-      }))
-    }
-  }
-
-
-  const searchClients = (event) => {
+  const searchClients = useCallback((event) => {
     const query = event.query.toLowerCase()
-    const results = clients.filter(client =>
-      client.cedula.toLowerCase().includes(query)
-    )
-    setFilteredClients(results)
-  }
+    setFilteredClients(clients.filter(client => client.cedula.toLowerCase().includes(query)))
+  }, [clients])
 
-  // Manejar selección de cliente
-  const handleClientSelect = (e) => {
-    const client = e.value // Objeto completo del cliente
-    setSelectedClient(client) // Guardamos el cliente seleccionado
+  const handleClientSelect = useCallback((e) => {
+    const client = e.value
+    setSelectedClient(client)
     setCedulaInput(client.cedula)
-    setOrder((prevOrder) => ({
-      ...prevOrder,
+  }, [])
+
+  const handleCedulaChange = useCallback((e) => {
+    setCedulaInput(e.value)
+    if (e.value !== selectedClient?.cedula) {
+      setSelectedClient(null)
+    }
+    setFilteredClients([])
+    handleInputChange(e)
+    setSelectedVehicle(null)
+    setPlacaInput('')
+    setFilteredVehicles([])
+
+    setOrder(prev => ({
+      ...prev,
       vehiculo: {
-        ...prevOrder.vehiculo,
-        cliente: client // Actualizamos el cliente en el vehículo
+        ...initialOrderState.vehiculo,
+        cliente: { ...initialOrderState.vehiculo.cliente }
       }
     }))
-  }
+  }, [selectedClient, handleInputChange])
 
-  const handleCedulaChange = (e) => {
-    setCedulaInput(e.value) // Actualizamos el valor del input de cédula
-    if (e.value != selectedClient?.cedula) {
-      setSelectedClient(null) // Limpiamos el cliente seleccionado
-    }
-    setFilteredClients([]) // Limpiamos la lista filtrada de clientes
-    handleInputChange(e) // Actualizamos el valor del input de cédula en la orden
-    console.log('Cliente seleccionado:', selectedClient)
-  }
-
-  // Manejar selección de vehículo
-  const searchVehicles = (event) => {
+  const searchVehicles = useCallback((event) => {
     if (!selectedClient) {
-      setFilteredVehicles([]) // Si no hay cliente seleccionado, no sugerir nada
+      setFilteredVehicles([])
       return
     }
 
     const query = event.query.toLowerCase()
     const results = vehicles.filter(vehicle =>
       vehicle.placa.toLowerCase().includes(query) &&
-      vehicle.cliente.id === selectedClient.id // Asumiendo que usas `clienteId` para enlazar
+      vehicle.cliente.id === selectedClient.id
     )
-
     setFilteredVehicles(results)
-  }
+  }, [selectedClient, vehicles])
 
+  const handleVehicleSelect = useCallback((e) => {
+    const vehicle = e.value
+    setSelectedVehicle(vehicle)
+    setOrder(prev => ({ ...prev, vehiculo: vehicle }))
+  }, [])
 
-  const handleVehicleSelect = (e) => {
-    const vehicle = e.value // Objeto completo del vehículo
-    setSelectedVehicle(vehicle) // Guardamos el vehículo seleccionado
-    setOrder((prevOrder) => ({
-      ...prevOrder,
-      vehiculo: vehicle // Actualizamos el vehículo en la orden
-    }))
-  }
-
-  const handleVehicleChange = (e) => {
-    setPlacaInput(e.value) // Actualizamos el valor del input de placa
-    setSelectedVehicle(null) // Limpiamos el vehículo seleccionado
-    if (filteredVehicles.length == 1) {
-      setSelectedVehicle(filteredVehicles[0]) // Si solo hay un vehículo, lo seleccionamos automáticamente
-    }
+  const handleVehicleChange = useCallback((e) => {
+    setPlacaInput(e.value)
+    setSelectedVehicle(null)
     handleInputChange(e)
-    console.log('Vehículo seleccionado:', selectedVehicle)
-  }
+  }, [handleInputChange])
 
-  const categories = [
-    { key: 'limpiaparabrisas', name: 'Limpiaparabrisas' },
-    { key: 'espejos', name: 'Espejos' },
-    { key: 'luces', name: 'Luces' },
-    { key: 'placas', name: 'Placas' },
-    { key: 'emblemas', name: 'Emblemas' },
-    { key: 'radio', name: 'Radio' },
-    { key: 'control_alarma', name: 'Control de Alarma' },
-    { key: 'tapetes', name: 'Tapetes' },
-    { key: 'aire_acondicionado', name: 'Aire Acondicionado' },
-    { key: 'matricula', name: 'Matrícula' },
-    { key: 'herramientas', name: 'Herramientas' },
-    { key: 'tuerca_seguridad', name: 'Tuerca de Seguridad' },
-    { key: 'gata', name: 'Gata' },
-    { key: 'llave_ruedas', name: 'Llave de Ruedas' },
-    { key: 'extintor', name: 'Extintor' },
-    { key: 'encendedor', name: 'Encendedor' },
-    { key: 'antena', name: 'Antena' },
-    { key: 'llanta_emergencia', name: 'Llanta de Emergencia' }
-  ]
-
-
-
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     try {
-      // 1. Crear la orden primero (con fotos vacías)
       const newOrder = await saveOrder(order)
-
-      if (!newOrder || !newOrder.id || !newOrder.foto?.id) {
-        throw new Error('No se pudo crear la orden')
+      if (!newOrder) {
+        console.error('Error al guardar la orden', newOrder, order)
+        return
       }
-
-      // 2. Si hay fotos temporales, subirlas ahora que tenemos ID
-      if (tempFotos) {
-        console.log('Lastemp fotos son ', tempFotos)
-        await saveFotos(newOrder.foto?.id, tempFotos)
-
-        // Opcional: Actualizar el estado de la orden con las fotos subidas
-        const updatedOrder = await saveEditedOrder(newOrder)
-        if (updatedOrder) {
-          setOrder(updatedOrder)
-        } else {
-          console.error('Updated order is undefined')
-        }
-      }
-
-      console.info('Orden guardada con éxito:', newOrder)
       onHide()
     } catch (error) {
       console.error('Error al guardar la orden:', error)
-      // Aquí podrías implementar lógica para eliminar la orden creada si falla la subida de fotos
     }
-  }
+  }, [order, tempFotos, saveOrder, saveFotos, saveEditedOrder, onHide])
 
 
   return (
@@ -296,7 +286,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText
-              value={selectedClient?.nombre || undefined}
+              value={selectedClient?.nombre || order.vehiculo.cliente.nombre}
               disabled={!!selectedClient}
               onChange={handleInputChange}
               name='nombre'
@@ -306,7 +296,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText
-              value={selectedClient?.direccion || undefined}
+              value={selectedClient?.direccion || order.vehiculo.cliente.direccion}
               disabled={!!selectedClient}
               onChange={handleInputChange}
               name='direccion'
@@ -316,7 +306,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText
-              value={selectedClient?.email || undefined}
+              value={selectedClient?.email || order.vehiculo.cliente.email}
               disabled={!!selectedClient}
               onChange={handleInputChange}
               name='email'
@@ -326,7 +316,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText
-              value={selectedClient?.telefono || undefined}
+              value={selectedClient?.telefono || order.vehiculo.cliente.telefono}
               disabled={!!selectedClient}
               onChange={handleInputChange}
               name='telefono'
@@ -341,10 +331,11 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
         <div className="grid grid-cols-3 gap-4 mt-1">
           <span className='p-float-label'>
             <AutoComplete
-              value={selectedVehicle?.placa || placaInput}
+              value={selectedVehicle?.placa || order.vehiculo.placa || placaInput}
               suggestions={filteredVehicles}
               completeMethod={searchVehicles}
               field="placa"
+              name="placa"
               onChange={handleVehicleChange}
               onSelect={handleVehicleSelect}
             />
@@ -353,7 +344,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText
-              value={selectedVehicle?.marca || undefined}
+              value={selectedVehicle?.marca || order.vehiculo.marca}
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='marca'
@@ -363,7 +354,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText
-              value={selectedVehicle?.modelo || undefined}
+              value={selectedVehicle?.modelo || order.vehiculo.modelo}
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='modelo'
@@ -373,7 +364,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText type='number'
-              value={selectedVehicle?.anio ? String(selectedVehicle.anio) : undefined}
+              value={selectedVehicle?.anio ? String(selectedVehicle.anio) : String(order.vehiculo.anio)}
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='anio'
@@ -383,7 +374,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText
-              value={selectedVehicle?.chasis || undefined}
+              value={selectedVehicle?.chasis || order.vehiculo.chasis}
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='chasis'
@@ -393,7 +384,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText
-              value={selectedVehicle?.motor || undefined}
+              value={selectedVehicle?.motor || order.vehiculo.motor}
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='motor'
@@ -403,7 +394,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
           <span className='p-float-label'>
             <InputText
-              value={selectedVehicle?.color || undefined}
+              value={selectedVehicle?.color || order.vehiculo.color}
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='color'
@@ -416,7 +407,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               type='number'
-              value={selectedVehicle ? String(selectedVehicle.kilometraje) : String(order.vehiculo.kilometraje || '')}
+              value={selectedVehicle?.kilometraje ? String(selectedVehicle.kilometraje) : String(order.vehiculo.kilometraje)}
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name="kilometraje"
@@ -512,6 +503,10 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
             <label htmlFor="client">Total</label>
           </span>
 
+          <span className='p-float-label col-span-2'>
+            <InputTextarea className='w-full h-fit' name='comentarios' onChange={handleInputChange} />
+            <label htmlFor="client">Comentarios</label>
+          </span>
         </div>
       </fieldset>
       <div className="flex justify-end mt-4">

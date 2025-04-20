@@ -92,8 +92,9 @@
 
 
         <br clear=ALL>
-        <p class=MsoNormal align=center style='text-align:center'><b><span
-                    style='font-size:16.0pt;line-height:107%'><a href={{orderLink}} target="_blank" style="color:inherit; text-decoration:none;">ORDEN DE TRABAJO N. {{orden.id}}</a></span></b></p>
+        <p class=MsoNormal align=center style='text-align:center'><b><span style='font-size:16.0pt;line-height:107%'><a
+                        href={{orderLink}} target="_blank" style="color:inherit; text-decoration:none;">ORDEN DE TRABAJO
+                        N. {{orden.id}}</a></span></b></p>
 
         <p class=MsoNormal><b>CLIENTE</b></p>
 
@@ -400,9 +401,9 @@
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
                     <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span lang=ES-EC>ABONO: $
-                        </span>{{orden.abono}}</p>
+                        </span>{{orden.total_mo}}</p>
                     <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span lang=ES-EC>SALDO: $
-                        </span>{{orden.saldo}}</p>
+                        </span>{{orden.total_rep}}</p>
                     <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span lang=ES-EC>TOTAL: $
                         </span>{{orden.total}}</p>
                 </td>

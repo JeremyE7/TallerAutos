@@ -5,11 +5,15 @@ import { createApiResponse } from '@/lib/api'
 import { db } from '@/db'
 import { Fotos } from '@/db/schema'
 
-// app/api/fotos/route.ts
 export const POST = withHeaderValidation(async (req: Request) => {
   try {
-    const body = await req.json()
-    console.log('Body:', body)
+    let body = await req.json()
+    //console.log('Body:', body)
+
+    // Si el body está vacío, crea un objeto vacío para la foto.
+    if (Object.keys(body).length === 0) {
+      body = { foto: {} }  // Crear un objeto vacío en caso de que el body esté vacío.
+    }
 
     const validatedBody = fotosSchema.safeParse(body)
     if (!validatedBody.success) {
@@ -32,8 +36,12 @@ export const POST = withHeaderValidation(async (req: Request) => {
     const filteredImages = uploadedImages.filter((image) => image !== null)
 
     if (filteredImages.length === 0) {
+      // Si no hay fotos para subir, crea una foto vacía.
+      const emptyFoto = { frontal: null, trasera: null, lateral: null, interior: null, motor: null, id: undefined } // Valores predeterminados
+      const newFotos = await db.insert(Fotos).values(emptyFoto).returning().get()
+
       return NextResponse.json(
-        createApiResponse('No hay imágenes válidas para subir', 400)
+        createApiResponse('Fotos creadas vacías', 200, newFotos)
       )
     }
 
@@ -41,7 +49,7 @@ export const POST = withHeaderValidation(async (req: Request) => {
     const newFotos = await db.insert(Fotos).values(fotosToCreate).returning().get()
 
     return NextResponse.json(
-      createApiResponse('Fotos creadas', 201, newFotos)
+      createApiResponse('Fotos creadas', 200, newFotos)
     )
 
   } catch (error) {

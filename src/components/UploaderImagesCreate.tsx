@@ -8,8 +8,8 @@ import { useRef, useState } from 'react'
 import { settingsStore } from '@/store/settingsStore'
 
 interface UploaderImagesCreateProps {
-    onUpload: (fotos: Omit<Foto, 'id'>) => Promise<void>;
-    initialFotos?: Omit<Foto, 'id'>;
+  onUpload: (fotos: Omit<Foto, 'id'>) => Promise<void>;
+  initialFotos?: Omit<Foto, 'id'>;
 }
 
 export const UploaderImagesCreate: React.FC<UploaderImagesCreateProps> = ({
@@ -58,7 +58,7 @@ export const UploaderImagesCreate: React.FC<UploaderImagesCreateProps> = ({
     const fotosToAdd: Omit<Foto, 'id'> = {}
     const availablePositions = Object.entries(uploadedFotos)
       .filter(([key, value]) => {
-        console.log(key)
+        console.log(key, value)
         return !value
       })
       .map(([key]) => key)
@@ -157,7 +157,7 @@ export const UploaderImagesCreate: React.FC<UploaderImagesCreateProps> = ({
       <div className="flex align-items-center flex-column">
         <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
         <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-                    Arrastra tus imágenes aquí
+          Arrastra tus imágenes aquí
         </span>
       </div>
     )
