@@ -6,13 +6,31 @@ import { settingsStore } from '@/store/settingsStore'
 const {setError} = settingsStore.getState()
 
 export const clientSchema = z.object({
-  nombre: z.string(),
-  cedula: z.string().min(10).refine(isValidCI, {
+  nombre: z.string({
+    required_error: 'El nombre es obligatorio.',
+    invalid_type_error: 'El nombre debe ser un texto.'
+  }),
+  cedula: z.string({
+    required_error: 'La cédula es obligatoria.',
+    invalid_type_error: 'La cédula debe ser un texto.'
+  }).min(10, {
+    message: 'La cédula debe tener al menos 10 caracteres.'
+  }).refine(isValidCI, {
     message: 'La cédula ingresada no es válida.'
   }),
-  email: z.string().email().optional(),
-  telefono: z.string().min(10).optional(),
-  direccion: z.string().optional()
+  email: z.string({
+    invalid_type_error: 'El email debe ser un texto.'
+  }).email({
+    message: 'El email ingresado no es válido.'
+  }).optional(),
+  telefono: z.string({
+    invalid_type_error: 'El teléfono debe ser un texto.'
+  }).min(10, {
+    message: 'El teléfono debe tener al menos 10 caracteres.'
+  }).optional(),
+  direccion: z.string({
+    invalid_type_error: 'La dirección debe ser un texto.'
+  }).optional()
 })
 
 export const clientUpdateSchema= clientSchema.partial().strict()
