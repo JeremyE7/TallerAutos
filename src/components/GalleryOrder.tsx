@@ -30,7 +30,7 @@ export default function GalleryyOrder ({ orderPhotos }: GalleryOrderProps) {
   }, [orderPhotos])
 
   const itemTemplate = (photo: PhotoGalleryProps) => {
-    return <img src={photo.source} alt={photo.alt} style={{ width: '100%', display: 'block' }} />
+    return <img src={photo.source ?? undefined} alt={photo.alt} style={{ width: '100%', display: 'block' }} />
   }
 
   if (!images) return <Loader widthPercentaje={50} heightPercentaje={50} />
