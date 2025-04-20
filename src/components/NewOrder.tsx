@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import { Calendar } from 'primereact/calendar'
@@ -28,7 +28,7 @@ addLocale('es', {
 
 // Estado inicial (mejor fuera del componente)
 const initialOrderState: OrdenTrabajo = {
-  id: 0,
+  id: -1,
   fechaIngreso: new Date(),
   fechaSalida: new Date(),
   operaciones_solicitadas: '',
@@ -38,7 +38,7 @@ const initialOrderState: OrdenTrabajo = {
   total: 0,
   comentarios: '',
   vehiculo: {
-    id: 0,
+    id: -1,
     marca: '',
     modelo: '',
     anio: 0,
@@ -48,7 +48,7 @@ const initialOrderState: OrdenTrabajo = {
     placa: '',
     kilometraje: 0,
     cliente: {
-      id: 0,
+      id: -1,
       nombre: '',
       cedula: '',
       direccion: '',
@@ -57,7 +57,7 @@ const initialOrderState: OrdenTrabajo = {
     }
   },
   elementosIngreso: {
-    id: 0,
+    id: -1,
     limpiaparabrisas: false,
     espejos: false,
     luces: false,
@@ -80,7 +80,7 @@ const initialOrderState: OrdenTrabajo = {
   },
   forma_pago: MetodoPago.EFECTIVO,
   foto: {
-    id: 0,
+    id: -1,
     frontal: '',
     trasera: '',
     derecha: '',
@@ -123,7 +123,7 @@ const categories = [
 
 export default function OrdenTrabajoModal ({ visible, onHide }) {
   // Hooks
-  const { saveFotos, saveEditedOrder, saveOrder } = useOrders()
+  const { saveFotos, saveEditedOrder, saveNewOrder } = useOrders()
   const { clients } = useClients()
   const { vehicles } = useVehicle()
 
@@ -137,6 +137,8 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
   const [tempFotos, setTempFotos] = useState<Omit<Foto, 'id'>>(initialFotoState)
   const [order, setOrder] = useState<OrdenTrabajo>(initialOrderState)
   const [isLoading, setIsLoading] = useState(false)
+  const [isIdentificationWritten, setIsIdentificationWritten] = useState(false)
+  const [isPlateWritten, setIsPlateWritten] = useState(false)
 
   // Handlers optimizados con useCallback
   const handleUpload = useCallback(async (newFotos: Omit<Foto, 'id'>) => {
@@ -148,12 +150,27 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
     if ('target' in e) {
       const { name, value, type, checked } = e.target as HTMLInputElement
 
+      if(name === 'placa' && value !== placaInput && value.length > 0) {
+        setIsPlateWritten(true)
+      } else if(name === 'cedula' && value !== cedulaInput && value.length > 0) {
+        console.log(value)
+
+        setIsIdentificationWritten(true)
+      }
+      else if(name === 'placa' && value.length === 0) {
+        setIsPlateWritten(false)
+      }
+      else if(name === 'cedula' && value.length === 0) {
+        setIsIdentificationWritten(false)
+      }
+
       setOrder(prev => {
         // Create a copy of the previous state
         const newState = { ...prev }
 
         // Handle fields that belong to vehiculo.cliente
         if (['nombre', 'direccion', 'email', 'telefono', 'cedula'].includes(name)) {
+          console.log(name, value)
           newState.vehiculo = {
             ...prev.vehiculo,
             cliente: {
@@ -164,9 +181,18 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
         }
         // Handle fields that belong to vehiculo
         else if (['placa', 'marca', 'modelo', 'anio', 'chasis', 'motor', 'color', 'kilometraje', 'combustible'].includes(name)) {
-          newState.vehiculo = {
-            ...prev.vehiculo,
-            [name]: value
+
+          if(name === 'kilometraje' || name === 'combustible' || name === 'anio' || name === 'kilometraje') {
+            const parsedValue = parseFloat(value as string)
+            newState.vehiculo = {
+              ...prev.vehiculo,
+              [name]: isNaN(parsedValue) ? 0 : parsedValue
+            }
+          }else{
+            newState.vehiculo = {
+              ...prev.vehiculo,
+              [name]: value
+            }
           }
         }
         // Handle checkbox fields that belong to elementosIngreso
@@ -178,13 +204,26 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
         }
         // Handle other top-level fields
         else {
-          newState[name] = value
+          if(name === 'total_mo' || name === 'total_rep' || name === 'total') {
+            console.log('value:', value)
+
+            const parsedValue = parseFloat(value as string)
+            newState[name] = isNaN(parsedValue) ? 0 : parsedValue
+          }else{
+
+            newState[name] = value
+          }
         }
 
         return newState
       })
     }
   }, [categories])
+
+  useEffect(() => {
+    console.log('order:', order)
+
+  },[order])
 
   const dateChangeHandler = useCallback((e) => {
     const field = e.target.name
@@ -218,13 +257,13 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
     setPlacaInput('')
     setFilteredVehicles([])
 
-    setOrder(prev => ({
-      ...prev,
-      vehiculo: {
-        ...initialOrderState.vehiculo,
-        cliente: { ...initialOrderState.vehiculo.cliente }
-      }
-    }))
+    // setOrder(prev => ({
+    //   ...prev,
+    //   vehiculo: {
+    //     ...initialOrderState.vehiculo,
+    //     cliente: { ...initialOrderState.vehiculo.cliente }
+    //   }
+    // }))
   }, [selectedClient, handleInputChange])
 
   const searchVehicles = useCallback((event) => {
@@ -254,21 +293,18 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
   }, [handleInputChange])
 
   const handleSave = useCallback(async () => {
+
     setIsLoading(true)
     try {
-      const newOrder = await saveOrder(order)
-      if (!newOrder) {
-        console.error('Error al guardar la orden', newOrder, order)
-        return
-      }
+      const newOrder = await saveNewOrder(order, tempFotos)
+      if (!newOrder || !newOrder.foto) return
       onHide()
     } catch (error) {
       console.error('Error al guardar la orden:', error)
     } finally {
       setIsLoading(false)
     }
-  }, [order, tempFotos, saveOrder, saveFotos, saveEditedOrder, onHide])
-
+  }, [order, tempFotos, saveNewOrder, saveFotos, saveEditedOrder, onHide])
 
   return (
     <Dialog header="Nueva Orden de Trabajo" visible={visible} style={{ width: '90vw' }} onHide={onHide} modal>
@@ -291,7 +327,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               value={selectedClient?.nombre || order.vehiculo.cliente.nombre}
-              disabled={!!selectedClient}
+              disabled={!!selectedClient || !isIdentificationWritten}
               onChange={handleInputChange}
               name='nombre'
             />
@@ -301,7 +337,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               value={selectedClient?.direccion || order.vehiculo.cliente.direccion}
-              disabled={!!selectedClient}
+              disabled={!!selectedClient || !isIdentificationWritten}
               onChange={handleInputChange}
               name='direccion'
             />
@@ -311,7 +347,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               value={selectedClient?.email || order.vehiculo.cliente.email}
-              disabled={!!selectedClient}
+              disabled={!!selectedClient || !isIdentificationWritten}
               onChange={handleInputChange}
               name='email'
               keyfilter={'email'}
@@ -322,7 +358,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               value={selectedClient?.telefono || order.vehiculo.cliente.telefono}
-              disabled={!!selectedClient}
+              disabled={!!selectedClient || !isIdentificationWritten}
               onChange={handleInputChange}
               name='telefono'
               keyfilter={'int'} // Asegúrate de que el valor sea un número entero
@@ -351,7 +387,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               value={selectedVehicle?.marca || order.vehiculo.marca}
-              disabled={!!selectedVehicle}
+              disabled={!!selectedVehicle || !isPlateWritten}
               onChange={handleInputChange}
               name='marca'
               keyfilter={'alpha'}
@@ -362,7 +398,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               value={selectedVehicle?.modelo || order.vehiculo.modelo}
-              disabled={!!selectedVehicle}
+              disabled={!!selectedVehicle || !isPlateWritten}
               onChange={handleInputChange}
               name='modelo'
               keyfilter={'alpha'}
@@ -373,7 +409,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText type='number'
               value={selectedVehicle?.anio ? String(selectedVehicle.anio) : String(order.vehiculo.anio)}
-              disabled={!!selectedVehicle}
+              disabled={!!selectedVehicle || !isPlateWritten}
               onChange={handleInputChange}
               name='anio'
               keyfilter={'int'}
@@ -384,7 +420,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               value={selectedVehicle?.chasis || order.vehiculo.chasis}
-              disabled={!!selectedVehicle}
+              disabled={!!selectedVehicle || !isPlateWritten}
               onChange={handleInputChange}
               name='chasis'
               keyfilter={'alphanum'}
@@ -395,7 +431,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               value={selectedVehicle?.motor || order.vehiculo.motor}
-              disabled={!!selectedVehicle}
+              disabled={!!selectedVehicle || !isPlateWritten}
               onChange={handleInputChange}
               name='motor'
               keyfilter={'alphanum'}
@@ -406,7 +442,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
           <span className='p-float-label'>
             <InputText
               value={selectedVehicle?.color || order.vehiculo.color}
-              disabled={!!selectedVehicle}
+              disabled={!!selectedVehicle || !isPlateWritten}
               onChange={handleInputChange}
               name='color'
               keyfilter={'alpha'}
@@ -420,7 +456,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
             <InputText
               type='number'
               value={selectedVehicle?.kilometraje ? String(selectedVehicle.kilometraje) : String(order.vehiculo.kilometraje)}
-              disabled={!!selectedVehicle}
+              disabled={!!selectedVehicle || !isPlateWritten}
               onChange={handleInputChange}
               name="kilometraje"
               keyfilter={'int'}
@@ -437,6 +473,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
               keyfilter={'int'}
               max={100}
               maxLength={3}
+              disabled={!isPlateWritten}
             />
             <label htmlFor="client">Combustible</label>
           </span>
