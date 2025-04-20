@@ -136,6 +136,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
   const [placaInput, setPlacaInput] = useState('')
   const [tempFotos, setTempFotos] = useState<Omit<Foto, 'id'>>(initialFotoState)
   const [order, setOrder] = useState<OrdenTrabajo>(initialOrderState)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Handlers optimizados con useCallback
   const handleUpload = useCallback(async (newFotos: Omit<Foto, 'id'>) => {
@@ -253,6 +254,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
   }, [handleInputChange])
 
   const handleSave = useCallback(async () => {
+    setIsLoading(true)
     try {
       const newOrder = await saveOrder(order)
       if (!newOrder) {
@@ -262,6 +264,8 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
       onHide()
     } catch (error) {
       console.error('Error al guardar la orden:', error)
+    } finally {
+      setIsLoading(false)
     }
   }, [order, tempFotos, saveOrder, saveFotos, saveEditedOrder, onHide])
 
