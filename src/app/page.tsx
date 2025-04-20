@@ -50,7 +50,7 @@ export default function Home () {
 
 
   useEffect(() => {
-    if (filteredOrders && filteredOrders.length > 0 && clients.length > 0 && vehicles.length > 0) {
+    if (filteredOrders) {
       setIsLoading(false)
     }
   }, [filteredOrders, clients, vehicles])

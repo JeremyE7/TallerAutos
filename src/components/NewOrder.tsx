@@ -121,7 +121,7 @@ const categories = [
   { key: 'llanta_emergencia', name: 'Llanta de Emergencia' }
 ]
 
-export default function OrdenTrabajoModal({ visible, onHide }) {
+export default function OrdenTrabajoModal ({ visible, onHide }) {
   // Hooks
   const { saveFotos, saveEditedOrder, saveOrder } = useOrders()
   const { clients } = useClients()
@@ -310,6 +310,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               disabled={!!selectedClient}
               onChange={handleInputChange}
               name='email'
+              keyfilter={'email'}
             />
             <label htmlFor="correo">Correo Electrónico</label>
           </span>
@@ -320,6 +321,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               disabled={!!selectedClient}
               onChange={handleInputChange}
               name='telefono'
+              keyfilter={'int'} // Asegúrate de que el valor sea un número entero
             />
             <label htmlFor="telefono">Teléfono</label>
           </span>
@@ -348,6 +350,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='marca'
+              keyfilter={'alpha'}
             />
             <label htmlFor="client">Marca</label>
           </span>
@@ -358,6 +361,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='modelo'
+              keyfilter={'alpha'}
             />
             <label htmlFor="client">Modelo</label>
           </span>
@@ -368,6 +372,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='anio'
+              keyfilter={'int'}
             />
             <label htmlFor="client">Año</label>
           </span>
@@ -378,6 +383,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='chasis'
+              keyfilter={'alphanum'}
             />
             <label htmlFor="client">Chasis</label>
           </span>
@@ -388,6 +394,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='motor'
+              keyfilter={'alphanum'}
             />
             <label htmlFor="client">Motor</label>
           </span>
@@ -398,6 +405,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name='color'
+              keyfilter={'alpha'}
             />
             <label htmlFor="client">Color</label>
           </span>
@@ -411,6 +419,7 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               disabled={!!selectedVehicle}
               onChange={handleInputChange}
               name="kilometraje"
+              keyfilter={'int'}
             />
             <label htmlFor="kilometraje">Kilometraje</label>
           </span>
@@ -421,6 +430,9 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
               type='number'
               onChange={handleInputChange}
               name='combustible'
+              keyfilter={'int'}
+              max={100}
+              maxLength={3}
             />
             <label htmlFor="client">Combustible</label>
           </span>
@@ -489,17 +501,17 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
 
 
           <span className='p-float-label'>
-            <InputText className='w-full' onChange={handleInputChange} name='total_mo' />
+            <InputText className='w-full' onChange={handleInputChange} name='total_mo' keyfilter={'money'}/>
             <label htmlFor="client">Abono</label>
           </span>
 
           <span className='p-float-label'>
-            <InputText className='w-full' onChange={handleInputChange} name='total_rep' />
+            <InputText className='w-full' onChange={handleInputChange} name='total_rep' keyfilter={'money'}/>
             <label htmlFor="client">Saldo</label>
           </span>
 
           <span className='p-float-label'>
-            <InputText className='w-full' onChange={handleInputChange} name='total' />
+            <InputText className='w-full' onChange={handleInputChange} name='total' keyfilter={'money'}/>
             <label htmlFor="client">Total</label>
           </span>
 
@@ -509,10 +521,16 @@ export default function OrdenTrabajoModal({ visible, onHide }) {
           </span>
         </div>
       </fieldset>
-      <div className="flex justify-end mt-4">
-        <Button label="Cancelar" icon="pi pi-times" className="p-button-text" onClick={onHide} />
-        <Button label="Guardar" icon="pi pi-check" className="p-button-success" onClick={handleSave} />
-      </div>
+      {!isLoading ? (
+        <div className="flex justify-end mt-4">
+          <Button label="Cancelar" icon="pi pi-times" className="p-button-text" onClick={onHide} />
+          <Button label="Guardar" icon="pi pi-check" className="p-button-success" onClick={handleSave} />
+        </div>
+      ) : (
+        <div className="flex justify-center mt-4">
+          <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem' }}></i>
+        </div>
+      )}
     </Dialog>
   )
 }

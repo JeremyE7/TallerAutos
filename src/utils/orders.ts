@@ -73,6 +73,8 @@ export const saveOrder = async (order: OrdenTrabajo, clientKey: string) => {
 
     console.info(data.message)
     setSuccess(data.message)
+    console.log('data de orden', data.data)
+
     return data.data
 
   } catch (error) {
