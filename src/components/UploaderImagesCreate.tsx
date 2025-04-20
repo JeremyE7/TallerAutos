@@ -3,7 +3,6 @@ import { Button } from 'primereact/button'
 import { FileUpload, FileUploadHandlerEvent, FileUploadHeaderTemplateOptions, FileUploadSelectEvent, ItemTemplateOptions } from 'primereact/fileupload'
 import { ProgressBar } from 'primereact/progressbar'
 import { Tag } from 'primereact/tag'
-import { Tooltip } from 'primereact/tooltip'
 import { useRef, useState } from 'react'
 import { settingsStore } from '@/store/settingsStore'
 
@@ -183,9 +182,6 @@ export const UploaderImagesCreate: React.FC<UploaderImagesCreateProps> = ({
 
   return (
     <div className='px-10 flex flex-col gap-5 justify-center'>
-      <Tooltip target=".custom-choose-btn" content="Escoger imágenes" position="bottom" />
-      <Tooltip target=".custom-upload-btn" content="Subir" position="bottom" />
-      <Tooltip target=".custom-cancel-btn" content="Limpiar" position="bottom" />
 
       <FileUpload
         ref={fileUploadRef}
