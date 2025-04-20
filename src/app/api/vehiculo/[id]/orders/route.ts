@@ -10,7 +10,7 @@ export const GET = async (req: Request, { params }) => {
     const orders = await db.select().from(OrdenTrabajo).where(eq(OrdenTrabajo.vehiculo_id, parseInt(id)))
     if (!orders || orders.length === 0) {
       return NextResponse.json(
-        createApiResponse('No orders found', 404)
+        createApiResponse('No se encontraron ordenes', 404)
       )
     }
 
