@@ -49,7 +49,7 @@ export const POST = withHeaderValidation(async (request: Request) => {
     }
     console.log('El body del vehiculo se valido:', vehicleSchema.safeParse(body).data)
     // Verificar si el cliente existe
-    const existingUser = await db.select().from(Cliente).where(eq(Cliente.id, parseInt((validateBody.data?.cliente?.id ?? '').toString())))
+    const existingUser = await db.select().from(Cliente).where(eq(Cliente.cedula, validateBody.data?.cliente?.cedula))
 
     if (!existingUser || existingUser.length === 0) {
       console.log('Cliente no encontrado, creando nuevo cliente')
@@ -68,8 +68,9 @@ export const POST = withHeaderValidation(async (request: Request) => {
         createApiResponse('Vehicle with that plate already exists', 200, existingVehicle)
       )
     }
+    // Transforma body a tipo Vehiculo
 
-    const vehicle = await db.insert(Vehiculo).values(validateBody.data).returning()
+    const vehicle = await db.insert(Vehiculo).values(validateBody.data[0]).returning()
 
     return NextResponse.json(
       createApiResponse('Vehicle created', 200, vehicle)
