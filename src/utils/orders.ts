@@ -73,6 +73,7 @@ export const createOrder = async (orderData: OrdenTrabajo, clientKey: string) =>
     if (data.code !== 200) {
       console.error('Error creating order:', data)
       setError(data.message)
+      return
     }
 
     console.info(data.message)

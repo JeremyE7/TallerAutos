@@ -18,15 +18,15 @@ export const settingsStore = create<SettingsStoreProps>((set) => ({
   clientKey: '',
   success: null,
   setSuccess: (success: string) => {
-    console.log('Setting success:', success)
+    console.trace('Setting success:', success)
     set(() => ({ success, showSuccess: true }))
   },
   setError: (error: string) => {
-    console.log('Setting error:', error)
+    console.trace('Setting error:', error)
     set(() => ({ error, showError: true }))
   },
   clearMessages: () => {
-    console.log('Clearing error')
+    console.trace('Clearing error')
     set(() => ({ error: null, success: null }))
   },
   getServerSettings: () => {
