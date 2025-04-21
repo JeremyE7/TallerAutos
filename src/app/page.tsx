@@ -14,7 +14,7 @@ import { useVehicle } from '@/hooks/useVehicle'
 import { DialogOrder } from '@/components/OrderView/DialogOrder'
 import { settingsStore } from '@/store/settingsStore'
 import { Toast } from 'primereact/toast'
-export default function Home () {
+export default function Home() {
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
   const id = searchParams.get('id') // Obtener el id de la URL
   const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
@@ -80,7 +80,7 @@ export default function Home () {
               <Button label='' icon='pi pi-plus' className='p-button-raised p-button-primary shadow' onClick={showNewOrderModal} />
             </div>
             {filteredOrders.length === 0 ? <h1>No se encontraron resultados</h1> :
-              <DataView value={filteredOrders} listTemplate={(items: OrdenTrabajo[]) => <ListOrders items={items} />} className='px-0 pb-5 gap-2 w-10' paginator rows={5} paginatorClassName='mt-10 rounded-lg!' />
+              <DataView value={[...filteredOrders].sort((a, b) => b.id - a.id)} listTemplate={(items: OrdenTrabajo[]) => <ListOrders items={items} />} className='px-0 pb-5 gap-2 w-10' paginator rows={5} paginatorClassName='mt-10 rounded-lg!' />
             }
             <OrdenTrabajoModal visible={newOrderModalVisible} onHide={hideNewOrderModal} />
             <DialogOrder
