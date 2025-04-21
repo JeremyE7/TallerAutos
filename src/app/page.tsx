@@ -14,7 +14,7 @@ import { useVehicle } from '@/hooks/useVehicle'
 import { DialogOrder } from '@/components/OrderView/DialogOrder'
 import { settingsStore } from '@/store/settingsStore'
 import { Toast } from 'primereact/toast'
-export default function Home() {
+export default function Home () {
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
   const id = searchParams.get('id') // Obtener el id de la URL
   const [orderToShowInModal, setOrderToShowInModal] = useState<OrdenTrabajo | null>(null)
