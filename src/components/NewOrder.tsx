@@ -150,17 +150,17 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
     if ('target' in e) {
       const { name, value, type, checked } = e.target as HTMLInputElement
 
-      if(name === 'placa' && value !== placaInput && value.length > 0) {
+      if (name === 'placa' && value !== placaInput && value.length > 0) {
         setIsPlateWritten(true)
-      } else if(name === 'cedula' && value !== cedulaInput && value.length > 0) {
+      } else if (name === 'cedula' && value !== cedulaInput && value.length > 0) {
         console.log(value)
 
         setIsIdentificationWritten(true)
       }
-      else if(name === 'placa' && value.length === 0) {
+      else if (name === 'placa' && value.length === 0) {
         setIsPlateWritten(false)
       }
-      else if(name === 'cedula' && value.length === 0) {
+      else if (name === 'cedula' && value.length === 0) {
         setIsIdentificationWritten(false)
       }
 
@@ -182,13 +182,13 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
         // Handle fields that belong to vehiculo
         else if (['placa', 'marca', 'modelo', 'anio', 'chasis', 'motor', 'color', 'kilometraje', 'combustible'].includes(name)) {
 
-          if(name === 'kilometraje' || name === 'combustible' || name === 'anio' || name === 'kilometraje') {
+          if (name === 'kilometraje' || name === 'combustible' || name === 'anio' || name === 'kilometraje') {
             const parsedValue = parseFloat(value as string)
             newState.vehiculo = {
               ...prev.vehiculo,
               [name]: isNaN(parsedValue) ? 0 : parsedValue
             }
-          }else{
+          } else {
             newState.vehiculo = {
               ...prev.vehiculo,
               [name]: value
@@ -204,12 +204,12 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
         }
         // Handle other top-level fields
         else {
-          if(name === 'total_mo' || name === 'total_rep' || name === 'total') {
+          if (name === 'total_mo' || name === 'total_rep' || name === 'total') {
             console.log('value:', value)
 
             const parsedValue = parseFloat(value as string)
             newState[name] = isNaN(parsedValue) ? 0 : parsedValue
-          }else{
+          } else {
 
             newState[name] = value
           }
@@ -223,7 +223,7 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
   useEffect(() => {
     console.log('order:', order)
 
-  },[order])
+  }, [order])
 
   const dateChangeHandler = useCallback((e) => {
     const field = e.target.name
@@ -297,12 +297,20 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
     setIsLoading(true)
     try {
       const newOrder = await saveNewOrder(order, tempFotos)
-      if (!newOrder || !newOrder.foto) return
+      if (!newOrder) {
+        console.log('no se guardo la orden', newOrder)
+        return
+      } else if (!newOrder.foto) {
+        console.log('no se guardo la foto')
+        return
+      }
+      console.log('deberia ocuktarse')
       onHide()
     } catch (error) {
       console.error('Error al guardar la orden:', error)
     } finally {
       setIsLoading(false)
+      onHide()
     }
   }, [order, tempFotos, saveNewOrder, saveFotos, saveEditedOrder, onHide])
 
@@ -542,17 +550,17 @@ export default function OrdenTrabajoModal ({ visible, onHide }) {
 
 
           <span className='p-float-label'>
-            <InputText className='w-full' onChange={handleInputChange} name='total_mo' keyfilter={'money'}/>
+            <InputText className='w-full' onChange={handleInputChange} name='total_mo' keyfilter={'money'} />
             <label htmlFor="client">Abono</label>
           </span>
 
           <span className='p-float-label'>
-            <InputText className='w-full' onChange={handleInputChange} name='total_rep' keyfilter={'money'}/>
+            <InputText className='w-full' onChange={handleInputChange} name='total_rep' keyfilter={'money'} />
             <label htmlFor="client">Saldo</label>
           </span>
 
           <span className='p-float-label'>
-            <InputText className='w-full' onChange={handleInputChange} name='total' keyfilter={'money'}/>
+            <InputText className='w-full' onChange={handleInputChange} name='total' keyfilter={'money'} />
             <label htmlFor="client">Total</label>
           </span>
 
