@@ -44,7 +44,7 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
 
 
   const onTemplateUpload = (event: FileUploadHandlerEvent) => {
-    if (totalSize > 6000000 - (numberOfImages * 1000000)) {
+    if (totalSize > 60000000 - (numberOfImages * 1000000)) {
       setError('El tamaño máximo es de ' + (6000000 - (numberOfImages * 1000000)) + ' MB')
       return
     }
