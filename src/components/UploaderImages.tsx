@@ -44,10 +44,10 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
 
 
   const onTemplateUpload = (event: FileUploadHandlerEvent) => {
-    /*if (totalSize > 60000000 - (numberOfImages * 1000000)) {
+    if (totalSize > 6000000 - (numberOfImages * 1000000)) {
       setError('El tamaño máximo es de ' + (6000000 - (numberOfImages * 1000000)) + ' MB')
       return
-    }*/
+    }
     if (event.files.length > (6 - numberOfImages)) {
       setError('El máximo de imagenes que puedes subir es de ' + (6 - numberOfImages))
       return
@@ -152,7 +152,7 @@ export const UploaderImages: React.FC<UploaderImagesProps> = ({ fotos, setOrderT
 
   return (
     <div className='px-10 flex flex-col md:flex-row gap-5 justify-center '>
-      <FileUpload ref={fileUploadRef} multiple accept="image/*" maxFileSize={1000000} customUpload
+      <FileUpload ref={fileUploadRef} multiple accept="image/*" maxFileSize={6000000} customUpload
         uploadHandler={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
         headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
         chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} contentClassName='h-70 overflow-y-scroll' />

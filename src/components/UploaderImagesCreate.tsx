@@ -187,7 +187,7 @@ export const UploaderImagesCreate: React.FC<UploaderImagesCreateProps> = ({
         ref={fileUploadRef}
         multiple
         accept="image/*"
-        maxFileSize={1000000}
+        maxFileSize={6000000}
         customUpload
         uploadHandler={onTemplateUpload}
         onSelect={onTemplateSelect}
