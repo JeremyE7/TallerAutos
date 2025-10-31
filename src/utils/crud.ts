@@ -118,3 +118,41 @@ export function handleValidationError (error: unknown): NextResponse {
     createApiResponse('Validation error', 400)
   )
 }
+
+/**
+ * Wrapper for error handling in async route handlers
+ */
+export function withErrorHandler (
+  handler: (...args: unknown[]) => Promise<NextResponse>,
+  errorMessage = 'Internal server error. Please try again later.'
+) {
+  return async (...args: unknown[]): Promise<NextResponse> => {
+    try {
+      return await handler(...args)
+    } catch (error) {
+      console.error('Error in handler:', error)
+      return NextResponse.json(
+        createApiResponse(errorMessage, 500)
+      )
+    }
+  }
+}
+
+/**
+ * Validate request body with a Zod schema
+ */
+export function validateRequestBody<T> (
+  body: unknown,
+  schema: ZodSchema<T>
+): { success: true; data: T } | { success: false; response: NextResponse } {
+  const result = schema.safeParse(body)
+  if (!result.success) {
+    return {
+      success: false,
+      response: NextResponse.json(
+        createApiResponse(result.error.errors.at(-1)?.message ?? 'Validation error', 400)
+      )
+    }
+  }
+  return { success: true, data: result.data }
+}
