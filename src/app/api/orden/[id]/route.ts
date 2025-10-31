@@ -1,62 +1,41 @@
-import { db } from '@/db'
-import { NextResponse } from 'next/server'
-import { createApiResponse } from '@/lib/api'
 import { OrdenTrabajo } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { getById, updateById, deleteById } from '@/utils/crud'
 import { withHeaderValidation } from '../../utils'
 
-
-
 // obtener una orden por su id de param
-export async function GET (req: Request, { params }) {
-  try {
-    const { id } = await params
-    const orden = await db.select().from(OrdenTrabajo).where(eq(OrdenTrabajo.id, parseInt(id)))
-    if (!orden) {
-      return NextResponse.json(
-        createApiResponse('No order found', 404)
-      )
-    }
-    return NextResponse.json(
-      createApiResponse('Orden encontrada', 200, orden)
-    )
-  } catch (error) {
-    console.error('Error fetching order:', error)
-    return NextResponse.json(
-      createApiResponse('Orden no encontrada', 500)
-    )
-  }
+export const GET = async (req: Request, { params }) => {
+  const { id } = await params
+  return getById(
+    OrdenTrabajo,
+    parseInt(id),
+    'No order found',
+    'Orden encontrada',
+    'Orden no encontrada'
+  )
 }
 
 // Actualizar una orden por su id de param
 export const PUT = withHeaderValidation(async (req: Request, { params }) => {
-  try {
-    const { id } = await params
-    const body = await req.json()
-    const orden = await db.update(OrdenTrabajo).set(body).where(eq(OrdenTrabajo.id, parseInt(id))).returning()
-    return NextResponse.json(
-      createApiResponse('Orden actualizada', 200, orden)
-    )
-  } catch (error) {
-    console.error('Error fetching order:', error)
-    return NextResponse.json(
-      createApiResponse('Orden no encontrada', 500)
-    )
-  }
+  const { id } = await params
+  const body = await req.json()
+
+  return updateById(
+    OrdenTrabajo,
+    parseInt(id),
+    body,
+    undefined,
+    'Orden actualizada',
+    'Orden no encontrada'
+  )
 })
 
 // Eliminar una orden por su id de param
 export const DELETE = withHeaderValidation(async (req: Request, { params }) => {
-  try {
-    const { id } = await params
-    const orden = await db.delete(OrdenTrabajo).where(eq(OrdenTrabajo.id, parseInt(id)))
-    return NextResponse.json(
-      createApiResponse('Orden ' + id + ' eliminada', 200, orden)
-    )
-  } catch (error) {
-    console.error('Error fetching order:', error)
-    return NextResponse.json(
-      createApiResponse('Orden no encontrada', 500)
-    )
-  }
+  const { id } = await params
+  return deleteById(
+    OrdenTrabajo,
+    parseInt(id),
+    'Orden',
+    'Orden no encontrada'
+  )
 })
