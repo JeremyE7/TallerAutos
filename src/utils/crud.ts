@@ -36,6 +36,38 @@ export async function getById<T> (
 }
 
 /**
+ * Generic GET handler for retrieving items by a foreign key field
+ */
+export async function getByField<T> (
+  table: T,
+  field: unknown,
+  value: number | string,
+  notFoundMessage = 'Items not found',
+  successMessage = 'Items found',
+  errorMessage = 'Error fetching items'
+) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await db.select().from(table as any).where(eq(field as any, value))
+
+    if (!result || result.length === 0) {
+      return NextResponse.json(
+        createApiResponse(notFoundMessage, 404)
+      )
+    }
+
+    return NextResponse.json(
+      createApiResponse(successMessage, 200, result)
+    )
+  } catch (error) {
+    console.error('Error fetching items:', error)
+    return NextResponse.json(
+      createApiResponse(errorMessage, 500)
+    )
+  }
+}
+
+/**
  * Generic PUT handler for updating an item by ID
  */
 export async function updateById<T> (
