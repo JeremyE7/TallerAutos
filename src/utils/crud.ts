@@ -79,6 +79,7 @@ export async function updateById<T> (
   errorMessage = 'Error updating item'
 ) {
   try {
+    let dataToUpdate = body
     // Validate body if schema provided
     if (schema) {
       const validatedBody = schema.safeParse(body)
@@ -87,10 +88,11 @@ export async function updateById<T> (
           createApiResponse(validatedBody.error.errors.at(-1)?.message ?? 'Validation error', 400)
         )
       }
+      dataToUpdate = validatedBody.data as Record<string, unknown>
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await db.update(table as any).set(body).where(eq((table as any).id, id)).returning()
+    const result = await db.update(table as any).set(dataToUpdate).where(eq((table as any).id, id)).returning()
 
     return NextResponse.json(
       createApiResponse(successMessage, 200, result)
@@ -101,7 +103,7 @@ export async function updateById<T> (
     // Handle specific database errors
     if (error instanceof Error && error.message.includes('UNIQUE constraint failed')) {
       return NextResponse.json(
-        createApiResponse('Duplicate entry detected', 400)
+        createApiResponse(errorMessage, 400)
       )
     }
 
