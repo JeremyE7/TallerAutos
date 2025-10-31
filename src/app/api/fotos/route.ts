@@ -4,58 +4,48 @@ import { NextResponse } from 'next/server'
 import { createApiResponse } from '@/lib/api'
 import { db } from '@/db'
 import { Fotos } from '@/db/schema'
+import { validateRequestBody, withErrorHandler } from '@/utils/crud'
 
-export const POST = withHeaderValidation(async (req: Request) => {
-  try {
-    let body = await req.json()
-    //console.log('Body:', body)
+export const POST = withHeaderValidation(withErrorHandler(async (req: Request) => {
+  let body = await req.json()
 
-    // Si el body está vacío, crea un objeto vacío para la foto.
-    if (Object.keys(body).length === 0) {
-      body = { foto: {} }  // Crear un objeto vacío en caso de que el body esté vacío.
+  // Si el body está vacío, crea un objeto vacío para la foto.
+  if (Object.keys(body).length === 0) {
+    body = { foto: {} } // Crear un objeto vacío en caso de que el body esté vacío.
+  }
+
+  const validation = validateRequestBody(body, fotosSchema)
+  if (!validation.success) {
+    return validation.response
+  }
+
+  // Subir imágenes a tu servicio (Cloudinary, S3, etc.)
+  const promisesUploadImages = Object.entries(validation.data).map(async ([key, value]) => {
+    if (value) {
+      const uploadResponse = await uploadImage(0, key, value) // Usamos 'temp' como ID temporal
+      if (!uploadResponse) return null
+      return { [key]: uploadResponse.secure_url }
     }
+    return null
+  })
 
-    const validatedBody = fotosSchema.safeParse(body)
-    if (!validatedBody.success) {
-      return NextResponse.json(
-        createApiResponse(validatedBody.error.errors.at(-1)?.message ?? '', 400)
-      )
-    }
+  const uploadedImages = await Promise.all(promisesUploadImages)
+  const filteredImages = uploadedImages.filter((image) => image !== null)
 
-    // Subir imágenes a tu servicio (Cloudinary, S3, etc.)
-    const promisesUploadImages = Object.entries(validatedBody.data).map(async ([key, value]) => {
-      if (value) {
-        const uploadResponse = await uploadImage(0, key, value) // Usamos 'temp' como ID temporal
-        if (!uploadResponse) return null
-        return { [key]: uploadResponse.secure_url }
-      }
-      return null
-    })
-
-    const uploadedImages = await Promise.all(promisesUploadImages)
-    const filteredImages = uploadedImages.filter((image) => image !== null)
-
-    if (filteredImages.length === 0) {
-      // Si no hay fotos para subir, crea una foto vacía.
-      const emptyFoto = { frontal: null, trasera: null, lateral: null, interior: null, motor: null, id: undefined } // Valores predeterminados
-      const newFotos = await db.insert(Fotos).values(emptyFoto).returning().get()
-
-      return NextResponse.json(
-        createApiResponse('Fotos creadas vacías', 200, newFotos)
-      )
-    }
-
-    const fotosToCreate = Object.assign({}, ...filteredImages)
-    const newFotos = await db.insert(Fotos).values(fotosToCreate).returning().get()
+  if (filteredImages.length === 0) {
+    // Si no hay fotos para subir, crea una foto vacía.
+    const emptyFoto = { frontal: null, trasera: null, lateral: null, interior: null, motor: null, id: undefined } // Valores predeterminados
+    const newFotos = await db.insert(Fotos).values(emptyFoto).returning().get()
 
     return NextResponse.json(
-      createApiResponse('Fotos creadas', 200, newFotos)
-    )
-
-  } catch (error) {
-    console.error('Error creating photos:', error)
-    return NextResponse.json(
-      createApiResponse('Error creating photos', 500)
+      createApiResponse('Fotos creadas vacías', 200, newFotos)
     )
   }
-})
+
+  const fotosToCreate = Object.assign({}, ...filteredImages)
+  const newFotos = await db.insert(Fotos).values(fotosToCreate).returning().get()
+
+  return NextResponse.json(
+    createApiResponse('Fotos creadas', 200, newFotos)
+  )
+}))
